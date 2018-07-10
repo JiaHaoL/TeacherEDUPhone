@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+    
+    
+    <select id="getResConentBysubjectid" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	      select RES_TYPE from RES_SUBJECT_SORT where RES_TYPE is not null START WITH G_ID=#treeid# CONNECT by PRIOR G_PID = G_ID
+	
+	</select>
+    
+     <!-- 查找资源内容类型 -->
+	<select id="getContentType" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+		  RES_CONTENT_PK, 
+          TITLE  
+		from SC_RESCENTER.RES_CONTENT where 1=1
+		<isNotEmpty prepend="AND" property="ids">  
+		   res_content_pk in ($ids$)
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ids_not">  
+		   res_content_pk not in ($ids_not$)
+		</isNotEmpty>
+		order by res_content_pk
+	</select>
+    
+    
+      <!-- 查询资源分类 -->
+      <select id="findResType" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT T_ID,
+		  T_ROOTID,
+		  T_PID,
+		  T_ISLEAF,
+		  T_NODE_TEXT,
+		  HIDDER_OR_SHOW,
+		  RANDOM,
+		  CHECK_LEVEL,
+		  CHECK_NAME
+		FROM SC_RESCENTER.RES_TYPE_SORT
+	  </select>
+	  
+	  <!-- 拼接所有父节点 -->
+	<select id="getparenttext" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select  
+	   G_ID,
+	  G_ROOTID,
+	  G_PID,
+	  G_ISLEAF,
+	  G_NODE_TEXT,
+	  HIDDER_OR_SHOW,
+	  RANDOM,
+	  CHECK_LEVEL,
+	  CHECK_NAME,
+	  RES_NUM,
+	  RES_TYPE,
+	  ORDER_NUM,
+      MENUID 
+	from RES_SUBJECT_SORT START WITH G_ID=#treeid# CONNECT by PRIOR G_PID = G_ID ORDER BY ORDER_NUM
+	</select>
+	  
+	 <!-- 加载视频转换对象 -->
+	<select id="getvideoconvertask" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT 
+	      RES_VIDEO_CONVER_TASK_PK,
+		  FILEPATH,
+		  CONTENT_HASHMD5,
+		  CONTENT_HASHSHA1,
+		  FILEID,
+		  ORI_FILENAME,
+		  EXTNAME,
+		  CREATETIME,
+		  UPDATETIME,
+		  STATUS,
+		  UPLOADAPP,
+		  UPLOADUSERID,
+		  OPENATTR
+		FROM SC_RESCENTER.RES_VIDEO_CONVER_TASK 
+		where 1=1
+		 <isNotEmpty prepend="AND" property="pk">  
+		    RES_VIDEO_CONVER_TASK = #pk#
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="fileMD5">  
+			    CONTENT_HASHMD5 = #fileMD5#
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="STATUS">  
+		    STATUS = #STATUS#
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="fileSHA1">  
+			    CONTENT_HASHSHA1 = #fileSHA1#
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="fileid">  
+		    FILEID = #fileid#
+		  </isNotEmpty>
+	</select>
+	  
+	<!-- 加载文件对象 -->
+	<select id="getphsicalfileattr" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT FILE_ID,
+	  FILE_PATH,
+	  CONTENT_HASHMD5,
+	  CONTENT_HASHSHA1,
+	  ORI_FILENAME,
+	  EXTNAME,
+	  NEW_FILENAME,
+	  MIMETYPES,
+	  MIMEPART,
+	  FILE_SIZE,
+	  MTIME,
+	  STORAGE_MTIME,
+	  ETAG,
+	  UPLOAD_USERID
+	  FROM SC_RESCENTER.RES_PHSICAL_FILE_ATTR where 1=1
+	  <isNotEmpty prepend="AND" property="fileid">  
+		    FILE_ID = #fileid#
+	  </isNotEmpty>
+	  <isNotEmpty prepend="AND" property="FILELINKPK">  
+		    FILE_ID = (select file_id from res_file_link where res_file_link_pk = #FILELINKPK#)
+	  </isNotEmpty>
+	  <isNotEmpty prepend="AND" property="fileMD5">  
+		    CONTENT_HASHMD5 = #fileMD5#
+	  </isNotEmpty>
+	  <isNotEmpty prepend="AND" property="fileSHA1">  
+		    CONTENT_HASHSHA1 = #fileSHA1#
+	  </isNotEmpty>
+	</select>
+	  
+	  <insert id="ResAttrTeaInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO RES_ATTR_TEA
+		  (
+		    RES_ATTR_TEA_PK,
+		    FK_RES_ATTR,
+		    PUBLISHER,
+		    CONTRIBUTOR,
+		    COVERAGE,
+		    CATALOG_ENTRY,
+		    MATADATA_SCHEME,
+		    PURPOSE,
+		    PROVIDER,
+		    PROVIDER_UNIT,
+		    CONTENTCLASS,
+		    RES_TYPE,
+		    BYGRADE,
+		    BYTYPE,
+		    SALARY,
+		    CHECK_STATE,
+		    COURSE_ID,
+		    SEENUM,
+		    DOWNMUM,
+		    ISDEL
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_RES_ATTR#,
+		    #PUBLISHER#,
+		    #CONTRIBUTOR#,
+		    #COVERAGE#,
+		    #CATALOG_ENTRY#,
+		    #MATADATA_SCHEME#,
+		    #PURPOSE#,
+		    #PROVIDER#,
+		    #PROVIDER_UNIT#,
+		    #CONTENTCLASS#,
+		    #RES_TYPE#,
+		    #BYGRADE#,
+		    #BYTYPE#,
+		    #SALARY#,
+		    #CHECK_STATE#,
+		    #COURSE_ID#,
+		    0,
+		    0,
+		    0
+		  )
+	</insert>
+	
+	<insert id="ResAttrInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO SC_RESCENTER.RES_ATTR
+		  (
+		    RES_ATTR_PK,
+		    TITLE,
+		    SUBJECT,
+		    KEYWORD,
+		    DESCRIPTION,
+		    SOURCE,
+		    LANGUAGE,
+		    ORI_FILENAME,
+		    DISPLAY_FILENAME,
+		    EXTNAME,
+		    IF_FIRST_RES,
+		    AUDIENCE,
+		    VERSION_RESID,
+		    MD5,
+		    FILEPATH,
+		    IDENTIFIER,
+		    FILE_SIZE,
+		    FILE_ID,
+		    PRE_VERSION_RESID,
+		    MTIME,
+		    STORAGE_MTIME,
+		    FK_RES_FILE_LINK
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #TITLE#,
+		    #SUBJECT#,
+		    #KEYWORD#,
+		    #DESCRIPTION#,
+		    #SOURCE#,
+		    #LANGUAGE#,
+		    #ORI_FILENAME#,
+		    #DISPLAY_FILENAME#,
+		    #EXTNAME#,
+		    #IF_FIRST_RES#,
+		    #AUDIENCE#,
+		    #VERSION_RESID#,
+		    #MD5#,
+		    #FILEPATH#,
+		    #IDENTIFIER#,
+		    #FILE_SIZE#,
+		    #FILE_ID#,
+		    #PRE_VERSION_RESID#,
+		    #MTIME#,
+		    #STORAGE_MTIME#,
+		    #FK_RES_FILE_LINK#
+		  )
+	</insert>
+	
+	<insert id="resaudienceInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO SC_RESCENTER.RES_AUDIENCE
+		  (
+		    RES_AUDIENCE_PK,
+		    FK_RES_ATTR,
+		    SCHOLAR,
+		    EDUCATE_TYPE,
+		    GRADE_LEVEL
+		  )
+		  VALUES
+		  (
+		    #RES_AUDIENCE_PK#,
+		    #FK_RES_ATTR#,
+		    #SCHOLAR#,
+		    #EDUCATE_TYPE#,
+		    #GRADE_LEVEL#
+		  )
+	</insert>
+	  
+</sqlMap>

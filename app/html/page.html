@@ -1,0 +1,13 @@
+<div class="row" style="text-align: center;">
+	当前第 {{page.currentNum}} 页， 共 {{page.pages }} 页 {{page.total }} 条数据 
+</div>
+
+
+<nav>
+  <ul class="pager">
+    <li class="previous"><a ng-click="paging('U')"><span aria-hidden="true"></span> 上一页</a></li> 
+    <li><a  ng-click="paging('S')">首页</a></li>
+ 		<li><a  ng-click="paging('E')">尾页</a></li>
+    <li class="next"><a ng-click="paging('D')">下一页 <span aria-hidden="true"></span></a>&nbsp;</li>
+  </ul>
+</nav>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<select id="findCourseForContribution" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" remapResults="true">
+	    select 
+            SC_COURSE_PK,
+		    CODE,
+		    TITLE,    
+		    FK_RES_SUBJECT_SORT,
+		    FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=FK_SUBJECT and rownum = 1) FK_SUBJECT_TEXT,
+		    FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=FK_UNIT) FK_UNIT_TEXT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    ACTIVITY_ID,
+		    COURSESPEAKER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=COURSESPEAKER) COURSESPEAKER_TEXT,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    IS_CLASS_LECTUREROOM 
+        from sc_course where to_date(APPLY_TIME, 'yyyy-mm-dd hh24:mi:ss') &gt;= to_date('2015-09-01', 'yyyy-mm-dd hh24:mi:ss')
+        <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#FK_TEACHER#
+	   </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="ACTIVITY_ID">  
+			    ACTIVITY_ID in ($ACTIVITY_ID$)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		CLASS_START_TIME desc
+	   </isEmpty>
+	</select>
+	
+	<select id="findCourseForContributionSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	    select count(1) from sc_course where 1=1
+	    <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	  <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#FK_TEACHER#
+	   </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="ACTIVITY_ID">  
+			    ACTIVITY_ID in ($ACTIVITY_ID$)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+       
+	</select>
+</sqlMap>

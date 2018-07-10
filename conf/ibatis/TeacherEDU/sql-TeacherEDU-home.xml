@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+    
+     <!-- 骨干教师 培训课程、专题讲座统计 -->
+    <select id="countCourseApply" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	    select count(1) from sc_course where 1=1
+	   <isNotEmpty prepend="AND" property="STATUS_MORE">  
+			    status >= #STATUS_MORE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#FK_TEACHER#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="ACTIVITY_ID">  
+			    ACTIVITY_ID=#ACTIVITY_ID#
+	   </isNotEmpty>
+	 </select>
+    
+    
+    
+    <!--骨干教师 教师成果统计  -->
+    <select id="countProjectWork" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+          select count(*) from SJTEACHEREDU.TEACHER_HARVEST@SJEDUMNG.SJEDU.CN where harvest_type != '论文' and teacher_id=#FK_TEACHER#
+    </select>
+    
+    <!--骨干教师 论文交流统计  -->
+    <select id="countThesis" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select count(*) from SJTEACHEREDU.TEACHER_HARVEST@SJEDUMNG.SJEDU.CN where harvest_type = '论文' and teacher_id=#FK_TEACHER#
+    </select>
+    
+     <select id="findCourseListForNotice" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+            select * from
+				(
+				select cn.sc_Course_Notice_pk,cn.title,t.teacher_xm,cn.create_time,cn.FK_SC_COURSE    from sc_Course_Notice cn 
+				left join sc_course course on cn.fk_sc_course = course.sc_course_pk
+				left join sc_user_teacher t on course.fk_teacher = t.teacher_pk   
+				where cn.FK_SC_COURSE in(select distinct(FK_SC_COURSE) from   SC_Course_teacher ct   where ct.fk_teacher =#userInfo.GUID# ) and course.status>=4 order by cn.create_time desc 
+				) where rownum &lt;=7
+     </select>
+     
+     <select id="findCourseListForApply" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+      select * from 
+           ( SELECT 
+            CODE,
+            TITLE,
+            APPLY_TIME,
+            STATUS,
+            SC_COURSE_PK
+            FROM SC_COURSE WHERE FK_TEACHER = #userInfo.GUID# ) where rownum &lt;=7
+     </select>
+</sqlMap>

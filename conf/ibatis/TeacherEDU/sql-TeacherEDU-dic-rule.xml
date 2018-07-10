@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+
+   <select id="findReferenceList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select 
+			  DICTIONARY_PK,
+			  FK_RULE,
+			  DICTIONARY_FATHER_PK,
+			  DICTIONARY_CODE,
+			  DICTIONARY_NAME,
+			  DICTIONARY_ABBREVIATION,
+			  DICTIONARY_COMMENT,
+			  DICTIONARY_TYPE,
+			  DICTIONARY_LEVEL
+		from 
+			SC_CORE.SC_DICTIONARY
+		where 
+		  DICTIONARY_FLAG = 0
+		  	<isNotEmpty prepend="AND" property="DICTIONARY_LEVEL">  
+			    DICTIONARY_LEVEL = #DICTIONARY_LEVEL#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_RULE">  
+			    FK_RULE = #FK_RULE#
+			</isNotEmpty>
+			ORDER BY DICTIONARY_CODE
+	</select>
+
+	<select id="DictionaryAllList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  DICTIONARY_PK,
+			  FK_RULE,
+			  DICTIONARY_FATHER_PK,
+			  DICTIONARY_CODE,
+			  DICTIONARY_NAME,
+			  DICTIONARY_ABBREVIATION,
+			  DICTIONARY_COMMENT,
+			  DICTIONARY_TYPE,
+			  DICTIONARY_LEVEL
+		from 
+			SC_DICTIONARY
+		where 
+		  DICTIONARY_FLAG = 0
+		  	<isNotEmpty prepend="AND" property="DICTIONARY_LEVEL">  
+			    DICTIONARY_LEVEL = #DICTIONARY_LEVEL#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_RULE">  
+			    FK_RULE = #FK_RULE#
+			</isNotEmpty>
+			ORDER BY DICTIONARY_CODE
+	</select>
+	
+	<select id="DictionaryList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+		  DICTIONARY_PK,
+		  FK_RULE,
+		  DICTIONARY_FATHER_PK,
+		  DICTIONARY_CODE,
+		  DICTIONARY_NAME,
+		  DICTIONARY_ABBREVIATION,
+		  DICTIONARY_COMMENT,
+		  DICTIONARY_TYPE,
+		  DICTIONARY_LEVEL,
+		  DICTIONARY_FLAG,
+		  CREATE_BY,
+		  CREATE_TIME,
+		  UPDATE_BY,
+		  UPDATE_TIME
+		from 
+			SC_DICTIONARY
+		where 
+		  DICTIONARY_FLAG = 0
+			<isNotEmpty prepend="AND" property="DICTIONARY_LEVEL">  
+			    DICTIONARY_LEVEL = #DICTIONARY_LEVEL#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_RULE">  
+			    FK_RULE = #FK_RULE#
+			</isNotEmpty>
+			ORDER BY DICTIONARY_CODE
+			<isNotEmpty prepend=" , " property="page.column">
+				$page.column$ $page.order$
+			</isNotEmpty>
+	</select>
+	<select id="DictionaryListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			  count(*)
+		from 
+			SC_DICTIONARY
+		where 
+		  DICTIONARY_FLAG = 0
+		    <isNotEmpty prepend="AND" property="DICTIONARY_LEVEL">  
+			    DICTIONARY_LEVEL = #DICTIONARY_LEVEL#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_RULE">  
+			    FK_RULE = #FK_RULE#
+			</isNotEmpty>
+	</select>
+	
+	<select id="DictionaryFindById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  DICTIONARY_PK,
+			  FK_RULE,
+			  DICTIONARY_FATHER_PK,
+			  DICTIONARY_CODE,
+			  DICTIONARY_NAME,
+			  DICTIONARY_ABBREVIATION,
+			  DICTIONARY_COMMENT,
+			  DICTIONARY_TYPE,
+			  DICTIONARY_LEVEL,
+			  DICTIONARY_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		from SC_DICTIONARY
+		where DICTIONARY_PK = #DICTIONARY_PK#
+	</select>
+
+	<update id="DictionaryDelete" parameterClass="java.util.HashMap">
+		UPDATE SC_DICTIONARY SET 
+		DICTIONARY_FLAG = 1,
+		UPDATE_TIME = sysdate,
+		UPDATE_BY = #userInfo.GUID#
+		WHERE DICTIONARY_PK =#DICTIONARY_PK#
+	</update>
+	
+	<update id="DictionaryUpdate" parameterClass="java.util.HashMap">
+		UPDATE SC_DICTIONARY SET 
+			  DICTIONARY_NAME = #DICTIONARY_NAME#,
+			  DICTIONARY_FATHER_PK = #DICTIONARY_FATHER_PK#,
+			  DICTIONARY_CODE = #DICTIONARY_CODE#,
+			  DICTIONARY_ABBREVIATION = #DICTIONARY_ABBREVIATION#,
+			  DICTIONARY_COMMENT = #DICTIONARY_COMMENT#,
+			  DICTIONARY_TYPE = #DICTIONARY_TYPE#,
+			  DICTIONARY_LEVEL = #DICTIONARY_LEVEL#,
+			  FK_RULE = #FK_RULE#,
+			  DICTIONARY_FLAG = #DICTIONARY_FLAG#,
+			  UPDATE_BY = #userInfo.GUID#,
+			  UPDATE_TIME = sysdate
+		WHERE DICTIONARY_PK =#DICTIONARY_PK#
+	</update>
+	
+	<insert id="DictionaryInsert" parameterClass="java.util.HashMap">
+		INSERT
+		INTO SC_DICTIONARY
+		  (
+			  DICTIONARY_PK,
+			  FK_RULE,
+			  DICTIONARY_FATHER_PK,
+			  DICTIONARY_CODE,
+			  DICTIONARY_NAME,
+			  DICTIONARY_ABBREVIATION,
+			  DICTIONARY_COMMENT,
+			  DICTIONARY_TYPE,
+			  DICTIONARY_LEVEL,
+			  DICTIONARY_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		  )
+		  VALUES
+		  (
+		  	  #UUID#,
+		  	  #FK_RULE#,
+			  #DICTIONARY_FATHER_PK#,
+			  #DICTIONARY_CODE#,
+			  #DICTIONARY_NAME#,
+			  #DICTIONARY_ABBREVIATION#,
+			  #DICTIONARY_COMMENT#,
+			  #DICTIONARY_TYPE#,
+			  #DICTIONARY_LEVEL#,
+			  0,
+			  #userInfo.GUID#,
+			  sysdate,
+			  #UPDATE_BY#,
+			  #UPDATE_TIME#
+		  )
+	</insert>
+</sqlMap>

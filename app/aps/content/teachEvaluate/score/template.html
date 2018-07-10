@@ -1,0 +1,56 @@
+<div >
+	<div ng-repeat="one in dataList" >
+	 	<div  id="{{one.SC_ASSESS_PK}}" style="border-color:#fff,background-color:#fff ">
+<!-- 	<div  style="border-color:#fff;background-color:#fff"><h4 align="center">{{one.TEXTONE}}</h4></div>
+ -->	 <div style="background-color:#fff" ng-repeat="two in one.TEXTTWO">
+    	<h5 style="padding:10px 15px 10px 15px">{{two.TEXT}}</h5>
+    	<div style="padding:0 20px 0 20px">
+    	<table  ng-repeat="three in two.TEXTTHREE" id="teacherScore" style="TABLE-LAYOUT: auto;margin: 0,border-color:#fff;background-color:#fff,padding:0 30px 0 30px" class="table" >  
+			<tr style="padding:0 15px 0 15px">
+				<td colspan="2"><p>{{three.TEXT}}</p></td>
+			</tr>
+			<tr >
+				<td>
+		            <div class="all" id="">
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}0" value="0" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','0')"/>
+				      <span>★</span>
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}1" value="1" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','1')"/>
+				      <span>★</span>
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}2" value="2" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','2')"/>
+				      <span>★</span>
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}3" value="3" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','3')"/>
+				      <span>★</span>
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}4" value="4" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','4')"/>
+				      <span>★</span>
+				      <input type="radio" name="{{three.SC_ASSESS_PK}}" id="{{three.SC_ASSESS_PK}}5" value="5" ng-click="scoreChange('{{three.SC_ASSESS_PK}}','5')"/>
+				      <span>★</span>
+				    </div>
+				</td>
+				<td>
+					<input onchange="angular.element(this).scope().userChange(this.id)" type="text" id="{{three.SC_ASSESS_PK}}"  value="{{three.SCORE}}" style='width:20px;border:none; border-bottom:1px solid #A0A0A0;' ></input>分
+				</td>
+			</tr>
+    	</table>
+    	</div>
+			<hr style="border:0;background-color:#D8D8D8;height:5px;">  	
+		</div>
+    </div>
+    
+  </div>
+
+<div style="background-color:#fff">
+<div class="row" style="text-align: center;">
+	当前第 {{nowPage}} 页， 共 {{pageNum }} 页 {{pageNum }} 条数据 
+</div>
+<nav>
+  <ul class="pager">
+    <li class="previous"><a ng-click="up()" id="up"><span aria-hidden="true"></span> 上一页</a></li> 
+    <li><a  ng-click="begin()">首页</a></li>
+ 		<li><a  ng-click="end()">尾页</a></li>
+    <li class="next"><a ng-click="down()" id="next">下一页 <span aria-hidden="true"></span></a>
+    				<a ng-click="add(1)" id="sub">确认提交 <span aria-hidden="true"></span></a>
+    &nbsp;</li>
+  </ul>
+</nav>
+</div>
+</div>

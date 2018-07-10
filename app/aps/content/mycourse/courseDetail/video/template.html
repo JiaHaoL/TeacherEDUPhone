@@ -1,0 +1,43 @@
+<div class="div_course div_class_point">
+		         <div align="right" style="padding-top:10px;padding-bottom:10px;">
+			         <button type="button" class="btn btn-info priviewVideo" ng-click="uploadRES();"> <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>上传视频</button>
+		         </div>
+		         <div class="panel panel-info">
+		             <!-- Default panel contents -->
+			            <table class="table table-hover table-striped table-bordered ">  
+					      <thead>
+					        <tr>
+					          <th column="TITLE" class="sorting" ng-click="order($event.target)">视频名称</th>
+					          <th column="MTIME" class="sorting" ng-click="order($event.target)">上传时间</th>
+					          <th column="EXTNAME" class="sorting" ng-click="order($event.target)">切片数</th>
+					          <th column="FILE_SIZE" class="sorting" ng-click="order($event.target)">操作</th>
+					        </tr>
+					      </thead>
+					      <tbody ng-switch on="page.current_num">
+					      	<tr ng-switch-when="0">
+					      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+					      	</tr>
+					        <tr ng-repeat='video in videoList'>
+					          <td>{{video.VIDEO_TITLE}}</td>
+					          <td>{{video.CREATE_TIME}}</td>
+					          <td>{{video.POINTCOUNT}}</td>
+					          <td ng-switch on="action">
+					            <a href="" ng-click="videoPointReview(video.SC_VIDEO_PK)" style="cursor:pointer;"><span class="glyphicon glyphicon" aria-hidden="true"></span><span style="color:blue;">播放</span></a>
+					            <span ng-switch-when='1'>
+					                <span ng-if="video.POINTCOUNT == '0'">
+					                 &nbsp;<a href="" ng-click="deleteVideo(video.FK_RES_ATTR,video.SC_VIDEO_PK)" style="cursor:pointer;color:red;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除</a>
+					                </span>
+					              </span>
+					          </td>
+					        </tr>
+					      </tbody>
+					      <tfoot>
+					      	<tr>
+					      		<td colspan="100">
+					      		    <div ng-include="'html/page.html'"></div>
+								</td>
+					      	</tr>
+					      </tfoot>
+					    </table> 
+		       </div>
+</div>

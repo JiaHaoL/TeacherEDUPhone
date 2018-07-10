@@ -1,0 +1,18 @@
+{
+    "name": "TeacherEdu_myCourse_courseDetail_moke",
+    "viewUrl": "aps/content/myCourse/courseDetail/moke/template.html",
+    "controllerUrl": "aps/content/myCourse/courseDetail/moke/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "getUserInfoURL":"json/User_getUserInfo_getUserInfo.json",
+            "findScCourseNoticeURL":"json/Open_queryForList_findScCourseNotice.json",
+            "ScCourseNoticeDeleteURL":"json/Open_delete_ScCourseNoticeDelete.json",
+            "findScForumThemeURL":"json/Scbbs_findMokeTheme_findMokeTheme.json",
+            "scForumPlateDeleteURL":"json/Open_delete_scForumPlateDelete.json",
+            "scForumThemeDeleteURL":"json/Open_delete_scForumThemeDelete.json"
+
+
+	}
+}

@@ -1,0 +1,36 @@
+/* 输入提示 */
+.form-control-feedback {
+    right: -20px;
+}
+
+.control-label-show {
+	padding-top: 7px;
+}
+
+
+/* 分页 */
+.pagination-sm{
+	margin:2px;
+	float:right;
+}
+.pageshow{
+	padding-top:5px;
+}
+
+.form-horizontal-condensed .form-group{
+	margin-bottom: 5px;
+}
+
+#app_left .list-group-item {
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+#app_left .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+   	color: #fff;
+    background-color: #337ab7;
+}

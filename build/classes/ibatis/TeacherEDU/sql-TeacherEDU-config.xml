@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+    
+    <select id="findresmineObj" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT SC_MINE_PK,
+		  MINE_DEFINE,
+		  MINE_TYPE,
+		  DEPICTTYPE,
+		  MINE_URL,
+		  SMALL_ICO,
+		  BIG_ICO,
+		  CREATETIME,
+		  UPDATETIME
+		FROM SC_MINE where 1=1
+		<isNotEmpty prepend="AND" property="SC_MINE_PK">
+				SC_MINE_PK=#SC_MINE_PK#
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="MINE_TYPE">
+				MINE_TYPE = #MINE_TYPE#
+	    </isNotEmpty>
+	</select>
+    
+	<select id="findresminelist" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT SC_MINE_PK,
+		  MINE_DEFINE,
+		  MINE_TYPE,
+		  DEPICTTYPE,
+		  MINE_URL,
+		  SMALL_ICO,
+		  BIG_ICO,
+		  CREATETIME,
+		  UPDATETIME
+		FROM SC_MINE where 1=1
+		<isNotEmpty prepend="AND" property="SC_MINE_PK">
+				SC_MINE_PK=#SC_MINE_PK#
+	    </isNotEmpty>
+		<isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	    </isNotEmpty>
+	    <isEmpty prepend="ORDER BY" property="page.column">
+		   CREATETIME desc
+	    </isEmpty>
+	</select>
+	
+	<select id="findresminelistSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	SELECT count(1)
+		FROM SC_MINE
+	</select>
+	
+	<select id="findresminelistAll" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT SC_MINE_PK,
+		  MINE_DEFINE,
+		  MINE_TYPE,
+		  DEPICTTYPE,
+		  MINE_URL,
+		  SMALL_ICO,
+		  BIG_ICO,
+		  CREATETIME,
+		  UPDATETIME
+		FROM SC_MINE
+	</select>
+	
+	 <delete id="deleteResMine" parameterClass="java.util.HashMap">
+		delete from SC_MINE where SC_MINE_PK in ($ids$)
+	 </delete>
+	<insert id="resMineInsert" parameterClass="java.util.HashMap">
+	   INSERT
+		INTO SC_MINE
+		  (
+		    SC_MINE_PK,
+		    MINE_DEFINE,
+		    MINE_TYPE,
+		    DEPICTTYPE,
+		    MINE_URL,
+		    SMALL_ICO,
+		    BIG_ICO,
+		    CREATETIME
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #MINE_DEFINE#,
+		    #MINE_TYPE#,
+		    #DEPICTTYPE#,
+		    #MINE_URL#,
+		    #SMALL_ICO#,
+		    #BIG_ICO#,
+		    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+		  )
+	</insert>
+	
+	<update id="resMineUpdate" parameterClass="java.util.HashMap">
+	  update SC_MINE set 
+		    MINE_DEFINE=#MINE_DEFINE#,
+		    MINE_TYPE=#MINE_TYPE#,
+		    DEPICTTYPE=#DEPICTTYPE#,
+		    MINE_URL=#MINE_URL#,
+		    SMALL_ICO=#SMALL_ICO#,
+		    BIG_ICO=#BIG_ICO#,
+		    updatetime = to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+		where SC_MINE_PK=#SC_MINE_PK#
+	</update>
+	
+	
+</sqlMap>

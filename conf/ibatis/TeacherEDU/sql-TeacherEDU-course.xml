@@ -1,0 +1,1305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+
+<!--  20171019修改二维码签到，由主讲教师改为申请教师 -->
+<select id="findCourseApplyListFor" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" remapResults="true">
+	    select 
+            SC_COURSE_PK,
+		    CODE,
+		    TITLE,    
+		    FK_RES_SUBJECT_SORT,
+		    FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=FK_SUBJECT and rownum = 1) FK_SUBJECT_TEXT,
+		    FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    case when CLASS_START_TIME is null then
+		    STUDY_START_TIME
+		    else 
+		    CLASS_START_TIME
+		    end as CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=FK_UNIT) FK_UNIT_TEXT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    ACTIVITY_ID,
+		    COURSESPEAKER,
+		    <!-- (select Teacher_xm from sc_user_teacher where TEACHER_PK=SC_COURSE.COURSESPEAKER) COURSESPEAKER_TEXT, -->
+		   <!--  (select user_sn from sc_core.sc_user where user_pk = SC_COURSE.COURSESPEAKER) COURSESPEAKER_TEXT, -->
+		    case when ACTIVITY_ID='2c28c6093e2008c1013e20e3ce180005' then 
+            (select TEACHERNAME from sc_expert_info where SC_EXPERT_INFO_PK=COURSESPEAKER)
+	        else
+	          (select Teacher_xm from sc_user_teacher where TEACHER_PK=COURSESPEAKER)
+	        end as COURSESPEAKER_TEXT,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    <dynamic prepend="">
+		      <isNotEmpty prepend="" property="onlinelist"> 
+					(SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE EXTNAME LIKE 'doc%' AND TEA.COURSE_ID= SC_COURSE_PK) DOCCOUNT, 
+			        (SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE EXTNAME LIKE 'ppt%' AND TEA.COURSE_ID= SC_COURSE_PK) PPTCOUNT,
+			        (SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE (EXTNAME = 'mp4' or EXTNAME = 'f4v') AND TEA.COURSE_ID= SC_COURSE_PK) VIDEOCOUNT, 
+			        (SELECT COUNT(*) FROM SC_VIDEO_POINT WHERE status=0 and FK_SC_VIDEO IN (SELECT SC_VIDEO_PK FROM SC_VIDEO WHERE FK_SC_COURSE=SC_COURSE_PK)) VIDEOPOINTCOUNT,   
+			        (SELECT COUNT(DISTINCT(CREATER)) FROM SC_VIDEO_COMMENT WHERE FK_SC_VIDEO_POINT IN ((SELECT VIDEO.SC_VIDEO_PK FROM SC_VIDEO_POINT VIDEOPOINT LEFT JOIN SC_VIDEO VIDEO ON VIDEOPOINT.FK_SC_VIDEO = VIDEO.SC_VIDEO_PK WHERE status=0 and FK_SC_COURSE=SC_COURSE_PK))) PKCOUNT,
+			        case when INCLUDE_OFFLINE=1 then               
+					(select count(*) from sc_course_teacher where fk_sc_course = SC_COURSE_PK and sc_course_teacher.status !=99)           
+					else               
+					(select count(*) from sc_course_teacher where ISONLINE=1 and fk_sc_course = SC_COURSE_PK and sc_course_teacher.status !=99)            
+					end as CYCOUNT, 
+			  </isNotEmpty>
+			</dynamic>	
+		    IS_CLASS_LECTUREROOM 
+        from sc_course where 1=1
+        <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS_MORE">  
+			    status >= #STATUS_MORE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#userInfo.GUID#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_LIVE">  
+			    INCLUDE_LIVE=#INCLUDE_LIVE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AREA_COURSE">  
+			    COURSELEVEL != 1
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID# 
+			    or FK_SIGN_TEACHER =#userInfo.GUID# 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="QRCODE">  
+	   		FK_TEACHER = #userInfo.GUID#
+	   		or FK_SIGN_TEACHER =#userInfo.GUID# 
+			<!-- COURSESPEAKER =#userInfo.GUID#  -->
+			<!-- and (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi')>sysdate or (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi') &lt; sysdate and (to_date(CLASS_END,'yyyy-MM-dd HH24:mi') > sysdate))   -->
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL_COURSE">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_UNIT">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL">  
+			    (COURSELEVEL=1 or COURSELEVEL=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="apply">  
+			    (STATUS=1 or STATUS=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		CLASS_START_TIME desc
+	   </isEmpty>
+	</select>
+	
+	<select id="findCourseApplyListForSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	    select count(1) from sc_course where 1=1
+	    <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS_MORE">  
+			    status >= #STATUS_MORE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#userInfo.GUID#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AREA_COURSE">  
+			    COURSELEVEL != 1
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID#
+			    or FK_SIGN_TEACHER =#userInfo.GUID#  
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="QRCODE">  
+			COURSESPEAKER =#userInfo.GUID# 
+			or FK_SIGN_TEACHER =#userInfo.GUID# 
+			<!-- and (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi')>sysdate or (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi') &lt; sysdate and (to_date(CLASS_END,'yyyy-MM-dd HH24:mi') > sysdate))   -->
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL_COURSE">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_UNIT">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL">  
+			    (COURSELEVEL=1 or COURSELEVEL=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="apply">  
+			    (STATUS=1 or STATUS=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_LIVE">  
+			    INCLUDE_LIVE=#INCLUDE_LIVE#
+	   </isNotEmpty>
+	</select>
+
+<select id="getNoTeacherByCourse" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     select 
+	          SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  unit_name
+	     from (SELECT 
+			  SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  (select unit_abbreviation from sc_unit where unit_pk = (select fk_unit from sc_user where user_pk= FK_TEACHER)) unit_name
+			FROM SC_COURSE_TEACHER t1 
+            left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk where t1.status =1
+            <isNotEmpty prepend="AND" property="ISNOTQJ">  
+			   ISQJ = 0
+	        </isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="UNIT_POINT">  
+			   fk_unit = #userInfo.FK_UNIT#
+	        </isNotEmpty>
+	        ) where teacher_xm is not null 
+	        order by nlssort(unit_name,'NLS_SORT=SCHINESE_PINYIN_M'),nlssort(TEACHER_XM,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	<select id="getNoTeacherByCourseSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			 count(*)
+			FROM SC_COURSE_TEACHER t1 
+            left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk where t1.status=1
+            <isNotEmpty prepend="AND" property="ISNOTQJ">  
+			   ISQJ = 0
+	        </isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="UNIT_POINT">  
+			   fk_unit = #userInfo.FK_UNIT#
+	        </isNotEmpty>
+	</select>
+<select id="getTeacherByQRCode" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+		  SC_COURSE_TEACHER_QRCODE_PK,
+		  FK_COURSE as FK_SC_COURSE,
+		  FK_TEACHER,
+		  teacher_xm,
+		  (select SC_COURSE_TEACHER_PK from sc_course_teacher where FK_TEACHER = t1.FK_TEACHER and FK_SC_COURSE = t1.FK_COURSE and rownum = 1) SC_COURSE_TEACHER_PK,
+		  (select unit_abbreviation from sc_unit where unit_pk = (select fk_unit from sc_user where user_pk= FK_TEACHER)) unit_name
+		FROM SC_COURSE_TEACHER_QRCODE T1 
+		left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk
+		WHERE t1.STATUS = 0 AND T1.FK_COURSE = #FK_SC_COURSE#
+	</select>
+	<select id="getTeacherByQRCodeSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	SELECT
+		 count(1)
+		FROM SC_COURSE_TEACHER_QRCODE T1 
+		left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk
+		WHERE t1.STATUS = 0 AND T1.FK_COURSE = #FK_SC_COURSE#
+	</select>
+    <update id="scCourseTeacherUpdate" parameterClass="java.util.HashMap">
+	    update sc_course_teacher set status=#STATUS#,update_time = sysdate where SC_COURSE_TEACHER_PK = #SC_COURSE_TEACHER_PK#
+	</update>
+	<update id="scCourseTeacherUpdateQRCode" parameterClass="java.util.HashMap">
+	    update SC_COURSE_TEACHER_QRCODE set status=#STATUS# where FK_COURSE = #FK_COURSE# AND FK_TEACHER = #FK_TEACHER#
+	</update>
+    <!-- 批量签到 -->
+    <update id="batchSignInUpdate" parameterClass="java.util.HashMap">
+         update sc_course_teacher set status=#STATUS# where FK_SC_COURSE = #FK_SC_COURSE# and fk_teacher in ($ids$)
+    </update>
+    <!-- 变更参与教师 -->
+    <update id="changeCourseTeacher" parameterClass="java.util.HashMap">
+        update sc_course_teacher set fk_teacher=#CHANGE_TEACHER# where sc_course_teacher_pk = #SC_COURSE_TEACHER_PK#
+    </update>
+    
+    <select id="findPlanTableList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          select 
+            SC_COURSE_PK,
+		    CODE,
+		    TITLE,    
+		    FK_RES_SUBJECT_SORT,
+		    FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=FK_SUBJECT) FK_SUBJECT_TEXT,
+		    FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=FK_UNIT) FK_UNIT_TEXT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    ACTIVITY_ID,
+		    COURSESPEAKER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=COURSESPEAKER) COURSESPEAKER_TEXT,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    (select UNIT_ABBREVIATION from sc_unit where unit_pk = ACTIVITY_PLACES) ACTIVITY_UNIT,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='ff522fffea21428088b0c0fd1c31b4ad' and DICTIONARY_PK=FK_SORT) FK_SORT_TEXT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    IS_CLASS_LECTUREROOM 
+        from sc_course where status &gt;=4 and INCLUDE_OFFLINE='1'
+        <isNotEmpty prepend="AND" property="SCHOOL_PLANTABLE">  
+			 (
+			    FK_UNIT=#userInfo.FK_UNIT# 
+			    or COURSESPEAKER in (select user_pk from SC_CORE.sc_user where fk_unit = #userInfo.FK_UNIT#) 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER in (select user_pk from SC_CORE.sc_user where fk_unit = #userInfo.FK_UNIT#) and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID# 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+        <isNotEmpty prepend="AND" property="START_TIME">
+	        to_date(ACTIVITY_START_TIME,'yyyy/MM/dd HH24:mi:ss') &gt;= to_date(#START_TIME#,'yyyy/MM/dd HH24:mi:ss')
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="END_TIME">
+	        to_date(ACTIVITY_START_TIME,'yyyy/MM/dd HH24:mi:ss') &lt;= to_date(#END_TIME#,'yyyy/MM/dd HH24:mi:ss')
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="UNIT_PK">
+	          FK_UNIT = #userInfo.FK_UNIT#
+	    </isNotEmpty>
+	    <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		ACTIVITY_START_TIME desc
+	   </isEmpty>
+    </select>
+    
+    <select id="findPlanTableListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select count(1)
+         from sc_course where status &gt;=4 and INCLUDE_OFFLINE='1'
+         <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID# 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL_PLANTABLE">  
+			 (
+			    FK_UNIT=#userInfo.FK_UNIT# 
+			    or COURSESPEAKER in (select user_pk from SC_CORE.sc_user where fk_unit = #userInfo.FK_UNIT#) 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER in (select user_pk from SC_CORE.sc_user where fk_unit = #userInfo.FK_UNIT#) and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="UNIT_PK">
+	          FK_UNIT = #userInfo.FK_UNIT#
+	    </isNotEmpty>
+        <isNotEmpty prepend="AND" property="START_TIME">
+	        to_date(ACTIVITY_START_TIME,'yyyy/MM/dd HH24:mi:ss') &gt;= to_date(#START_TIME#,'yyyy/MM/dd HH24:mi:ss')
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="END_TIME">
+	        to_date(ACTIVITY_START_TIME,'yyyy/MM/dd HH24:mi:ss') &lt;= to_date(#END_TIME#,'yyyy/MM/dd HH24:mi:ss')
+	    </isNotEmpty>
+    </select>
+    
+    <select id="findScCourseNotice" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+			  SC_COURSE_NOTICE_PK,
+			  NOTICECONTENT,
+			  CREATE_TIME,
+			  CREATER,
+			  (select Teacher_xm from sc_user_teacher where TEACHER_PK=CREATER) CREATER_TEXT,
+			  TITLE,
+			  FK_SC_COURSE
+		 FROM SC_COURSE_NOTICE where 1=1
+		 <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+	        FK_SC_COURSE = #FK_SC_COURSE#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="SC_COURSE_NOTICE_PK">
+	        SC_COURSE_NOTICE_PK = #SC_COURSE_NOTICE_PK#
+	     </isNotEmpty>
+    </select>
+    <select id="findScCourseNoticeSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT 
+			  count(1)
+		 FROM SC_COURSE_NOTICE where 1=1
+		 <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+	        FK_SC_COURSE = #FK_SC_COURSE#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="SC_COURSE_NOTICE_PK">
+	        SC_COURSE_NOTICE_PK = #SC_COURSE_NOTICE_PK#
+	     </isNotEmpty>
+    </select>
+    <delete id="ScCourseNoticeDelete" parameterClass="java.util.HashMap">
+	     delete from SC_COURSE_NOTICE where SC_COURSE_NOTICE_PK in ($ids$)
+	</delete>
+    
+    <insert id="ScCourseNoticeInsert" parameterClass="java.util.HashMap">
+         INSERT
+			INTO SC_COURSE_NOTICE
+			  (
+			    SC_COURSE_NOTICE_PK,
+			    NOTICECONTENT,
+			    CREATE_TIME,
+			    CREATER,
+			    TITLE,
+			    FK_SC_COURSE
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #NOTICECONTENT#,
+			    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
+			    #userInfo.GUID#,
+			    #TITLE#,
+			    #FK_SC_COURSE#
+			  )
+    </insert>
+    
+    <update id="ScCourseNoticeUpdate" parameterClass="java.util.HashMap">
+           UPDATE 
+           SC_COURSE_NOTICE set 
+			    NOTICECONTENT=#NOTICECONTENT#,
+			    TITLE=#TITLE#
+	       WHERE  SC_COURSE_NOTICE_PK=#SC_COURSE_NOTICE_PK#
+    </update>
+    
+    <select id="findScCourseSynopsis" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+      select
+        SC_COURSE_SYNOPSIS_PK,
+	    SYNOPSIS,
+	    FK_SC_COURSE
+       from SC_COURSE_SYNOPSIS where 1=1
+       <isNotEmpty prepend="AND" property="FK_SC_COURSE">      
+			    FK_SC_COURSE=#FK_SC_COURSE#
+	   </isNotEmpty> 
+    </select>
+    <insert id="ScCourseSynopsisInsert" parameterClass="java.util.HashMap">
+            INSERT
+			INTO SC_COURSE_SYNOPSIS
+			  (
+			    SC_COURSE_SYNOPSIS_PK,
+			    SYNOPSIS,
+			    FK_SC_COURSE
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #SYNOPSIS#,
+			    #FK_SC_COURSE#
+			  )
+    </insert>
+    <update id="ScCourseSynopsisUpdate" parameterClass="java.util.HashMap">
+        update SC_COURSE_SYNOPSIS set SYNOPSIS= #SYNOPSIS# where FK_SC_COURSE= #FK_SC_COURSE#
+    </update>
+    
+    <select id="appointSchoolCourse" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+       select 
+            course.SC_COURSE_PK,
+		    course.CODE,
+		    course.TITLE,    
+		    course.FK_RES_SUBJECT_SORT,
+		    (select G_NODE_TEXT from RES_SUBJECT_SORT where G_ID=course.FK_RES_SUBJECT_SORT) subjecttext,
+		    course.FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=course.FK_SUBJECT) FK_SUBJECT_TEXT,
+		    course.FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    course.APPLY_DESC,
+		    course.APPLY_TIME,
+		    course.CHECK_TIME,
+		    course.CLASS_START_TIME,
+		    course.CLASS_END_TIME,
+		    course.FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=course.FK_UNIT) FK_UNIT_TEXT,
+		    course.COURSELEVEL,
+		    course.STATUS,
+		    course.SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='64b689bdb45845cb8eccbf8941977ebe' and DICTIONARY_PK=FK_CLASS) FK_CLASS_TEXT,
+		    ACTIVITY_ID,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='258ead7629b1445c88b93ed7b6e9021f' and DICTIONARY_PK=ACTIVITY_ID) ACTIVITY_ID_TEXT,
+		    COURSESPEAKER,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='ff522fffea21428088b0c0fd1c31b4ad' and DICTIONARY_PK=FK_SORT) FK_SORT_TEXT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    IS_CLASS_LECTUREROOM
+        from sc_course_school school left join sc_course course on school.fk_sc_course = course.sc_course_pk
+        where STATUS=4 and COURSELEVEL !=1 and school.FK_UNIT =#userInfo.FK_UNIT#
+        <isNotEmpty prepend="AND" property="IS_ADD_TEACHER">  
+			    IS_ADD_TEACHER = #IS_ADD_TEACHER#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL = #COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT = #FK_SUBJECT#
+	   </isNotEmpty>
+	   
+        <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		   CLASS_START_TIME desc
+	   </isEmpty>
+    </select>
+   
+    <select id="appointSchoolCourseSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+       select 
+         count(1) 
+        from sc_course_school school left join sc_course course on school.fk_sc_course = course.sc_course_pk
+        where school.FK_UNIT =#userInfo.FK_UNIT# 
+        <isNotEmpty prepend="AND" property="IS_ADD_TEACHER">  
+			    IS_ADD_TEACHER = #IS_ADD_TEACHER#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL = #COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT = #FK_SUBJECT#
+	   </isNotEmpty>
+        <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+    </select>
+
+   <!-- 获取课程编号 -->
+	<select id="getMaxCourseCode" parameterClass="java.util.HashMap" resultClass="java.lang.Object">
+	    select * from (select code from sc_course where 1=1
+	    <isNotEmpty prepend="AND" property="COURSE_CODE">
+	     substr(code,0,8)=#COURSE_CODE#
+	     </isNotEmpty>
+	     order by code desc) where rownum=1
+	</select>
+	
+	<select id="findTeacherbyCourse" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+  			FK_TEACHER TEACHER_PK,
+  			(select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) TEACHER_XM,
+  			(select TEACHER_GZDWMC from sc_user_teacher where TEACHER_PK=FK_TEACHER) SCHOOL_ABBREVIATION,
+  			(select TEACHER_GZDWPK from sc_user_teacher where TEACHER_PK=FK_TEACHER) SCHOOL_PK
+		from sc_course where  1=1
+        <isNotEmpty prepend="AND" property="SC_COURSE_PK">      
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>   
+	</select>
+	<select id="findCourseById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     select 
+            SC_COURSE_PK,
+		    CODE,
+		    TITLE,    
+		    FK_RES_SUBJECT_SORT,
+		    (select G_NODE_TEXT from RES_SUBJECT_SORT where G_ID=FK_RES_SUBJECT_SORT) subjecttext,
+		    FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=FK_SUBJECT and rownum=1) FK_SUBJECT_TEXT,
+		    FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    SCHOOL_CHECK_TIME,
+		    AREA_CHECK_TIME,
+		    CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=FK_UNIT) FK_UNIT_TEXT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=SCHOOL_CHECK_TEACHER) SCHOOL_CHECK_TEACHER_TEXT,
+		    AREA_CHECK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=AREA_CHECK_TEACHER) AREA_CHECK_TEACHER_TEXT,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='64b689bdb45845cb8eccbf8941977ebe' and DICTIONARY_PK=FK_CLASS) FK_CLASS_TEXT,
+		    ACTIVITY_ID,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='258ead7629b1445c88b93ed7b6e9021f' and DICTIONARY_PK=ACTIVITY_ID) ACTIVITY_ID_TEXT,
+		    COURSESPEAKER,
+		     case when ACTIVITY_ID='2c28c6093e2008c1013e20e3ce180005' then 
+            (select TEACHERNAME from sc_expert_info where SC_EXPERT_INFO_PK=COURSESPEAKER)
+	        else
+	          (select Teacher_xm from sc_user_teacher where TEACHER_PK=COURSESPEAKER)
+	        end as COURSESPEAKER_TEXT,
+	        case when ACTIVITY_ID='2c28c6093e2008c1013e20e3ce180005' then 
+	            (select AFFILIATED_UNIT from sc_expert_info where SC_EXPERT_INFO_PK=COURSESPEAKER)
+	        else
+	          (select UNIT_ABBREVIATION from sc_unit where UNIT_PK =(select FK_UNIT from sc_user_teacher where TEACHER_PK=COURSESPEAKER))
+	        end as COURSESPEAKER_UNIT_TEXT,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='ff522fffea21428088b0c0fd1c31b4ad' and DICTIONARY_PK=FK_SORT) FK_SORT_TEXT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    IS_CLASS_LECTUREROOM
+        from sc_course t1 where 1=1
+        <isNotEmpty prepend="AND" property="SC_COURSE_PK">      
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>   
+	      
+	</select>
+	
+	<select id="findCourseApplyList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" remapResults="true">
+	    select 
+            SC_COURSE_PK,
+		    CODE,
+		    TITLE,    
+		    FK_RES_SUBJECT_SORT,
+		    FK_SUBJECT,
+		    (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=FK_SUBJECT and rownum = 1) FK_SUBJECT_TEXT,
+		    FK_TEACHER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=FK_TEACHER) FK_TEACHER_TEXT,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    case when CLASS_START_TIME is null then
+		    STUDY_START_TIME
+		    else 
+		    CLASS_START_TIME
+		    end as CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    (select UNIT_ABBREVIATION from sc_unit where UNIT_PK=FK_UNIT) FK_UNIT_TEXT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    ACTIVITY_ID,
+		    COURSESPEAKER,
+		    (select Teacher_xm from sc_user_teacher where TEACHER_PK=COURSESPEAKER) COURSESPEAKER_TEXT,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    <dynamic prepend="">
+		      <isNotEmpty prepend="" property="onlinelist"> 
+					(SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE EXTNAME LIKE 'doc%' AND TEA.COURSE_ID= SC_COURSE_PK) DOCCOUNT, 
+			        (SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE EXTNAME LIKE 'ppt%' AND TEA.COURSE_ID= SC_COURSE_PK) PPTCOUNT,
+			        (SELECT COUNT(*) FROM SC_RESCENTER.RES_ATTR ATTR LEFT JOIN RES_ATTR_TEA TEA ON ATTR.RES_ATTR_PK = TEA.FK_RES_ATTR WHERE (EXTNAME = 'mp4' or EXTNAME = 'f4v') AND TEA.COURSE_ID= SC_COURSE_PK) VIDEOCOUNT, 
+			        (SELECT COUNT(*) FROM SC_VIDEO_POINT WHERE status=0 and FK_SC_VIDEO IN (SELECT SC_VIDEO_PK FROM SC_VIDEO WHERE FK_SC_COURSE=SC_COURSE_PK)) VIDEOPOINTCOUNT,   
+			        (SELECT COUNT(DISTINCT(CREATER)) FROM SC_VIDEO_COMMENT WHERE FK_SC_VIDEO_POINT IN ((SELECT VIDEO.SC_VIDEO_PK FROM SC_VIDEO_POINT VIDEOPOINT LEFT JOIN SC_VIDEO VIDEO ON VIDEOPOINT.FK_SC_VIDEO = VIDEO.SC_VIDEO_PK WHERE status=0 and FK_SC_COURSE=SC_COURSE_PK))) PKCOUNT,
+			        case when INCLUDE_OFFLINE=1 then               
+					(select count(*) from sc_course_teacher where fk_sc_course = SC_COURSE_PK and sc_course_teacher.status !=99)           
+					else               
+					(select count(*) from sc_course_teacher where ISONLINE=1 and fk_sc_course = SC_COURSE_PK and sc_course_teacher.status !=99)            
+					end as CYCOUNT, 
+			  </isNotEmpty>
+			</dynamic>	
+		    IS_CLASS_LECTUREROOM 
+        from sc_course where 1=1
+        <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS_MORE">  
+			    status >= #STATUS_MORE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#userInfo.GUID#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_LIVE">  
+			    INCLUDE_LIVE=#INCLUDE_LIVE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AREA_COURSE">  
+			    COURSELEVEL != 1
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID# 
+			    or FK_SIGN_TEACHER = #userInfo.GUID# 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="QRCODE">  
+			COURSESPEAKER =#userInfo.GUID# 
+			or FK_SIGN_TEACHER = #userInfo.GUID# 
+			<!-- and (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi')>sysdate or (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi') &lt; sysdate and (to_date(CLASS_END,'yyyy-MM-dd HH24:mi') > sysdate))   -->
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL_COURSE">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_UNIT">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL">  
+			    (COURSELEVEL=1 or COURSELEVEL=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="apply">  
+			    (STATUS=1 or STATUS=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		CLASS_START_TIME desc
+	   </isEmpty>
+	</select>
+	
+	<select id="findCourseApplyListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	    select count(1) from sc_course where 1=1
+	    <isNotEmpty prepend="AND" property="SC_COURSE_PK">  
+			    SC_COURSE_PK=#SC_COURSE_PK#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="TITLE">  
+			    TITLE like '%$TITLE$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_SUBJECT">  
+			    FK_SUBJECT=#FK_SUBJECT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS">  
+			    status=#STATUS#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="STATUS_MORE">  
+			    status >= #STATUS_MORE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_TEACHER">  
+			    FK_TEACHER=#userInfo.GUID#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AREA_COURSE">  
+			    COURSELEVEL != 1
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="MY_COURSE">  
+			 (
+			    FK_TEACHER=#userInfo.GUID# 
+			    or COURSESPEAKER =#userInfo.GUID# 
+			    or FK_SIGN_TEACHER = #userInfo.GUID# 
+			    or sc_course_pk in (select DISTINCT FK_sc_course from sc_course_teacher where FK_TEACHER=#userInfo.GUID# and sc_course_teacher.status !=99)
+			 )
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="QRCODE">  
+			COURSESPEAKER =#userInfo.GUID# 
+			or FK_SIGN_TEACHER = #userInfo.GUID# 
+			<!-- and (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi')>sysdate or (to_date(CLASS_START_TIME,'yyyy-MM-dd HH24:mi') &lt; sysdate and (to_date(CLASS_END,'yyyy-MM-dd HH24:mi') > sysdate))   -->
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL_COURSE">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="FK_UNIT">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="COURSELEVEL">  
+			    COURSELEVEL=#COURSELEVEL#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SCHOOL">  
+			    (COURSELEVEL=1 or COURSELEVEL=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="apply">  
+			    (STATUS=1 or STATUS=2)
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_ONLINE">  
+			    INCLUDE_ONLINE = #INCLUDE_ONLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_OFFLINE">  
+			    INCLUDE_OFFLINE = #INCLUDE_OFFLINE#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="INCLUDE_LIVE">  
+			    INCLUDE_LIVE=#INCLUDE_LIVE#
+	   </isNotEmpty>
+	</select>
+	
+	
+	<select id="getSchoolByCourse" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     select 
+	      SCHOOL_PK,
+	      FK_SC_COURSE,
+		  t1.FK_UNIT,
+		  SCHOOL_NAME,
+		  SCHOOL_ADDRESS,
+		  t1.IS_ADD_TEACHER,
+		  NVL(SCHOOL_ABBREVIATION,SCHOOL_NAME) SCHOOL_ABBREVIATION from sc_course_school t1 left join 
+      (SELECT 
+	      SCHOOL_PK,
+		  FK_UNIT,
+		  SCHOOL_NAME,
+		  SCHOOL_ADDRESS,
+		  NVL(SCHOOL_ABBREVIATION,SCHOOL_NAME) SCHOOL_ABBREVIATION
+		FROM (
+		     SELECT 
+		      SCHOOL_PK,
+				  FK_UNIT,
+				  SCHOOL_NAME,
+				  SCHOOL_ADDRESS,
+				  SCHOOL_ABBREVIATION,
+		      SCHOOL_PROPERTY_CODE,
+		      FK_DICTIONARY_SCHOOL_TYPE
+				FROM sc_unit_SCHOOL where 1=1
+		    union all 
+		    select 
+		       unit_pk as FK_UNIT,
+		       unit_pk as SCHOOL_PK,
+		       unit_name as SCHOOL_NAME,
+		       unit_address as SCHOOL_ADDRESS,
+		       unit_abbreviation as SCHOOL_ABBREVIATION,
+		       '000000XXBB2010040814501698401647128' as SCHOOL_PROPERTY_CODE,
+		       '0ace878d4854452096f31aa691e774ee' as FK_DICTIONARY_SCHOOL_TYPE
+		      from sc_unit where unit_type=0
+		)) t2 on t1.FK_UNIT = t2.SCHOOL_PK
+        where 1=1
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE#
+	        </isNotEmpty>
+	</select>
+	
+	
+	
+	
+	
+	<select id="getTeacherByCourse" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     select 
+	          SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  unit_name
+	     from (SELECT 
+			  SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  (select unit_abbreviation from sc_unit where unit_pk = (select fk_unit from sc_user where user_pk= FK_TEACHER)) unit_name
+			FROM SC_COURSE_TEACHER t1 
+            left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk where t1.status !=99
+            <isNotEmpty prepend="AND" property="ISNOTQJ">  
+			   ISQJ = 0
+	        </isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISONLINE">  
+			   ISONLINE = #ISONLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="STATUS">  
+			   STATUS = #STATUS# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISOFFLINE">  
+			   ISOFFLINE = #ISOFFLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="UNIT_POINT">  
+			   fk_unit = #userInfo.FK_UNIT#
+	        </isNotEmpty>
+	        ) where teacher_xm is not null 
+	        order by nlssort(unit_name,'NLS_SORT=SCHINESE_PINYIN_M'),nlssort(TEACHER_XM,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	<select id="getTeacherByCourseSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT 
+			 count(*)
+			FROM SC_COURSE_TEACHER t1 
+            left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk where t1.status !=99
+            <isNotEmpty prepend="AND" property="ISNOTQJ">  
+			   ISQJ = 0
+	        </isNotEmpty>
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISONLINE">  
+			   ISONLINE = #ISONLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="STATUS">  
+			   STATUS = #STATUS# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISOFFLINE">  
+			   ISOFFLINE = #ISOFFLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="UNIT_POINT">  
+			   fk_unit = #userInfo.FK_UNIT#
+	        </isNotEmpty>
+	</select>
+	
+	
+	
+	<!-- 打印签到表 -->
+	
+	<select id="getTeacherByCourseForSignin" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     select 
+	          SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  unit_name,
+			  teacher_phone
+	     from (SELECT 
+			  SC_COURSE_TEACHER_PK,
+              teacher_xm,
+			  FK_SC_COURSE,
+			  FK_TEACHER,
+			  STATUS,
+			  XXDM,
+			  ISQJ,
+			  ISONLINE,
+			  ISOFFLINE,
+			  (select unit_abbreviation from sc_unit where unit_pk = (select fk_unit from sc_core.sc_user where user_pk= FK_TEACHER)) unit_name,
+			  (select user_phone from sc_core.sc_user where user_pk= FK_TEACHER) teacher_phone
+			FROM SC_COURSE_TEACHER t1 
+            left join sc_user_teacher t2 on t1.fk_teacher=t2.teacher_pk where t1.status !=99
+			<isNotEmpty prepend="AND" property="FK_SC_COURSE">  
+			   FK_SC_COURSE = #FK_SC_COURSE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISONLINE">  
+			   ISONLINE = #ISONLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ISOFFLINE">  
+			   ISOFFLINE = #ISOFFLINE# 
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="UNIT_POINT">  
+			   fk_unit = #userInfo.FK_UNIT#
+	        </isNotEmpty>
+	        ) where teacher_xm is not null
+	        order by nlssort(unit_name,'NLS_SORT=SCHINESE_PINYIN_M'),nlssort(TEACHER_XM,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	
+	
+	<delete id="scCourseDelete" parameterClass="java.util.HashMap">
+	     delete from sc_course where sc_course_pk in ($ids$)
+	     <isNotEmpty prepend="AND" property="status">  
+			    status=#status#
+	    </isNotEmpty>
+	</delete>
+	
+	<update id="scCourseTeacherDelete" parameterClass="java.util.HashMap">
+	     update sc_course_teacher set status=99 where FK_SC_COURSE=#FK_SC_COURSE#
+	     <isNotEmpty prepend="AND" property="FK_UNIT">  
+			    FK_UNIT=#userInfo.FK_UNIT#
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="ISOFFLINE">  
+			    ISOFFLINE=1
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="ISONLINE">  
+			    ISONLINE=1
+	    </isNotEmpty>
+	</update>
+	
+	
+	<insert id="scCourseTeacherInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO SC_COURSE_TEACHER
+		  (
+		    SC_COURSE_TEACHER_PK,
+		    FK_SC_COURSE,
+		    FK_TEACHER,
+		    STATUS,
+		    XXDM,
+		    ISQJ,
+		    ISONLINE,
+		    ISOFFLINE,
+		    FK_UNIT
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_COURSE#,
+		    #FK_TEACHER#,
+		    1,
+		    #XXDM#,
+		    #ISQJ#,
+		    #ISONLINE#,
+		    #ISOFFLINE#,
+		    #userInfo.FK_UNIT#
+		  )
+	</insert>
+	<delete id="scCourseSchoolDelete" parameterClass="java.util.HashMap">
+	   delete from SC_COURSE_SCHOOL where FK_SC_COURSE=#FK_SC_COURSE#
+	</delete>
+	<update id="scCourseSchoolUpdate" parameterClass="java.util.HashMap">
+	   update SC_COURSE_SCHOOL set IS_ADD_TEACHER=2 where FK_SC_COURSE=#FK_SC_COURSE# and FK_UNIT=#userInfo.FK_UNIT#
+	</update>
+	<insert id="scCourseSchoolInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO SC_COURSE_SCHOOL
+		  (
+		    SC_COURSE_SCHOOL_PK,
+		    FK_SC_COURSE,
+		    XXDM,
+		    IS_ADD_TEACHER,
+		    ISONLINE,
+		    ISOFFLINE,
+		    FK_UNIT
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_COURSE#,
+		    #XXDM#,
+		    #IS_ADD_TEACHER#,
+		    #ISONLINE#,
+		    #ISOFFLINE#,
+		    #FK_UNIT#
+		  )
+	</insert>
+	
+	<insert id="scCourseInsert" parameterClass="java.util.HashMap">
+	      INSERT
+		  INTO SC_COURSE
+		  (
+		    SC_COURSE_PK,
+		    CODE,
+		    TITLE,
+		    FK_RES_SUBJECT_SORT,
+		    FK_SUBJECT,
+		    FK_TEACHER,
+		    APPLY_DESC,
+		    APPLY_TIME,
+		    CHECK_TIME,
+		    CLASS_START_TIME,
+		    CLASS_END_TIME,
+		    FK_UNIT,
+		    COURSELEVEL,
+		    STATUS,
+		    SCHOOL_CHECK_TIME,
+		    AREA_CHECK_TIME,
+		    SCHOOL_STATUS,
+		    AREA_STATUS,
+		    SCHOOL_CHECK_COMMENT,
+		    AREA_CHECK_TEXT,
+		    SCHOOL_CHECK_TEACHER,
+		    AREA_CHECK_TEACHER,
+		    STUDY_START_TIME,
+		    STUDY_END_TIME,
+		    SCHOOL_APPOINT_LEAST,
+		    FK_CLASS,
+		    ACTIVITY_ID,
+		    COURSESPEAKER,
+		    ACTIVITY_PLACE,
+		    GRADEE,
+		    GRADEB,
+		    ACTIVITY_PLACES,
+		    SCHOOL_APPOINT_MOST,
+		    TEACHER_IDS,
+		    SCHOOL_IDS,
+		    COURSECONTENT,
+		    FK_SORT,
+		    ISMEDIA,
+		    PEOPLENUM,
+		    ISCHECK_SCHOOL,
+		    INCLUDE_ONLINE,
+		    INCLUDE_OFFLINE,
+		    INCLUDE_LIVE,
+		    ACTIVITY_START_TIME,
+		    ACTIVITY_END_TIME,
+		    IS_CLASS_LECTUREROOM
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #CODE#,
+		    #TITLE#,
+		    #FK_RES_SUBJECT_SORT#,
+		    #FK_SUBJECT#,
+		    #FK_TEACHER#,
+		    #APPLY_DESC#,
+		    #APPLY_TIME#,
+		    #CHECK_TIME#,
+		    #CLASS_START_TIME#,
+		    #CLASS_END_TIME#,
+		    #FK_UNIT#,
+		    #COURSELEVEL#,
+		    #STATUS#,
+		    #SCHOOL_CHECK_TIME#,
+		    #AREA_CHECK_TIME#,
+		    #SCHOOL_STATUS#,
+		    #AREA_STATUS#,
+		    #SCHOOL_CHECK_COMMENT#,
+		    #AREA_CHECK_TEXT#,
+		    #SCHOOL_CHECK_TEACHER#,
+		    #AREA_CHECK_TEACHER#,
+		    #STUDY_START_TIME#,
+		    #STUDY_END_TIME#,
+		    #SCHOOL_APPOINT_LEAST#,
+		    #FK_CLASS#,
+		    #ACTIVITY_ID#,
+		    #COURSESPEAKER#,
+		    #ACTIVITY_PLACE#,
+		    #GRADEE#,
+		    #GRADEB#,
+		    #ACTIVITY_PLACES#,
+		    #SCHOOL_APPOINT_MOST#,
+		    #TEACHER_IDS#,
+		    #SCHOOL_IDS#,
+		    #COURSECONTENT#,
+		    #FK_SORT#,
+		    #ISMEDIA#,
+		    #PEOPLENUM#,
+		    #ISCHECK_SCHOOL#,
+		    #INCLUDE_ONLINE#,
+		    #INCLUDE_OFFLINE#,
+		    #INCLUDE_LIVE#,
+		    #ACTIVITY_START_TIME#,
+		    #ACTIVITY_END_TIME#,
+		    #IS_CLASS_LECTUREROOM#
+		  )
+	</insert>
+	
+	<update id="scCourseUpdate" parameterClass="java.util.HashMap">
+	     update SC_COURSE set 
+		    TITLE = #TITLE#,
+		    FK_RES_SUBJECT_SORT=#FK_RES_SUBJECT_SORT#,
+		    FK_SUBJECT=#FK_SUBJECT#,
+		    FK_TEACHER=#FK_TEACHER#,
+		    APPLY_DESC=#APPLY_DESC#,
+		    CLASS_START_TIME=#CLASS_START_TIME#,
+		    CLASS_END_TIME=#CLASS_END_TIME#,
+		    FK_UNIT=#FK_UNIT#,
+		    COURSELEVEL=#COURSELEVEL#,
+		    STUDY_START_TIME=#STUDY_START_TIME#,
+		    STUDY_END_TIME=#STUDY_END_TIME#,
+		    SCHOOL_APPOINT_LEAST=#SCHOOL_APPOINT_LEAST#,
+		    FK_CLASS=#FK_CLASS#,
+		    ACTIVITY_ID=#ACTIVITY_ID#,
+		    COURSESPEAKER=#COURSESPEAKER#,
+		    ACTIVITY_PLACE= #ACTIVITY_PLACE#,
+		    GRADEE=#GRADEE#,
+		    GRADEB=#GRADEB#,
+		    ACTIVITY_PLACES=#ACTIVITY_PLACES#,
+		    SCHOOL_APPOINT_MOST=#SCHOOL_APPOINT_MOST#,
+		    TEACHER_IDS=#TEACHER_IDS#,
+		    SCHOOL_IDS=#SCHOOL_IDS#,
+		    COURSECONTENT=#COURSECONTENT#,
+		    FK_SORT=#FK_SORT#,
+		    ISMEDIA=#ISMEDIA#,
+		    PEOPLENUM=#PEOPLENUM#,
+		    ISCHECK_SCHOOL=#ISCHECK_SCHOOL#,
+		    INCLUDE_ONLINE=#INCLUDE_ONLINE#,
+		    INCLUDE_OFFLINE=#INCLUDE_OFFLINE#,
+		    INCLUDE_LIVE=#INCLUDE_LIVE#,
+		    ACTIVITY_START_TIME=#ACTIVITY_START_TIME#,
+		    ACTIVITY_END_TIME=#ACTIVITY_END_TIME#,
+		    IS_CLASS_LECTUREROOM=#IS_CLASS_LECTUREROOM#
+          where SC_COURSE_PK=#SC_COURSE_PK#
+	</update>
+	
+	<update id="scCourseStatusUpdate" parameterClass="java.util.HashMap">
+	     update SC_COURSE set StATUS=#STATUS# where SC_COURSE_PK=#SC_COURSE_PK#
+	</update>
+	
+	
+	<update id="scCourseSchoolCheck" parameterClass="java.util.HashMap">
+	     update SC_COURSE set 
+              SCHOOL_STATUS=#SCHOOL_STATUS#,
+              SCHOOL_CHECK_COMMENT=#SCHOOL_CHECK_COMMENT#,
+              SCHOOL_CHECK_TEACHER=#userInfo.GUID#,
+              SCHOOL_CHECK_TIME=#SCHOOL_CHECK_TIME#,
+              STATUS=#STATUS#
+          where SC_COURSE_PK=#SC_COURSE_PK#
+	</update>
+	
+	<update id="scCourseAreaCheck" parameterClass="java.util.HashMap">
+	     update SC_COURSE set 
+              AREA_STATUS=#AREA_STATUS#,
+              AREA_CHECK_TEXT=#AREA_CHECK_TEXT#,
+              AREA_CHECK_TEACHER=#userInfo.GUID#,
+              AREA_CHECK_TIME=#AREA_CHECK_TIME#,
+              STATUS=#STATUS#
+          where SC_COURSE_PK=#SC_COURSE_PK#
+	</update>
+	
+	
+</sqlMap>

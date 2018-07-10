@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+       <select id="findLiveMessage" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+              SELECT 
+                  SC_VIDEO_LIVE_MESSAGE_PK,
+				  FK_SC_COURSE,
+				  MESSAGE,
+				  FROMUSER,
+				  FROMUSER_NAME,
+				  TOUSER,
+				  TOUSER_NAME,
+				  CREATE_TIME
+				FROM SC_VIDEO_LIVE_MESSAGE where 1=1
+				<isNotEmpty prepend="AND" property="FK_SC_COURSE">
+			      FK_SC_COURSE = #FK_SC_COURSE#
+                </isNotEmpty>
+       </select>
+       
+       <select id="findLiveMessageSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+              SELECT 
+                  count(1)
+				FROM SC_VIDEO_LIVE_MESSAGE where 1=1
+				<isNotEmpty prepend="AND" property="FK_SC_COURSE">
+			      FK_SC_COURSE = #FK_SC_COURSE#
+                </isNotEmpty>
+       </select>
+       
+       <!-- 入库及时聊天记录 -->
+       <insert id="videoLiveMessage" parameterClass="java.util.HashMap">
+            INSERT
+			INTO SC_VIDEO_LIVE_MESSAGE
+			  (
+			    SC_VIDEO_LIVE_MESSAGE_PK,    
+			    FK_SC_COURSE,
+			    MESSAGE,
+			    FROMUSER,
+			    FROMUSER_NAME,
+			    TOUSER,
+			    TOUSER_NAME,
+			    CREATE_TIME
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #FK_SC_COURSE#,
+			    #MESSAGE#,
+			    #FROMUSER#,
+			    #FROMUSER_NAME#,
+			    #TOUSER#,
+			    #TOUSER_NAME#,
+			    #CREATE_TIME#
+			  )
+       </insert>
+      
+       
+       <select id="findScVideoComment" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          SELECT SC_VIDEO_COMMENT_PK,
+			  TEACHERCOMMENT,
+			  CREATER,
+			  (select Teacher_xm from sc_user_teacher where teacher_pk=CREATER) CREATER_TEXT,
+			  CREATE_TIME,
+			  FK_SC_VIDEO_POINT
+			FROM SC_VIDEO_COMMENT where 1=1
+			<isNotEmpty prepend="AND" property="SC_VIDEO_COMMENT_PK">
+			   SC_VIDEO_COMMENT_PK = #SC_VIDEO_COMMENT_PK#
+            </isNotEmpty>
+            <isNotEmpty prepend="AND" property="FK_SC_VIDEO_POINT">
+			   FK_SC_VIDEO_POINT = #FK_SC_VIDEO_POINT#
+            </isNotEmpty>
+            order by CREATE_TIME desc
+       </select>
+       
+       <select id="findScVideoCommentSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+          SELECT count(1)
+			FROM SC_VIDEO_COMMENT where 1=1
+			<isNotEmpty prepend="AND" property="SC_VIDEO_COMMENT_PK">
+			   SC_VIDEO_COMMENT_PK = #SC_VIDEO_COMMENT_PK#
+            </isNotEmpty>
+            <isNotEmpty prepend="AND" property="FK_SC_VIDEO_POINT">
+			   FK_SC_VIDEO_POINT = #FK_SC_VIDEO_POINT#
+            </isNotEmpty>
+       </select>
+       
+       <insert id="scVideoCommentInsert" parameterClass="java.util.HashMap">
+             INSERT
+			 INTO SC_VIDEO_COMMENT
+			  (
+			    SC_VIDEO_COMMENT_PK,
+			    TEACHERCOMMENT,
+			    CREATER,
+			    CREATE_TIME,
+			    FK_SC_VIDEO_POINT
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #TEACHERCOMMENT#,
+			    #userInfo.GUID#,
+		        to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
+			    #FK_SC_VIDEO_POINT#
+			  )
+       </insert>
+       
+       <delete id="scVideoCommentDelete" parameterClass="java.util.HashMap">
+          delete from SC_VIDEO_COMMENT where SC_VIDEO_COMMENT_PK =#SC_VIDEO_COMMENT_PK#
+       </delete>
+       
+       <select id="findScVideoPointSynopsis" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+            SELECT 
+              SC_VIDEO_POINT_PK,
+			  TYPE_ID,
+			  (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='5d9b6b358d9447fb8c02b18e2c7c8a02' and DICTIONARY_PK=TYPE_ID) TYPE_TEXT,
+			  TITLE,
+			  BEGIN_TIME,
+			  END_TIME,
+			  ALL_TIME,
+			  HITS,
+			  (select POINTCOMMENT from SC_POINT_SYNOPSIS where FK_SC_VIDEO_POINT =SC_VIDEO_POINT_PK ) SYNOPSIS,
+			  FK_SC_VIDEO
+			FROM SC_VIDEO_POINT where status=0
+	        <isNotEmpty prepend="AND" property="SC_VIDEO_POINT_PK">
+				SC_VIDEO_POINT_PK=#SC_VIDEO_POINT_PK#
+	        </isNotEmpty>
+       </select>
+       
+       
+       <select id="findScVideoPoint" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+            SELECT 
+              SC_VIDEO_POINT_PK,
+			  TYPE_ID,
+			  (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='5d9b6b358d9447fb8c02b18e2c7c8a02' and DICTIONARY_PK=TYPE_ID) TYPE_TEXT,
+			  TITLE,
+			  BEGIN_TIME,
+			  END_TIME,
+			  ALL_TIME,
+			  HITS,
+			  (select count(1) from SC_VIDEO_COMMENT where FK_SC_VIDEO_POINT=SC_VIDEO_POINT_PK) commentcount,
+			  FK_SC_VIDEO
+			FROM SC_VIDEO_POINT where status=0
+	        <isNotEmpty prepend="AND" property="FK_SC_VIDEO">
+				FK_SC_VIDEO=#FK_SC_VIDEO#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="SC_VIDEO_POINT_PK">
+				SC_VIDEO_POINT_PK=#SC_VIDEO_POINT_PK#
+	        </isNotEmpty>
+       </select>
+       
+       <select id="findScVideoPointSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+           SELECT 
+			 count(1)
+			FROM SC_VIDEO_POINT where status=0
+	        <isNotEmpty prepend="AND" property="FK_SC_VIDEO">
+				FK_SC_VIDEO=#FK_SC_VIDEO#
+	        </isNotEmpty>
+       </select>
+       
+       <insert id="scVideoPointInsert" parameterClass="java.util.HashMap">
+             INSERT
+			 INTO SC_VIDEO_POINT
+			  (
+			    SC_VIDEO_POINT_PK,
+			    TYPE_ID,
+			    TITLE,
+			    BEGIN_TIME,
+			    END_TIME,
+			    ALL_TIME,
+			    HITS,
+			    FK_SC_VIDEO,
+			    STATUS
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #TYPE_ID#,
+			    #TITLE#,
+			    #BEGIN_TIME#,
+			    #END_TIME#,
+			    #ALL_TIME#,
+			    #HITS#,
+			    #FK_SC_VIDEO#,
+			    0
+			  )
+       </insert>
+       
+       <update id="scVideoPointUpdate" parameterClass="java.util.HashMap">
+            update SC_VIDEO_POINT set 
+                TYPE_ID=#TYPE_ID#,
+			    TITLE=#TITLE#,
+			    BEGIN_TIME=#BEGIN_TIME#,
+			    END_TIME=#END_TIME#,
+			    ALL_TIME=#ALL_TIME#,
+			    HITS=#HITS#,
+            where SC_VIDEO_POINT_PK = #SC_VIDEO_POINT_PK#
+       </update>
+       
+       <update id="scVideoPointDelete" parameterClass="java.util.HashMap">
+          update SC_VIDEO_POINT set status=99 where SC_VIDEO_POINT_PK = #SC_VIDEO_POINT_PK#
+       </update>
+       
+       <select id="findScVideo" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          SELECT 
+              SC_VIDEO_PK,
+			  VIDEO_TITLE,
+			  FK_SC_COURSE,
+			  CONTENTMD5,
+			  VIDEO_URL,
+			  FK_RES_ATTR,
+			  (select count(1) from sc_video_point where status=0 and FK_SC_VIDEO=SC_VIDEO_PK) pointcount,
+			  CREATE_TIME
+			FROM SC_VIDEO where deleteflag=0
+          <isNotEmpty prepend="AND" property="SC_VIDEO_PK">
+				SC_VIDEO_PK=#SC_VIDEO_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+				FK_SC_COURSE=#FK_SC_COURSE#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	        </isNotEmpty>
+	        <isEmpty prepend="ORDER BY" property="page.column">
+			   CREATE_TIME desc
+	        </isEmpty>
+	        
+     </select>
+     
+     <select id="findScVideoSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select 
+            count(1)
+        FROM SC_VIDEO where DELETEFLAG = 0 
+          <isNotEmpty prepend="AND" property="SC_VIDEO_PK">
+				SC_VIDEO_PK=#SC_VIDEO_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+				FK_SC_COURSE=#FK_SC_COURSE#
+	        </isNotEmpty>
+     </select>
+     
+     <insert id="scVideoInsert" parameterClass="java.util.HashMap">
+            INSERT
+			INTO SC_VIDEO
+			  (
+			    SC_VIDEO_PK,
+			    VIDEO_TITLE,
+			    FK_SC_COURSE,
+			    CONTENTMD5,
+			    VIDEO_URL,
+			    CREATE_TIME,
+			    FK_RES_ATTR,
+			    DELETEFLAG
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #VIDEO_TITLE#,
+			    #FK_SC_COURSE#,
+			    #CONTENTMD5#,
+			    #VIDEO_URL#,
+			    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
+			    #FK_RES_ATTR#,
+			    0
+			  )
+     </insert>
+     
+     <update id="scVideoDelete" parameterClass="java.util.HashMap">
+           update SC_VIDEO set DELETEFLAG = 1,DELETETIME=sysdate where SC_VIDEO_PK=#SC_VIDEO_PK#
+     </update>
+     
+      <insert id="ScPointSynopsisInsert" parameterClass="java.util.HashMap">
+           INSERT
+			INTO SC_POINT_SYNOPSIS
+			  (
+			    SC_POINT_SYNOPSIS_PK,
+			    POINTCOMMENT,
+                FK_SC_VIDEO_POINT,
+			    CREATE_TIME
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #POINTCOMMENT#,
+                #FK_SC_VIDEO_POINT#,
+			    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+			  )
+       </insert>
+</sqlMap>

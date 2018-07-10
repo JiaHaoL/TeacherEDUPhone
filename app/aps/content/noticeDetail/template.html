@@ -1,0 +1,200 @@
+<div class="div_fields">
+  <div class="div_base"> 
+    <div class="panel panel-default">
+		  <div class="panel-body" style="padding:0px;">
+		      <table class="table table-striped" style="font-weight: normal;padding:0px;">
+			         <tr>  
+			          <td>
+						       <label>会议名称：</label>{{dataVO.TITLE}}
+			          </td>
+			        </tr>
+			        
+			        <tr>
+			          <td>
+						    <label>编号：</label>{{dataVO.CODE}} &nbsp;&nbsp;<label>学科：</label>{{dataVO.FK_SUBJECT_TEXT}}
+			          </td> 
+			        </tr>
+			       
+			       
+			       <tr>
+			          <td >
+						   
+                            <label>主讲教师：</label>{{dataVO.COURSESPEAKER_TEXT}} &nbsp;&nbsp;
+                            <label>  级别： </label><span ng-switch on="dataVO.COURSELEVEL">
+                                    <span ng-switch-when="1">校内</span>
+						          	<span ng-switch-when="2">校际</span>
+						          	<span ng-switch-when="3">区级</span>
+									<span ng-switch-default>校内</span>           
+                                  </span>
+			          </td>
+			       </tr>
+			       <!-- <tr>
+				        <td>
+						    <label >资源存放点:</label>{{dataVO.SUBJECTTEXT}}
+			           </td>
+			          
+
+			       </tr> -->
+			       <tr>
+			         <td class="table-info-right">
+						    <label >申请教师：</label>{{dataVO.FK_TEACHER_TEXT}}
+			          </td>
+			          
+
+			       </tr>
+			       <tr>   
+			          <td class="table-info-right">
+						   <label >申请时间：</label>{{dataVO.APPLY_TIME}}
+			          </td>
+			       </tr>
+			       <tr>
+			          <td class="table-info-right">
+						    <label >出席对象：</label> {{dataVO.APPLY_DESC}}
+			          </td>
+			       </tr>
+			      <tr class="view_check viewschool" style="display:none">
+			          <td class="table-info-right">
+						    <label>校审核情况：</label>
+						    <span ng-if="dataVO.STATUS==2">
+				                 {{dataVO.SCHOOL_CHECK_TEACHER_TEXT}},在{{dataVO.SCHOOL_CHECK_TIME}}通过
+				            </span>
+				            <span ng-if="dataVO.STATUS>=4">
+				                 {{dataVO.SCHOOL_CHECK_TEACHER_TEXT}},在{{dataVO.SCHOOL_CHECK_TIME}}通过
+				            </span>
+				            <span ng-if="dataVO.STATUS==3">
+				                          未通过
+				            </span>
+				            <span ng-if="dataVO.STATUS==1">
+				                           待审核
+				            </span>
+			          </td>
+			       </tr>
+			       <tr class="view_check viewarea" style="display:none">
+			          <td class="table-info-right">
+						    <label>区审核情况：</label>
+						    <span ng-if="dataVO.STATUS>=4">
+				                 {{dataVO.AREA_CHECK_TEACHER_TEXT}},在{{dataVO.AREA_CHECK_TIME}}通过
+				            </span>
+				            <span ng-if="dataVO.STATUS==2">
+				                                审核中
+				            </span>
+			          </td>
+			       </tr>  
+			   </table>
+     
+
+  </div>
+  
+  
+  <div class="div_offline" style="display:none;padding-top:0px;">      
+		      <table class="table table-striped" style="font-weight: normal;">
+			        <tr>
+			          <td>
+						    <label >研训类别：</label>  {{dataVO.FK_SORT_TEXT}}
+			          </td>
+			       </tr>
+			       <tr>  
+			           <td>
+						    <label >会议所属类别:</label>{{dataVO.FK_CLASS_TEXT}}
+			          </td>
+			       </tr>
+			       <tr>
+			          <td >
+						    <label >会议时间:</label>{{dataVO.ACTIVITY_START_TIME}}到{{dataVO.ACTIVITY_END_TIME}}
+			          </td>
+			      </tr>
+			       <tr>    
+			          <td >
+						   <label >适用年级:</label> {{dataVO.GRADEB_TEXT}}
+			          </td>
+			       </tr>
+			       
+			       <tr>
+			         <td>
+						    <label >会议地点:</label>{{dataVO.ACTIVITY_PLACE}}
+			          </td>
+			       </tr>
+			       
+			      <!--  <tr>  
+
+			          <td >
+						    <label > 多媒体:</label><span ng-switch on="dataVO.ISMEDIA">
+						    	<span ng-switch-when="0">不需要</span>
+				          	    <span ng-switch-when="1">需要</span>
+						    </span>
+			          </td>
+			       </tr> -->
+			       <tr>
+			          <td >
+						   <label >限制条件:</label>各学校至少指派{{dataVO.SCHOOL_APPOINT_LEAST}}位教师，最多指派{{dataVO.SCHOOL_APPOINT_MOST}}位教师
+			          </td>
+			       </tr>
+			       <tr>
+			          <td >
+						    <label>会议内容:</label> {{dataVO.COURSECONTENT}}
+			          </td>
+			       </tr>
+			       
+			       <tr class="tr_appointTeacher_offline" >	
+				      <td >
+							    <label >参加教师:</label>
+							    <div id="IdsAddDiv" >
+							           <div style="float:left;" ng-repeat="dataObj in dataList | filter :{ ISOFFLINE: '1'}">
+							           <div style="padding-right:10px;"><div style="margin-bottom:5px;" ><span style="color:blue;">{{dataObj.TEACHER_XM}}</span>({{dataObj.UNIT_NAME}})</div>
+						               </div>
+				               </div>
+				         </div>
+			          </td>	  
+				  </tr>
+			   </table>
+     </div>
+    <div class="div_online" style="display:none">      
+		      <table class="table table-striped" style="font-weight: normal;">
+			        <!-- <tr>
+			          <td >
+						    <label >线上方式:</label> 
+						    <span ng-switch on="dataVO.INCLUDE_LIVE">
+							    <span ng-switch-when="0">网上研讨</span>
+					          	<span ng-switch-when="1">直播教研</span>
+								<span ng-switch-default>网上研讨</span>
+						    </span> 
+			          </td>
+			       </tr> -->
+			       <tr class="class_time">
+			          <td>
+						    <label >会议时间:</label>  {{dataVO.CLASS_START_TIME}}到{{dataVO.CLASS_END_TIME}}
+			          </td>
+			       </tr>
+			      <!--  <tr>
+			          <td >
+						    <label >网上教研时间:</label>{{dataVO.STUDY_START_TIME}}到{{dataVO.STUDY_END_TIME}}
+			          </td>
+			         
+
+			       </tr> -->
+			       
+			       <!-- <tr class="tr_appointTeacher_online" >	
+				      <td class="table-info-right"  valign="top">
+							    <label >线上参加教师:</label>
+							    <div id="IdsAddOnlineDiv"  >
+					             <div style="float:left;" ng-repeat="dataObj in dataList | filter :{ ISONLINE: '1'}">
+							           <div style="padding-right:10px;" ><div style="margin-bottom:5px;" ><span style="color:blue;">{{dataObj.TEACHER_XM}}</span>({{dataObj.UNIT_NAME}})</div>
+						               </div>
+				                 </div>
+				               </div>
+							    
+			          </td>	  
+					</tr> -->
+			   </table>
+	        </div>  
+	     </div>
+     </div>
+    </div>
+    <br/>
+<div style="position:fixed;z-index:100000; bottom:0; left:0;width:100%;background-color:#e6e6ef;">
+      <div class="btn-group btn-group-justified" role="group" aria-label="...">
+		  <div class="btn-group" role="group" ng-click="openTeacherEDUPhone(data);">
+		    <button type="button" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-open"  aria-hidden="true"></span> 进入 </button>
+		  </div>
+		</div>
+ </div>   

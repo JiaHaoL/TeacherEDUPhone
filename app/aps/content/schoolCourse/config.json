@@ -1,0 +1,13 @@
+{
+    "name": "TeacherEdu_schoolCourse_list",
+    "viewUrl": "aps/content/schoolCourse/template.html",
+    "controllerUrl": "aps/content/schoolCourse/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "getUserInfoURL":"json/User_getUserInfo_data.json",
+            "DictionaryAllListURL":"json/Open_queryForList_DictionaryAllList.json",
+            "findCourseApplyListURL":"json/Open_queryForList_findCourseApplyList.json"
+	}
+}

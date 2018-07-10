@@ -1,0 +1,12 @@
+{
+    "name": "app_content",
+    "viewUrl": "aps/content/welcome/template.html",
+    "controllerUrl": "aps/content/welcome/controller.js",
+    "config": 
+    {
+            "getUserInfoURL":"json/User_getUserInfo_data.json",
+            "changeStudentURL":"json/Parent_changeStudent_data.json",
+            "getUserHisClassURL":"json/Open_queryForList_findStudentByParentId.json",
+            "menuListData": "json/Api_queryForList_UserRightMenu.json"
+	}
+}

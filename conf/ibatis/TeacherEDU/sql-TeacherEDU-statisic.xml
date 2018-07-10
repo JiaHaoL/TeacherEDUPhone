@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+  
+  <select id="findQJdetail" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT t1.SC_COURSE_TEACHER_PK FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK where t1.fk_teacher=#FK_TEACHER#
+         and SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 1) AND T2.COURSELEVEL ='3'
+  </select>
+  
+  <select id="findXNdetail" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT t1.SC_COURSE_TEACHER_PK FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK where t1.fk_teacher=#FK_TEACHER#
+         and SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 2) AND T2.COURSELEVEL !='3'
+  </select>
+  
+  <select id="findXJJSXFdetail" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+     SELECT    
+        UT.TEACHER_PK,
+	    UT.TEACHER_XM,
+	    US.UNIT_NAME,
+	    UT.TEACHER_SFZJH,
+        '0' jsbh,
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4'
+	        <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) TOTLECOUNT,  
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='1' 
+	       <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) XNCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='2'
+           <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='3'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4'
+             <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) CYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='1'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XNCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='2'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL !='3'
+			 <isNotEmpty prepend="AND" property="state">
+                  SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 2 and FK_SC_COURSE_STATISIC != #FK_STATISIC_CODE#)
+              </isNotEmpty>
+              <isEmpty prepend="AND" property="state">
+                 SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 2)
+              </isEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJJSXFCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='3'
+			  <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCYCOUNT
+		FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK
+		where US.UNIT_PK = #userInfo.FK_UNIT#
+        <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+		</isNotEmpty>
+		<isEmpty prepend="ORDER BY" property="page.column">
+			TOTLECOUNT DESC
+		</isEmpty>
+  </select>
+  
+  <select id="findXJJSXFdetailSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        SELECT    
+        count(1)
+        FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK 
+        where US.UNIT_PK = #userInfo.FK_UNIT#
+  </select>
+  
+  
+  <select id="findQJJSXFdetail" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+       SELECT    
+        UT.TEACHER_PK,
+	    UT.TEACHER_XM,
+	    US.UNIT_NAME,
+	    UT.TEACHER_SFZJH,
+        '0' jsbh,
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4'
+	        <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) TOTLECOUNT,  
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='1' 
+	       <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) XNCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='2'
+           <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='3'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4'
+             <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) CYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='1'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XNCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='2'
+             <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T1.FK_TEACHER = UT.TEACHER_PK AND T2.STATUS>='4' AND T2.COURSELEVEL='3'
+              <isNotEmpty prepend="AND" property="state">
+                  SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 1 and FK_SC_COURSE_STATISIC != #FK_STATISIC_CODE#)
+              </isNotEmpty>
+              <isEmpty prepend="AND" property="state">
+                 SC_COURSE_TEACHER_PK not in (select FK_SC_COURSE_TEACHER from SC_COURSE_STATISIC_DETAIL where type = 1)
+              </isEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCYCOUNT
+		FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK where 1=1
+        <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+		</isNotEmpty>
+		<isEmpty prepend="ORDER BY" property="page.column">
+			TOTLECOUNT DESC
+		</isEmpty>
+  </select>
+  
+  <select id="findQJJSXFdetailSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        SELECT    
+        count(1)
+        FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK
+  </select>
+    
+  <insert id="statisicDetailSave" parameterClass="java.util.HashMap">
+       INSERT
+		INTO SC_COURSE_STATISIC_DETAIL
+		  (
+		    SC_COURSE_STATISIC_DETAIL_PK,
+		    FK_SC_COURSE_TEACHER,
+		    FK_SC_COURSE_STATISIC,
+		    TYPE
+		  )
+		  VALUES
+		  (
+		     #UUID#,
+			 #FK_SC_COURSE_TEACHER#,
+			 #FK_SC_COURSE_STATISIC#,
+			 #TYPE#
+		  )
+  </insert>
+  
+   <select id="countJSXF" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+      SELECT    
+        UT.TEACHER_PK,
+	    UT.TEACHER_XM,
+	    US.UNIT_NAME,
+	    UT.TEACHER_SFZJH,
+        '0' jsbh,
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK and AND STATUS>='4'
+	        <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) TOTLECOUNT,  
+	    (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='1' 
+	       <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+	    ) XNCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='2'
+           <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE WHERE FK_TEACHER = UT.TEACHER_PK AND STATUS>='4' AND COURSELEVEL='3'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T2.FK_TEACHER = UT.TEACHER_PK
+             <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) CYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T2.FK_TEACHER = UT.TEACHER_PK AND T2.COURSELEVEL='1'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XNCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T2.FK_TEACHER = UT.TEACHER_PK AND T2.COURSELEVEL='2'
+            <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) XJCYCOUNT,
+        (SELECT COUNT(1) FROM SC_COURSE_TEACHER T1 LEFT JOIN SC_COURSE T2 ON T1.FK_SC_COURSE = T2.SC_COURSE_PK WHERE T2.FK_TEACHER = UT.TEACHER_PK AND T2.COURSELEVEL='3'
+             <isNotEmpty prepend="AND" property="BEGIN_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &gt;= to_date(#BEGIN_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+			  <isNotEmpty prepend="AND" property="END_TIME">  
+			    to_date(substr(APPLY_TIME,0,10), 'yyyy-mm-dd') &lt;= to_date(#END_TIME#, 'yyyy-mm-dd')
+			  </isNotEmpty>
+        ) QJCYCOUNT
+		FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK
+        <isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+		</isNotEmpty>
+		<isEmpty prepend="ORDER BY" property="page.column">
+			TOTLECOUNT DESC
+		</isEmpty>
+   </select>
+   
+   <select id="countJSXFSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+      SELECT    
+        count(1)
+        FROM  sc_user_teacher  UT  LEFT JOIN  sc_unit US ON UT.TEACHER_GZDWPK=US.UNIT_PK
+   </select>
+  
+   <select id="findScCourseStatisicList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	        SELECT 
+	          SC_COURSE_STATISIC_PK,
+			  STATISIC_CODE,
+			  STATISIC_NAME,
+			  CREATE_TIME,
+			  BEGIN_TIME,
+			  END_TIME,
+			  TOTLE_COUNT,
+			  STATE,
+			  CREATER
+			FROM SC_COURSE_STATISIC where 1=1
+		  	<isNotEmpty prepend="AND" property="SC_COURSE_STATISIC_PK">  
+			    SC_COURSE_STATISIC_PK = #SC_COURSE_STATISIC_PK#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="TYPE">  
+			    TYPE = #TYPE#
+			</isNotEmpty>
+			<isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+			</isNotEmpty>
+			<isEmpty prepend="ORDER BY" property="page.column">
+				CREATE_TIME DESC
+			</isEmpty>
+			
+	</select>
+    
+    <select id="findScCourseStatisicListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	        SELECT 
+	         count(1)
+			FROM SC_COURSE_STATISIC where 1=1
+	</select>
+	<!-- 得到统计开始时间 -->
+	<select id="getStartTime" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	        SELECT 
+				  SC_COURSE_STATISIC_PK,
+				  STATISIC_CODE,
+				  STATISIC_NAME,
+				  CREATE_TIME,
+				  BEGIN_TIME,
+				  END_TIME,
+				  TOTLE_COUNT,
+				  STATE,
+				  CREATER
+		    FROM SC_COURSE_STATISIC where rownum &lt; 2 
+		    <isNotEmpty prepend="AND" property="TYPE">
+				type=#TYPE# and FK_UNIT = #userInfo.FK_UNIT#
+			</isNotEmpty>
+			<isEmpty prepend="AND" property="TYPE">
+				type=1
+			</isEmpty>
+		    order by CREATE_TIME
+	</select>
+	
+	<select id="findCountTeacher" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	        select count(*)  
+            from  sc_user_teacher  ut  left join  sc_unit us on ut.TEACHER_GZDWPK=us.UNIT_PK where 1=1
+            <isNotEmpty prepend="AND" property="FK_UNIT">
+				us.UNIT_PK = #userInfo.FK_UNIT#
+			</isNotEmpty>
+	</select>
+   
+    <select id="findMaxCode" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         select max(STATISIC_CODE) code from SC_COURSE_STATISIC where substr(CREATE_TIME,0,4)=#YEAR#
+         <isNotEmpty prepend="AND" property="FK_UNIT">
+				type=2 and FK_UNIT = #userInfo.FK_UNIT#
+		 </isNotEmpty>
+		 <isEmpty prepend="AND" property="FK_UNIT">
+				type=1
+		 </isEmpty>
+    </select>
+    <delete id="scCourseStatisicDelete" parameterClass="java.util.HashMap">
+         delete from SC_COURSE_STATISIC where SC_COURSE_STATISIC_PK=#SC_COURSE_STATISIC_PK#
+    </delete>
+    <update id="scCourseStatisicUpdate" parameterClass="java.util.HashMap">
+       update SC_COURSE_STATISIC set STATE='1' where STATISIC_CODE=#STATISIC_CODE#
+    </update>
+    <insert id="scCourseStatisicInsert" parameterClass="java.util.HashMap">
+            INSERT
+			INTO SC_COURSE_STATISIC
+			  (
+			    SC_COURSE_STATISIC_PK,
+			    STATISIC_CODE,
+			    STATISIC_NAME,
+			    CREATE_TIME,
+			    BEGIN_TIME,
+			    END_TIME,
+			    TOTLE_COUNT,
+			    STATE,
+			    CREATER,
+			    FK_UNIT,
+			    TYPE
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #STATISIC_CODE#,
+			    #STATISIC_NAME#,
+			    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
+			    #BEGIN_TIME#,
+			    #END_TIME#,
+			    #TOTLE_COUNT#,
+			    #STATE#,
+			    #userInfo.GUID#,
+			    #userInfo.FK_UNIT#,
+			    #TYPE#
+			  )
+    </insert>
+</sqlMap>

@@ -1,0 +1,120 @@
+<div class="div_course div_class_point_review" style="width:700px;">
+		         <div class="panel panel-info" class="videopointliebiao">
+		             <!-- Default panel contents -->
+					 <div class="panel-heading"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 视频切片&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="pointVideo" style="cursor:pointer;display:none" href="" ng-click="priviewVideo();"><span style="color:blue;"><span class="glyphicon glyphicon-scissors" aria-hidden="true"></span>切片</span></a></div>
+			            <table class="table table-hover table-striped table-bordered ">  
+					      <thead>
+					        <tr>
+					          <th column="TITLE" class="sorting" ng-click="order($event.target)">切片名称</th>
+					          <th column="TITLE" class="sorting" ng-click="order($event.target)">切片类型</th>
+					          <th column="MTIME" class="sorting" ng-click="order($event.target)">开始时间</th>
+					          <th column="EXTNAME" class="sorting" ng-click="order($event.target)">结束时间</th>
+					          <th column="EXTNAME" class="sorting" ng-click="order($event.target)">时长</th>
+					          <th column="EXTNAME" class="sorting" ng-click="order($event.target)">评课数</th>
+					          <th column="FILE_SIZE" class="sorting" ng-click="order($event.target)">操作</th>
+					        </tr>
+					      </thead>
+					      <tbody ng-switch on="videopointlist.length">
+					      	<tr ng-switch-when="0">
+					      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+					      	</tr>
+					        <tr ng-repeat='videopoint in videopointlist'>
+					          <td>{{videopoint.TITLE}}</td>
+					          <td>{{videopoint.TYPE_TEXT}}</td>
+					          <td>{{videopoint.beginTime}}</td>
+					          <td>{{videopoint.endTime}}</td>
+					          <td>{{videopoint.ALL_TIME}}</td>
+					          <td>{{videopoint.COMMENTCOUNT}}</td>
+					          <td>
+					           <span ng-switch on="action">
+					              <span ng-switch-when='1'>
+					                <span ng-if="videopoint.COMMENTCOUNT == '0'">
+					                 <a href="" ng-click="deleteVideoPoint(videopoint.SC_VIDEO_POINT_PK)" style="cursor:pointer;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span><span style="color:blue;">删除</span></a>
+					                </span>
+					              </span>
+					            </span> 
+					          </td>
+					        </tr>
+					      </tbody>
+					    </table> 
+		             </div>
+					     <div class="panel panel-info video_pointdetail">
+							  <!-- Default panel contents -->
+							  <div class="panel-heading"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 切片评课  
+							          <span style="color:blue;" ng-click="videoplay(-1);"><a href="">&nbsp;&nbsp;观看完整视频</a></span>
+							          <span style="color:blue;" ng-repeat="videopoint in videopointlist" ng-click="videoplay(videopoint.BEGIN_TIME,videopoint.SC_VIDEO_POINT_PK);"><a href="">&nbsp;{{videopoint.TITLE}}&nbsp;</a></span>
+							  </div>
+							  <!-- Table -->
+							  <table class="table">  
+									  <tr>
+									     <td style="width:20%;text-align: right;">切片名称:</td>
+									     <td style="width:30%">{{synopsis.TITLE}}</td>
+									     <td style="width:20%;text-align: right;">开始时间:</td>
+									     <td style="width:30%;text-align: left;">{{synopsis.beginTime}}</td>
+									  </tr>
+									  <tr>
+									     <td style="width:20%;text-align: right;">切片类型:</td>
+									     <td style="width:30%;text-align: left;">{{synopsis.TYPE_TEXT}}</td>
+									     <td style="width:20%;text-align: right;">结束时间:</td>
+									     <td style="width:30%;text-align: left;">{{synopsis.endTime}}</td>
+									  </tr>		  		  
+									  <tr>
+									     <td style="width:20%;text-align: right;">自我评定:</td>
+									     <td colspan="3"> 
+									        {{synopsis.SYNOPSIS}}
+									     </td>
+									  </tr>
+								</table>
+					       </div>
+					       <div class="panel panel-info">
+					                <div class="panel-heading"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>视频播放 <span align="right" class="govideolist"><a href="" ng-click="backVideoPoint();">返回视频列表</a></span></div>
+					                <div class="video_play">
+					                           <div id="container_video">Loading the player...</div>
+					                </div>
+					       </div>
+					       <div class="panel panel-info video_pointdetail">
+					                <div class="panel-heading"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>发表教后反思：(300字以上) </div>
+					                <div class="div_base" style="padding:10px;">
+									          <span style="color:red">*</span>内容：   
+									       <textarea class="form-control" rows="6" style="width:600px;" ng-model="comment.TEACHERCOMMENT"></textarea>
+							        </div> 
+							        <div align="right">
+							            <button type="button" class="btn btn-primary" ng-click="saveTeachingreflection();"> <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>提交</button> 
+										<button type="button" class="btn btn-defalut" ng-click="backVideoPoint();"> <span class="glyphicon glyphicon-back" aria-hidden="true"></span>返回</button> 
+							        </div>
+					       </div>
+					       <div class="panel panel-info video_pointdetail">
+					                <div class="panel-heading"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 教后反思</div>
+					                <!-- Table -->
+							        <table class="table" >
+							          <tbody ng-switch on="page.current_num">
+									      	<tr ng-switch-when="0">
+									      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+									      	</tr>  	
+							           <tr ng-repeat="comment in videoPointCommentList">
+									     <td > 
+									        <span>{{commentsize-$index}}楼，{{comment.CREATE_TIME}}&nbsp;{{comment.CREATER_TEXT}} 教后反思:</span><br>
+									        <span style="padding:5px;display:inline-block;width:690px;word-wrap:break-word ">
+									              {{comment.TEACHERCOMMENT}}
+									        </span>
+									     </td>
+									  </tr> 
+									  </tbody> 		  
+									 <!--  <tr >
+									     <td> 
+									        <span>29楼，2015-06-30 朱红琴 教后反思:</span><br>
+									        <span style="padding:5px;">
+									           车墩学校刘立新：看了戴慧萍老师《西班牙救护绳结》的这节拓展课，给我有以下一些收获：1、这节课注重用多种方法使学生获得体验和感悟。火灾视频的导入，成功地创设了一个能使学生获得体验和感悟的情境。这个情境使学生感悟到火灾时可能需要逃生，而逃生需要一定的知识和技术。火灾现场音频效果的模拟，更让学生产生一种紧张的自我救护、自我逃生的氛围，有身临其境的感觉。2、引领学生动手动脑，有效地学习知识与技能。这节课摒弃了传统的老师教、学生学的技能传授学习方式，而是采用了自我发现、自我探究打绳结的方法，这种实践体验法使技能掌握的更为牢固。整堂课就是这样通过精心设计的情景和提问，激发学生的情感和思维，在师生互动的氛围下引领学生积极参与到技术探究活动中去，学会技术，掌握技能。虽然我们只是看到了一节课，但是从这节课中我们感受到戴老师开发的《消防安全绳结》这门校本课程的实用性和可操作性。
+									        </span>
+									     </td>
+									  </tr>  -->
+									  <tfoot>
+								      	<tr>
+								      		<td colspan="100">
+								      		    <div ng-include="'html/page.html'"></div>
+											</td>
+								      	</tr>   
+								      </tfoot>
+								  </table>
+					       </div>
+</div>	  

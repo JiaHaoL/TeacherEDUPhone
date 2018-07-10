@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<select id="RuleList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  RULE_PK,
+			  RULE_CODE,
+			  RULE_NAME,
+			  RULE_ABBREVIATION,
+			  RULE_COMMENT,
+			  RULE_TYPE,
+			  RULE_LEVEL,
+			  RULE_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		from 
+			SC_RULE
+		where 
+		  RULE_FLAG = 0
+			<isNotEmpty prepend="AND" property="RULE_NAME">  
+			    RULE_NAME LIKE '%$RULE_NAME$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="RULE_LEVEL">  
+			    RULE_LEVEL = #RULE_LEVEL#
+			</isNotEmpty>
+			<isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+			</isNotEmpty>
+	</select>
+	<select id="RuleListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			  count(*)
+		from 
+			SC_RULE
+		where 
+		  RULE_FLAG = 0
+		    <isNotEmpty prepend="AND" property="RULE_NAME">  
+			    RULE_NAME LIKE '%$RULE_NAME$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="RULE_LEVEL">  
+			    RULE_LEVEL = #RULE_LEVEL#
+			</isNotEmpty>
+	</select>
+	
+	<select id="RuleFindById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+		      RULE_PK,
+			  RULE_CODE,
+			  RULE_NAME,
+			  RULE_ABBREVIATION,
+			  RULE_COMMENT,
+			  RULE_TYPE,
+			  RULE_LEVEL,
+			  RULE_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		from SC_RULE
+		where RULE_PK = #RULE_PK#
+	</select>
+	
+	<update id="RuleUpdate" parameterClass="java.util.HashMap">
+		UPDATE SC_RULE SET
+		  RULE_NAME = #RULE_NAME#,
+		  RULE_CODE = #RULE_CODE#,
+		  RULE_ABBREVIATION = #RULE_ABBREVIATION#,
+		  RULE_COMMENT = #RULE_COMMENT#,
+		  RULE_TYPE = #RULE_TYPE#,
+		  RULE_LEVEL = #RULE_LEVEL#,
+		  RULE_FLAG = #RULE_FLAG#,
+		  UPDATE_BY = #userInfo.GUID#,
+		  UPDATE_TIME = sysdate
+		WHERE RULE_PK = #RULE_PK#
+	</update>
+	
+	<update id="RuleDelete" parameterClass="java.util.HashMap">
+		UPDATE SC_RULE SET 
+		RULE_FLAG = 1,
+		UPDATE_TIME = sysdate,
+		UPDATE_BY = #userInfo.GUID#
+		WHERE RULE_PK =#RULE_PK#
+	</update>
+	<update id="RuleTrashRecovery" parameterClass="java.util.HashMap">
+		UPDATE SC_RULE SET RULE_FLAG = 0 WHERE RULE_PK =#RULE_PK#
+	</update>
+	<delete id="RuleTrashDelete" parameterClass="java.util.HashMap">
+		DELETE FROM SC_RULE WHERE RULE_PK =#RULE_PK#
+	</delete>
+	
+	<insert id="RuleInsert" parameterClass="java.util.HashMap">
+		INSERT
+		INTO SC_RULE
+		  (
+			  RULE_PK,
+			  RULE_CODE,
+			  RULE_NAME,
+			  RULE_ABBREVIATION,
+			  RULE_COMMENT,
+			  RULE_TYPE,
+			  RULE_LEVEL,
+			  RULE_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		  )
+		  VALUES
+		  (
+		  	  #UUID#,
+		  	  #RULE_CODE#,
+			  #RULE_NAME#,
+			  #RULE_ABBREVIATION#,
+			  #RULE_COMMENT#,
+			  #RULE_TYPE#,
+			  #RULE_LEVEL#,
+			  0,
+			  #userInfo.GUID#,
+			  sysdate,
+			  #UPDATE_BY#,
+			  #UPDATE_TIME#
+		  )
+	</insert>
+	
+	
+	<select id="RuleTrashList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  RULE_PK,
+			  RULE_CODE,
+			  RULE_NAME,
+			  RULE_ABBREVIATION,
+			  RULE_COMMENT,
+			  RULE_TYPE,
+			  RULE_LEVEL,
+			  RULE_FLAG,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME
+		from 
+			SC_RULE
+		where 
+		  RULE_FLAG = 1
+			<isNotEmpty prepend="AND" property="RULE_NAME">  
+			    RULE_NAME LIKE '%$RULE_NAME$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+			</isNotEmpty>
+	</select>
+	<select id="RuleTrashListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			  count(*)
+		from 
+			SC_RULE
+		where 
+		  RULE_FLAG = 1
+		    <isNotEmpty prepend="AND" property="RULE_NAME">  
+			    RULE_NAME LIKE '%$RULE_NAME$%'
+			</isNotEmpty>
+	</select>
+</sqlMap>

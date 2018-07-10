@@ -1,0 +1,66 @@
+<div>
+    <ul class="nav nav-tabs" >
+	  <li role="presentation" class="onlineTab tab_all active" ng-click="onlineTabclick(0);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-list"> 全部</span></a></li>
+	  <!-- <li role="presentation" class="onlineTab tab_offline" ng-click="onlineTabclick(2);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-blackboard"></span> 线下</a></li>
+	  <li role="presentation" class="onlineTab tab_online" ng-click="onlineTabclick(1);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-globe"></span> 线上</a></li> -->
+    </ul>
+
+				 <table class="table">  
+				      <tbody ng-switch on="page.current_num">
+				      	<tr ng-switch-when="0">
+				      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+				      	</tr>
+				        <tr ng-repeat='data in dataList'>
+				          <td>
+				               <table width="100%">
+							   <tr>
+									<!-- <td rowspan="4" style="width:80px;height:90px;padding-right: 10px;" ><a href="" ng-click="trClick(row.STUDY_WEIKE_PK,row.SECTION_ID,row.THEME_ID,row.CREATE_BY);"><img  class="img-thumbnail" ng-src="{{row.IDENTIFIER}}" style="width:70px;height:90px;"></a></td> -->	    
+							 		<td valign="middle" style="font-size:18px;">{{data.TITLE}}</td>
+							 	</tr>
+
+							 	<tr>
+							 		<td valign="middle" valign="middle" style="color:#888;">主讲教师：{{data.COURSESPEAKER_TEXT }} &nbsp;&nbsp;学科：{{data.FK_SUBJECT_TEXT}}</td>
+							 	</tr>
+							 	<tr>
+							 		<td valign="middle" valign="middle" style="color:#888;">
+							 		会议级别:
+								 	    <span ng-switch on="data.COURSELEVEL">
+								          	<span ng-switch-when="1">校内</span>
+								          	<span ng-switch-when="2">校际</span>
+										  	<span ng-switch-when="3">区级</span>
+											<span ng-switch-default>{{data.COURSELEVEL}}</span>
+								 		</span>
+							 		 &nbsp;&nbsp;开始时间：{{data.CLASS_START_TIME }} 
+							 		</td>
+							 		
+							 	</tr>
+							 	<tr>
+							 		<td valign="middle" style="color: #888;" align="right">
+							 		    <span ng-if="data.qiandao==1 && data.STATUS==4">
+								           <button type="button" class="btn btn-primary btn-sm" ng-click="closeCourse(5,data.SC_COURSE_PK);"><span class="glyphicon glyphicon-off"  aria-hidden="true"></span> 结束会议 </button>
+								        </span>
+								       <!--  <span ng-if="data.INCLUDE_ONLINE==1">
+								             <button type="button" class="btn btn-warning btn-sm" ng-click="videoPoint(data);"><span class="glyphicon glyphicon-scissors"  aria-hidden="true"></span> 切片评课 </button>
+								        </span> -->
+										<button type="button" class="btn btn-success btn-sm" ng-click="viewclick(data);"><span class="glyphicon glyphicon-list-alt"  aria-hidden="true"></span> 详情 </button>
+										<button type="button" class="btn btn-info btn-sm" ng-click="enterIntoClick(data);"><span class="glyphicon glyphicon-open"  aria-hidden="true"></span> 进入 </button>
+							 		</td>
+							 	</tr>
+							 </table>
+				          </td>
+
+				         
+				        </tr>
+				       
+				      </tbody>
+				      <tfoot>
+				      	<tr>
+				      		<td colspan="100">
+				      		<div ng-include="'html/page.html'"></div>
+							</td>
+				      	</tr>
+				      </tfoot>
+				    </table>
+ </div>
+   
+

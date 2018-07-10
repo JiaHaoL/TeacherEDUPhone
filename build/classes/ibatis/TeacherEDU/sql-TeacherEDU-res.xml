@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+    
+    <select id="findResList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+                RES_ATTR_PK,
+	            TITLE,
+	            EXTNAME,
+	            T1.FILE_SIZE,
+	            T1.FILEPATH,
+	            T1.FILE_ID,
+	            T1.FK_RES_FILE_LINK,
+	            T1.MTIME 
+            FROM RES_ATTR T1 WHERE 1=1
+            <isNotEmpty prepend="AND" property="SC_COURSE_PK">
+				T1.FK_COURSE=#SC_COURSE_PK#
+	        </isNotEmpty>
+    </select>
+    
+     <select id="findResListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT 
+	           count(1)
+          FROM RES_ATTR T1 
+          WHERE 1=1
+          <isNotEmpty prepend="AND" property="SC_COURSE_PK">
+				T1.FK_COURSE=#SC_COURSE_PK#   
+	      </isNotEmpty>
+    </select>
+</sqlMap>

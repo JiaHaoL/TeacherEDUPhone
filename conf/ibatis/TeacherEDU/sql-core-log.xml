@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+
+
+    <insert id="MsgUserInsert" parameterClass="java.util.HashMap">
+	    INSERT
+		INTO SC_CORE.SC_MESSAGE_USER
+		  (
+		    SC_MESSAGE_USER_PK,
+		    MESSAGE_PK,
+		    MESSAGE_TYPE,
+		    READ_USER,
+		    READ_USERXM,
+		    READ_USERUNIT,
+		    READ_USERTYPE,
+		    READ_TIME,
+		    READ_IP,
+		    READ_CLIENT,
+		    READ_SYSTEM,
+		    BROWSER
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #MESSAGE_PK#,
+		    #MESSAGE_TYPE#,
+		    #GUID#,
+		    #XM#,
+		    #FK_UNIT#,
+		    #SFDL#,
+		    sysdate,
+		    #AccessIp#,
+		    #READ_CLIENT#,
+		    #READ_SYSTEM#,
+		    #Browser#
+		  )
+	 </insert>
+
+	<update id="LogUpdateOutTime" parameterClass="java.util.HashMap">
+		UPDATE SC_CORE.SC_LOG SET LOG_TIME_OUT = sysdate
+		WHERE LOG_PK = #LOG_PK#
+	</update>
+	
+	<insert id="LogInsert" parameterClass="java.util.HashMap">
+		INSERT
+		INTO SC_CORE.SC_LOG
+		  (
+		    LOG_PK,
+		    LOG_SYSTEM,
+		    LOG_MODEL,
+		    LOG_LEVEL,
+		    LOG_TYPE,
+		    LOG_INFO,
+		    LOG_INFO_DETAIL,
+		    LOG_INPUT,
+		    LOG_OUTPUT,
+		    LOG_SESSIONID,
+		    LOG_TOKEN,
+		    LOG_USER,
+		    LOG_USER_NAME,
+		    LOG_UNIT,
+		    LOG_UNIT_NAME,
+		    LOG_TIME,
+		    LOG_TIME_OUT,
+		    LOG_OS,
+		    LOG_BROWSER,
+		    LOG_TIME_STAMP,
+		    LOG_IP
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #LOG_SYSTEM#,
+		    #LOG_MODEL#,
+		    10,
+		    #LOG_TYPE#,
+		    #LOG_INFO#,
+		    #LOG_INFO_DETAIL#,
+		    #LOG_INPUT#,
+		    #LOG_OUTPUT#,
+		    #LOG_SESSIONID#,
+		    #LOG_TOKEN#,
+		    #userInfo.GUID#,
+		    #userInfo.XM#,
+		    #userInfo.FK_UNIT#,
+		    #userInfo.FK_UNITNAME#,
+		    #LOG_TIME#,
+		    #LOG_TIME_OUT#,
+		    #OperatingSystem#,
+		    #Browser#,
+		    #LOG_TIME_STAMP#,
+		    #AccessIp#
+		  )
+	</insert>
+</sqlMap>

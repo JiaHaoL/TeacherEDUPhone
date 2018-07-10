@@ -1,0 +1,18 @@
+{
+    "name": "TeacherEdu_teachEvaluate_score",
+    "viewUrl": "aps/content/teachEvaluate/score/template.html",
+    "controllerUrl": "aps/content/teachEvaluate/score/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "TeacherScoreListURL":"json/Open_queryForList_TeacherScoreList.json",
+            "TeacherScoreAllListURL":"json/TeacherScore_TeacherScoreAllList_TeacherScoreAllList.json",
+			"TeacherScoreInsertURL":"json/TeacherScore_TeacherScoreInsert_TeacherScoreInsert.json",
+			"TeacherScoreCheckURL":"json/Open_queryForList_TeacherScoreCheck.json",
+			"TeacherScoreByIDURL":"json/TeacherScore_TeacherScoreByID_TeacherScoreByID.json",
+			"TeacherScoreUpdateURL":"json/TeacherScore_TeacherScoreUpdate_TeacherScoreUpdate.json",
+			"FindCourseNameURL":"json/Open_queryForList_FindCourseNameById.json"
+            
+	}
+}

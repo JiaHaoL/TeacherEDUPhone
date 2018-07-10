@@ -1,0 +1,15 @@
+{
+    "name": "app_home",
+    "viewUrl": "aps/main/template.html",
+    "controllerUrl": "aps/main/controller.js",
+    "config": 
+    {
+            "contentName": "content",
+            "modalName":"modal",
+            "getUserInfoURL":"json/Parent_userInfo_data.json",
+            "changeStudentURL":"json/Parent_changeStudent_data.json",
+            "getUserHisClassURL":"json/Open_queryForList_findStudentByParentId.json",
+            "menuListData": "json/Api_queryForList_UserRightMenu.json",
+            "defaultAppPartSrc":"aps/content/welcome/config.json"
+	}
+}

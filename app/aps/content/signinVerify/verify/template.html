@@ -1,0 +1,36 @@
+<ul class="nav nav-tabs" >
+  <li role="presentation" class="onlineTab tab_verify active" ng-click="tabClick(0);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-qrcode"> 待确认</span></a></li>
+  <li role="presentation" class="onlineTab tab_off" ng-click="tabClick(1);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-ok"></span> 已签到</a></li>
+  <li role="presentation" class="onlineTab tab_on" ng-click="tabClick(2);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-ok"></span> 未签到</a></li>
+</ul>
+
+<div >
+
+	 <table class="table table-striped">  
+	      <tbody ng-switch on="page.current_num">
+	      	<tr ng-switch-when="0" align="center">
+	      		<td colspan="100" class="NoSelectHistory">没有待确认的签到信息</td>
+	      	</tr>
+	        <tr ng-repeat='data in dataList'>
+	          <td>
+	               <table width="100%">
+				   <tr>
+				 		<td valign="middle" style="font-size:18px;"><span style="font-weight:bold;">{{data.TEACHER_XM}}</span>({{data.UNIT_NAME}})</td>
+				 		<td valign="middle" style="font-size:18px;" align="right" class="verif-btn"><button type="button" class="btn btn-info btn-sm" ng-click="signinClick(data);"><span class="glyphicon glyphicon-ok"  aria-hidden="true"></span> 确认 </button></td>
+				 	</tr>
+
+				 </table>
+	          </td>
+	        </tr>
+	      </tbody>
+	      <tfoot>
+	      	<tr>
+	      		<td colspan="100">
+	      		<div ng-include="'html/page.html'"></div>
+				</td>
+	      	</tr>
+	      </tfoot>
+	    </table>
+ </div>
+   
+

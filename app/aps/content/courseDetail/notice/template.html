@@ -1,0 +1,11 @@
+ <div class="div_course div_class_notice" style="margin-top: 5px;">
+		          
+		          
+		            <div class="panel panel-default" ng-repeat='notice in noticeList'>
+						  <div class="panel-heading" style="font-size:18px;">{{notice.TITLE}}</div>
+						  <div class="panel-body">
+						       <div ng-bind-html="notice.NOTICECONTENT|trustHtml"></div>
+						  </div>
+					</div>
+
+</div>

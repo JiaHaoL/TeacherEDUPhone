@@ -1,0 +1,76 @@
+ <div class="div_course div_class_moke" style="margin-top: 15px;">
+		      
+		      <div class="div_bbs" style="diaplay:none">
+		         <div class="panel panel-info" ng-repeat="moke in mokeList">
+				  <!-- Default panel contents -->
+				  <div class="panel-heading">
+				       <span>
+				       <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>{{moke.theme_title}} 
+				       <small>{{moke.theme_subtitle}}</small>
+						&nbsp; &nbsp; <a  ng-click="mokeTopic(moke.SC_FORUM_THEME_PK,moke.theme_title)"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 添加话题</a> 
+				       </span>
+				       
+				       <span ng-switch on="useraction" style="float:right;" >
+				            <span ng-switch-when="1">
+				                <span class="div_theme_themeaction" ng-switch on="moke.isPlate">
+							           
+					             <a  ng-click="mokeTheme(moke.sc_forum_theme_pk,2);"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 修改分区</a> 
+				             	  &nbsp; <span ng-switch-when="0">
+						            <a ng-click="mokeTheme(moke.sc_forum_theme_pk,3);"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除分区</a> 
+						          </span>
+						          <span ng-switch-when="1">
+						          &nbsp;
+						          </span> 
+					           </span>
+				            </span>
+					        <span ng-switch-when="0">
+                                  &nbsp;
+					        </span>
+				       </span>
+				  </div>
+				 
+
+				 <!-- Table -->
+				  <table class="table table-hover table-striped table-bordered ">  
+					      <thead>
+					        <tr>
+					          <th column="SC_COURSE_NOTICE_PK" class="sorting" ng-click="order($event.target)">主题</th>
+					          <th column="NOTICECONTENT" class="sorting" ng-click="order($event.target)">话题</th>
+					          <th column="CREATE_TIME" class="sorting" ng-click="order($event.target)">创建人</th>
+   					          <th column="CREATER" class="sorting" ng-click="order($event.target)">创建时间</th>
+						      <th>操作</th>
+					        </tr>
+					      </thead>
+					      <tbody ng-switch on="moke.isPlate">
+					      	<tr ng-switch-when="0">
+					      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+					      	</tr>
+					        <tr ng-repeat='plate in moke.plateList' ng-Dblclick="mokeTopic(plate.SC_FORUM_PLATE_PK,plate.PLATE_TITLE,moke.theme_title)"">
+					          
+					          <td style="width:50%">
+					          <span style="font-size: 1.5em;color:#bce8f1;margin-left: 10px;margin-right: 5px;" class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+					          <a href="" style="font-weight:blod;line-height: 40px;" ng-click="mokeTopic(plate.SC_FORUM_PLATE_PK,plate.PLATE_TITLE,moke.theme_title)">{{plate.PLATE_TITLE}}</a>_{{plate.PLATE_SUBTITLE}}</td>
+					          <td style="line-height: 40px">{{plate.TOPICCOUNT}}</td>
+					          <td style="line-height: 40px">{{plate.CREATER_TEXT}}</td>
+					          <td style="line-height: 40px">{{plate.CRATE_TIME}}</td>
+					          <td style="line-height: 40px;width:180px;text-align: center;">
+							       <div ng-switch on="useraction">
+				                      <span ng-switch-when="1">
+							            <a ng-click="mokePlate(plate.SC_FORUM_PLATE_PK,2);"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 修改主题</a> 
+							             &nbsp; 
+							            <a ng-click="mokePlate(plate.SC_FORUM_PLATE_PK,3);"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除</a> 
+							           </span>
+							       </div>
+		                      </td>
+					        </tr>
+					      </tbody>
+					    </table>
+				</div>   
+		      </div>
+		      
+		      <div ng-switch on="useraction">
+		         <div ng-switch-when="1" style="text-align: right;margin-top: 10px;">
+		           <button type="button" class="btn btn-link" ng-click="mokeTheme(null,1);"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新建磨课分区</button> 
+		         </div>
+		      </div>
+		      

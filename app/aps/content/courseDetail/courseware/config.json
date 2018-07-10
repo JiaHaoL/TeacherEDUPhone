@@ -1,0 +1,13 @@
+{
+    "name": "TeacherEdu_myCourse_courseDetail_courseware",
+    "viewUrl": "aps/content/courseDetail/courseware/template.html",
+    "controllerUrl": "aps/content/courseDetail/courseware/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "loadStudyResURL":"json/Open_queryForList_findResList.json",
+            "getUserInfoURL":"json/User_getUserInfo_getUserInfo.json",
+            "downloadurl":"http://hygl.pdedu.sh.cn/ResCenter/upload/Download_downloadForApp_download.json"
+	}
+}

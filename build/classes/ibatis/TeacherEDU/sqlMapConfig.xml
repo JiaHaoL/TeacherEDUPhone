@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	    <sqlMap resource="ibatis/TeacherEDU/sql-core-log.xml"/>
+	    <sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-course.xml"/>
+	    <sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-user.xml"/>
+	    <sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-dic.xml"/>
+	    <sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-dic-rule.xml"/>
+		<sqlMap resource="ibatis/core/sql-core-test.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-res.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-forum.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-video.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-statisic.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-config.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-home.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-contributionDetail.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-rescenter.xml"/>
+		
+</sqlMapConfig>

@@ -1,0 +1,14 @@
+{
+    "name": "TeacherEdu_areaCourse_list",
+    "viewUrl": "aps/content/areaCourse/template.html",
+    "controllerUrl": "aps/content/areaCourse/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+             "DictionaryAllListURL":"json/Open_queryForList_DictionaryAllList.json",
+             "findRoleByUserPkURL":"json/Open_queryForList_findRoleByUserPk.json",
+             "unitAllListData": "json/ScCourse_findSchoolBy_findSchoolBy.json",
+            "findCourseApplyListURL":"json/Open_queryForList_findCourseApplyList.json"
+	}
+}

@@ -1,0 +1,31 @@
+{
+    "name": "TeacherEdu_myCourse_speakCourse",
+    "viewUrl": "aps/content/myCourse/speakCourse/template.html",
+    "controllerUrl": "aps/content/myCourse/speakCourse/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "loadObjURL":"json/Open_queryForObject_findScCourseSynopsis.json",
+            "ScCourseSynopsisInsertURL":"json/Open_insert_ScCourseSynopsisInsert.json",
+            "ScCourseSynopsisUpdateURL":"json/Open_update_ScCourseSynopsisUpdate.json",
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"TeacherEdu_myCourse_speakCourse.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"TeacherEdu_myCourse_speakCourse.save"
+		        	}
+				]
+			}	
+	}
+}

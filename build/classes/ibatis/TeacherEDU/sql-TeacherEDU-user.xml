@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+
+	<select id="getNewTicket" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT
+		 *
+		 FROM
+		  (  SELECT
+		      TICKET
+		    FROM SC_TOKEN_TEMP
+		    WHERE TICKET IS NOT NULL
+		    AND TYPE = 2
+		    ORDER BY CREATE_TIME DESC 
+		   )
+		  WHERE ROWNUM = 1
+	</select>
+	<update id="setUserOpenId" parameterClass="java.util.HashMap">
+		update sc_user set 
+			user_wx = #openid#
+		where id_number = #id_number#
+	</update>
+	<select id="checkUserWx" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+           select 
+            user_pk GUID,
+		    user_pk,
+		    user_name,
+		    user_email,
+		    user_phone,
+		    user_card,
+		    user_pwd,
+		    user_type,
+		    user_status,
+		    create_by,
+		    create_time,
+		    update_by,
+		    update_time,
+		    fk_unit,
+		    user_wx,
+		    user_sn,
+		    user_bg,
+		    user_mn,
+		    id_number,
+		    xjfh,
+		    other_type
+            from sc_user
+           where user_wx = #openid#
+    </select>
+	<select id="findUnitPkByUserIDNumber" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+           select 
+            user_pk GUID,
+		    user_pk,
+		    user_name,
+		    user_email,
+		    user_phone,
+		    user_card,
+		    user_pwd,
+		    user_type,
+		    user_status,
+		    create_by,
+		    create_time,
+		    update_by,
+		    update_time,
+		    fk_unit,
+		    user_wx,
+		    user_sn,
+		    user_bg,
+		    user_mn,
+		    id_number,
+		    xjfh,
+		    other_type
+            from sc_user
+           where id_number=#id_number# or user_pk = #id_number#
+    </select>
+    
+    <select id="findRoleByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+           select * from sc_user_role where fk_user=#userInfo.GUID# 
+           <isNotEmpty prepend="AND" property="FK_ROLE">
+				fk_role=#FK_ROLE#
+	       </isNotEmpty>
+           <isNotEmpty prepend="AND" property="FK_ROLE_IDS">
+				fk_role in ($FK_ROLE_IDS$)
+	       </isNotEmpty>
+    </select>
+    <select id="findTeacherGroupby" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+          SC_TEACHER_GROUP_PK,
+		  TEACHER_ID,
+		  TEACHER_NAME,
+		  TEACHER_XXDM,
+		  TEACHER_CLASSIFY,
+		  FK_UNIT,
+		  (select replace(ID_NUMBER,substr(ID_NUMBER,4,11),'***********') from sc_user where user_pk=TEACHER_ID) ID_NUMBER,
+		  (select substr(USER_EMAIL,1,1)||'*'||substr(USER_EMAIL,instr(USER_EMAIL,'@',-1,1)-1,length(USER_EMAIL)-instr(USER_EMAIL,'@',-1,1)+2 ) from sc_user where user_pk=TEACHER_ID)  USER_EMAIL,
+		  (select replace(USER_PHONE,substr(USER_PHONE,4,4),'****') from sc_user where user_pk=TEACHER_ID) USER_PHONE,
+		  #userInfo.FK_UNITNAME# as FK_UNITNAME
+		FROM SC_TEACHER_GROUP WHERE 
+		   TEACHER_CLASSIFY='$TEACHER_CLASSIFY$'
+	    <isNotEmpty prepend="AND" property="UNIT_PK">
+				FK_UNIT=#userInfo.FK_UNIT#
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="GROUP_TYPE">
+				GROUP_TYPE=#GROUP_TYPE#
+	    </isNotEmpty>
+    </select>
+    
+    <select id="findTeacherGroupbySize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT 
+          COUNT(1)
+		FROM SC_TEACHER_GROUP WHERE
+		   TEACHER_CLASSIFY='$TEACHER_CLASSIFY$'
+		   <isNotEmpty prepend="AND" property="UNIT_PK">
+				FK_UNIT=#userInfo.FK_UNIT#
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="GROUP_TYPE">
+				GROUP_TYPE=#GROUP_TYPE#
+	    </isNotEmpty>
+    </select>
+    <delete id="scTeacherGroupDelete" parameterClass="java.util.HashMap">
+      delete from SC_TEACHER_GROUP where SC_TEACHER_GROUP_PK in ($ids$)
+    </delete>
+    <insert id="scTeacherGroupInsert" parameterClass="java.util.HashMap">
+        INSERT
+		INTO SC_TEACHER_GROUP
+		  (
+		    SC_TEACHER_GROUP_PK,
+		    TEACHER_ID,
+		    TEACHER_NAME,
+		    TEACHER_CLASSIFY,
+		    FK_UNIT,
+		    GROUP_TYPE
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #TEACHER_ID#,
+		    #TEACHER_NAME#,
+		    #TEACHER_CLASSIFY#,
+		    #userInfo.FK_UNIT#,
+		    #GROUP_TYPE#
+		  )
+    </insert>
+    <select id="findExpertinfo" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        SELECT 
+          SC_EXPERT_INFO_PK,
+		  TEACHERNAME,
+		  AFFILIATED_UNIT,
+		  SPEAKERCOURSE,
+		  (select DICTIONARY_NAME from SC_DICTIONARY where fk_RULE='97233b073c49468eafc7852f61458fd0' and DICTIONARY_PK=SPEAKERCOURSE) FK_SUBJECT_TEXT,
+		  EMAIL,
+		  SEX,
+		  IDENTITYCARD,
+		  NATION,
+		  REMARK,
+		  CREATER,
+		  XXDM
+		FROM SC_EXPERT_INFO where 1=1
+		<isNotEmpty prepend="AND" property="TEACHERNAME">
+				TEACHERNAME like '%$TEACHERNAME$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AFFILIATED_UNIT">
+				AFFILIATED_UNIT like '%$AFFILIATED_UNIT$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SEX">
+				SEX =#SEX#
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SPEAKERCOURSE">
+				SPEAKERCOURSE =#SPEAKERCOURSE#
+	   </isNotEmpty>
+		<isNotEmpty prepend="ORDER BY" property="page.column">
+				$page.column$ $page.order$
+	   </isNotEmpty>
+	   <isEmpty prepend="ORDER BY" property="page.column">
+		 TEACHERNAME desc
+	   </isEmpty>
+    </select>
+    <select id="findExpertinfoSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        SELECT count(1)
+		FROM SC_EXPERT_INFO where 1=1
+		<isNotEmpty prepend="AND" property="TEACHERNAME">
+				TEACHERNAME like '%$TEACHERNAME$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="AFFILIATED_UNIT">
+				AFFILIATED_UNIT like '%$AFFILIATED_UNIT$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="SEX">
+				SEX =#SEX#
+	   </isNotEmpty>
+    </select>
+
+    
+    <insert id="expertinfoInsert" parameterClass="java.util.HashMap" >
+        INSERT
+		INTO SC_EXPERT_INFO
+		  (
+		    SC_EXPERT_INFO_PK,
+		    TEACHERNAME,
+		    AFFILIATED_UNIT,
+		    SPEAKERCOURSE,
+		    EMAIL,
+		    SEX,
+		    IDENTITYCARD,
+		    NATION,
+		    REMARK,
+		    CREATER,
+		    XXDM
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #TEACHERNAME#,
+		    #AFFILIATED_UNIT#,
+		    #SPEAKERCOURSE#,
+		    #EMAIL#,
+		    #SEX#,
+		    #IDENTITYCARD#,
+		    #NATION#,
+		    #REMARK#,
+		    #unserInfo.USER_PK#,
+		    #unserInfo.FK_UNIT#
+		  )
+    </insert>
+    
+	<select id="findTeacherBy" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	     SELECT TEACHER_PK,
+		  FK_USER,
+		  TEACHER_XM,
+		  TEACHER_GZDWDM,
+		  TEACHER_RSDWMC,
+		  TEACHER_RSDWDM,
+		  TEACHER_GZDWPK,
+		  TEACHER_RSDWPK,
+		  TEACHER_DZXX,
+		  TEACHER_SJ,
+		  TEACHER_SFZJH,
+		  (select unit_abbreviation from sc_unit where unit_pk = TEACHER_GZDWPK) TEACHER_GZDWMC
+		FROM sc_user_teacher where TEACHER_XM !='SCHOOLADMIN' and teacher_state !=4 
+		 <isNotEmpty prepend="AND" property="FK_USER">
+	        FK_USER=#FK_USER#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_XM">
+	        TEACHER_XM like '%$TEACHER_XM$%'
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+	        TEACHER_PK not in (select FK_TEACHER from sc_course_teacher where fk_sc_course=#FK_SC_COURSE# and status !=99 and fk_teacher is not null)
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_SJ">
+	        TEACHER_SJ like '%$TEACHER_SJ$%'
+	     </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="TEACHER_DZXX">
+	        TEACHER_DZXX like '%$TEACHER_DZXX$%'
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_GZDWDM">
+	        TEACHER_GZDWDM=#TEACHER_GZDWDM#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_GZDWPK">
+	        TEACHER_GZDWPK=#TEACHER_GZDWPK#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="GZDWPK">
+	        TEACHER_GZDWPK=#userInfo.FK_UNIT#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="SCHOOL_PK">
+	        TEACHER_GZDWPK=#SCHOOL_PK#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FILTER">
+	      TEACHER_PK not in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='0' and FK_UNIT=#userInfo.FK_UNIT#)
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FILTER_TYPE">
+	      TEACHER_PK not in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='1')
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="subject">
+	        TEACHER_PK in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='0' and FK_UNIT=#userInfo.FK_UNIT#)
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="AREA_GROUP">
+	        TEACHER_PK in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='1')
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FK_TEACHER">
+	        TEACHER_GZDWPK = (select FK_UNIT from SC_CORE.SC_USER where user_pk=#FK_TEACHER#)
+	     </isNotEmpty>
+	     order by nlssort(TEACHER_XM,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	<select id="findTeacherBySize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	    SELECT 
+	      count(1)
+		FROM sc_user_teacher where TEACHER_XM !='SCHOOLADMIN' and teacher_state !=4
+		  <isNotEmpty prepend="AND" property="FK_USER">
+	        FK_USER=#FK_USER#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_XM">
+	        TEACHER_XM like '%$TEACHER_XM$%'
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_SJ">
+	        TEACHER_SJ like '%$TEACHER_SJ$%'
+	     </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="TEACHER_DZXX">
+	        TEACHER_DZXX like '%$TEACHER_DZXX$%'
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_GZDWDM">
+	        TEACHER_GZDWDM=#TEACHER_GZDWDM#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="TEACHER_GZDWPK">
+	        TEACHER_GZDWPK=#TEACHER_GZDWPK#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="GZDWPK">
+	        TEACHER_GZDWPK=#userInfo.FK_UNIT#
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FILTER">
+	      TEACHER_PK not in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='0' and FK_UNIT=#userInfo.FK_UNIT#)
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="FILTER_TYPE">
+	      TEACHER_PK not in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='1')
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="subject">
+	        TEACHER_PK in (select teacher_id from sc_teacher_group where TEACHER_CLASSIFY=#TEACHER_CLASSIFY# and GROUP_TYPE='0' and FK_UNIT=#userInfo.FK_UNIT#)
+	     </isNotEmpty>
+	</select>
+	
+	<select id="findSchoolBy" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT 
+	      SCHOOL_PK,
+		  FK_UNIT,
+		  SCHOOL_NAME,
+		  SCHOOL_ADDRESS,
+		  NVL(SCHOOL_ABBREVIATION,SCHOOL_NAME) SCHOOL_ABBREVIATION
+		FROM (
+		     SELECT 
+		      SCHOOL_PK,
+				  FK_UNIT,
+				  SCHOOL_NAME,
+				  SCHOOL_ADDRESS,
+				  SCHOOL_ABBREVIATION,
+		      SCHOOL_PROPERTY_CODE,
+		      FK_DICTIONARY_ASCERTAINED,
+		      FK_DICTIONARY_SCHOOL_TYPE
+				FROM sc_unit_SCHOOL where 1=1
+		    union all 
+		    select 
+		       unit_pk as FK_UNIT,
+		       unit_pk as SCHOOL_PK,
+		       unit_name as SCHOOL_NAME,
+		       unit_address as SCHOOL_ADDRESS,
+		       unit_abbreviation as SCHOOL_ABBREVIATION,
+		       '000000XXBB2010040814501698401647128' FK_DICTIONARY_ASCERTAINED,
+		       '000000XXBB2010040814501698401647128' as SCHOOL_PROPERTY_CODE,
+		       '0ace878d4854452096f31aa691e774ee' as FK_DICTIONARY_SCHOOL_TYPE
+		      from sc_unit where unit_type=0
+		) where 1=1
+		<isNotEmpty prepend="AND" property="FK_DICTIONARY_SCHOOL_TYPE"> 
+	        FK_DICTIONARY_SCHOOL_TYPE = '$FK_DICTIONARY_SCHOOL_TYPE$'
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_DICTIONARY_ASCERTAINED"> 
+		<!-- 学校办别 -->
+	        FK_DICTIONARY_ASCERTAINED= '$FK_DICTIONARY_ASCERTAINED$'
+	     </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="other"> 
+		<!-- 学校办别 -->
+	        FK_DICTIONARY_ASCERTAINED is null
+	     </isNotEmpty>
+	     order by nlssort(SCHOOL_NAME,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	<select id="findSchoolBySize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	     SELECT 
+	      count(1)
+		FROM (
+		     SELECT 
+		      SCHOOL_PK,
+				  FK_UNIT,
+				  SCHOOL_NAME,
+				  SCHOOL_ADDRESS,
+				  SCHOOL_ABBREVIATION,
+		      SCHOOL_PROPERTY_CODE,
+		      FK_DICTIONARY_SCHOOL_TYPE
+				FROM sc_unit_SCHOOL where 1=1
+		    union all 
+		    select 
+		       unit_pk as FK_UNIT,
+		       unit_pk as SCHOOL_PK,
+		       unit_name as SCHOOL_NAME,
+		       unit_address as SCHOOL_ADDRESS,
+		       unit_abbreviation as SCHOOL_ABBREVIATION,
+		       '000000XXBB2010040814501698401647128' as SCHOOL_PROPERTY_CODE,
+		       '0ace878d4854452096f31aa691e774ee' as FK_DICTIONARY_SCHOOL_TYPE
+		      from sc_unit where unit_type=0
+		) where 1=1
+	   <isNotEmpty prepend="AND" property="FK_DICTIONARY_SCHOOL_TYPE"> 
+	        FK_DICTIONARY_SCHOOL_TYPE= #FK_DICTIONARY_SCHOOL_TYPE#
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="SCHOOL_PROPERTY_CODE"> 
+		<!-- 学校办别 -->
+	        SCHOOL_PROPERTY_CODE= #SCHOOL_PROPERTY_CODE#
+	     </isNotEmpty>
+	</select>
+	
+	
+	<!-- 资源库数据-查找父节点下的子节点 -->
+	<select id="getSubjectSortbypid" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+		  G_ID,
+		  G_ROOTID,
+		  G_PID,
+		  G_ISLEAF,
+		  G_NODE_TEXT,
+		  HIDDER_OR_SHOW,
+		  RANDOM,
+		  CHECK_LEVEL,
+		  CHECK_NAME,
+		  RES_NUM,
+		  RES_TYPE,
+		  ORDER_NUM,
+          MENUID 
+       from RES_SUBJECT_SORT 
+		where 1=1  
+		<isNotEmpty prepend="AND" property="G_PID">  
+		    G_PID= #G_PID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="MENUID">  
+		    MENUID= #MENUID#
+		</isNotEmpty>
+		order by ORDER_NUM asc
+	</select>
+	
+</sqlMap>

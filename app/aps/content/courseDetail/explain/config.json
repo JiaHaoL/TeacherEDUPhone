@@ -1,0 +1,13 @@
+{
+    "name": "TeacherEdu_myCourse_courseDetail_explain",
+    "viewUrl": "aps/content/courseDetail/explain/template.html",
+    "controllerUrl": "aps/content/courseDetail/explain/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "getUserInfoURL":"json/User_getUserInfo_getUserInfo.json",
+            "findCourseApplyListURL":"json/Open_queryForList_findCourseApplyList.json",
+            "findScCourseSynopsisURL":"json/Open_queryForList_findScCourseSynopsis.json"
+	}
+}

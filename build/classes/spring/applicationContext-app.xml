@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+    "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName">
+	<!-- ========================= BIZ SERVICE ======================== -->
+	<bean id="openService" class="cn.smartercampus.core.service.impl.OpenServiceImpl" />
+	<bean id="handleService" class="cn.smartercampus.core.service.impl.HandleServiceImpl" />
+	
+	<!-- ========================= DAO ENTITY ======================== -->
+	<bean id="baseDao" class="cn.smartercampus.core.dao.BaseDao" />
+	<bean id="openDao" class="cn.smartercampus.core.dao.OpenDao" />
+</beans>

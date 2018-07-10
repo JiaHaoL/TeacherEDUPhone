@@ -1,0 +1,49 @@
+<div class="div_course div_class_point" style="padding-top:5px;">
+		         <div class="panel panel-info">
+		             <!-- Default panel contents -->
+			            <table class="table table-info">  
+					      <tbody ng-switch on="page.current_num">
+					      	<tr ng-switch-when="0" align="center">
+					      		<td colspan="100" class="NoSelectHistory">暂未上传视频资料</td>
+					      	</tr>
+					        <tr ng-repeat='video in videoList'>
+					          <td>
+					            <table width="100%">
+									   <tr>
+										    <td rowspan="3" style="width:80px;height:100px;padding-right: 10px;" ><a href=""><img  class="img-thumbnail" ng-src="http://rescenter.sjedu.cn/ResCenter/data/ConvertJPG/2017/1/4/792b1d76cd274ec8b7cb2055d73679a1.jpg" style="width:70px;height:90px;"></a></td>    
+									 		<td valign="middle" style="font-size:18px;">{{video.VIDEO_TITLE}}</td>
+									 	</tr>
+		
+									 	<tr>
+									 		<td valign="middle" valign="middle" style="color:#888;">切片数：{{video.POINTCOUNT}}</td>
+									 	</tr>
+									 	<tr>
+									 		<td valign="middle" valign="middle" style="color:#888;">上传时间：{{video.CREATE_TIME}}</td>
+									 	</tr>
+
+									   <tr>
+									       <td align="right" colspan="2">
+									          <span ng-if="video.POINTCOUNT>0">
+									             <button type="button" class="btn btn-success btn-sm" ng-click="videoPointReview(video.SC_VIDEO_PK)"><span class="glyphicon glyphicon-facetime-video"  aria-hidden="true"></span> 切片观看 </button>
+									          </span>
+									          <span ng-if="video.POINTCOUNT==0">
+									                <button type="button" class="btn btn-defaultt btn-sm" ng-click="videoPointReview(video.SC_VIDEO_PK)" disabled="disabled"><span class="glyphicon glyphicon-facetime-video"  aria-hidden="true"></span> 切片观看 </button>
+									          </span>
+									          <button type="button" class="btn btn-primary btn-sm" ng-click="videoFullplay(video.SC_VIDEO_PK)"><span class="glyphicon glyphicon-facetime-video"  aria-hidden="true"></span> 完整观看 </button>
+									          
+									       </td>
+									   </tr>
+									 </table>
+					          </td>
+					        </tr>
+					      </tbody>
+					      <tfoot>
+					      	<tr>
+					      		<td colspan="100">
+					      		    <div ng-include="'html/page.html'"></div>
+								</td>
+					      	</tr>
+					      </tfoot>
+					    </table> 
+		       </div>
+</div>

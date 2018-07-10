@@ -1,0 +1,81 @@
+<div class="div_course div_class_point_review">
+					     <div class="panel panel-default video_pointdetail">
+							  <!-- Default panel contents -->
+							  <div class="panel-heading"></span>
+							          <span style="color:blue;" ng-repeat="videopoint in videopointlist" ng-click="videoplay(videopoint.BEGIN_TIME,videopoint.SC_VIDEO_POINT_PK);"><a href="">&nbsp;{{videopoint.TITLE}}&nbsp;</a></span>
+							  </div>
+							  <!-- Table -->
+							  <table class="table">  
+									  <tr>
+									     <td style="width:25%;text-align: right;">切片名称:</td>
+									     <td style="width:25%">{{synopsis.TITLE}}</td>
+									     <td style="width:25%;text-align: right;">开始时间:</td>
+									     <td style="width:25%;text-align: left;">{{synopsis.beginTime}}</td>
+									  </tr>
+									  <tr>
+									     <td style="width:25%;text-align: right;">切片类型:</td>
+									     <td style="width:25%;text-align: left;">{{synopsis.TYPE_TEXT}}</td>
+									     <td style="width:25%;text-align: right;">结束时间:</td>
+									     <td style="width:25%;text-align: left;">{{synopsis.endTime}}</td>
+									  </tr>		  		  
+									  <tr>
+									     <td style="width:20%;text-align: left;" colspan="4">自我评定:</td>
+									  </tr>
+									  <tr>
+									     <td colspan="4"> 
+									        {{synopsis.SYNOPSIS}}
+									     </td>
+									  </tr>
+								</table>
+					       </div>
+					       <!-- <div class="panel panel-info">
+					                <div class="panel-heading"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>视频播放 <span align="right" class="govideolist"><a href="" ng-click="backVideoPoint();">返回视频列表</a></span></div>
+					                <div class="video_play">
+					                           <div id="container_video">Loading the player...</div>
+					                </div>
+					       </div>
+					       -->
+					       
+					       <div id="video" align="center" class="showSP" >
+							          <p>
+										 <video id="media" src="" controls="controls" autoplay="autoplay" loop="loop" -webkit-playsinline webkit-playsinline width="100%" height="100%" >
+										       <source type=video/mp4 />
+										 </video> 
+									  </p>
+							 </div>
+					       
+					       <div class="panel panel-info video_pointdetail">
+					                <div class="panel-heading"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 教后反思</div>
+					                <!-- Table -->
+							        <table class="table table-striped">
+							          <tbody ng-switch on="page.current_num">
+									      	<tr ng-switch-when="0">
+									      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+									      	</tr>  	
+							           <tr ng-repeat="comment in videoPointCommentList">
+									     <td> 
+									        <span>{{commentsize-$index}}楼，{{comment.CREATE_TIME}}&nbsp;<span style+"font-size:18px;">{{comment.CREATER_TEXT}}</span> 教后反思:</span><br>
+									        <span style="padding:5px;">
+									              {{comment.TEACHERCOMMENT}}
+									        </span>
+									     </td>
+									  </tr> 
+									  </tbody> 		  
+									 <!--  <tr >
+									     <td> 
+									        <span>29楼，2015-06-30 朱红琴 教后反思:</span><br>
+									        <span style="padding:5px;">
+									           车墩学校刘立新：看了戴慧萍老师《西班牙救护绳结》的这节拓展课，给我有以下一些收获：1、这节课注重用多种方法使学生获得体验和感悟。火灾视频的导入，成功地创设了一个能使学生获得体验和感悟的情境。这个情境使学生感悟到火灾时可能需要逃生，而逃生需要一定的知识和技术。火灾现场音频效果的模拟，更让学生产生一种紧张的自我救护、自我逃生的氛围，有身临其境的感觉。2、引领学生动手动脑，有效地学习知识与技能。这节课摒弃了传统的老师教、学生学的技能传授学习方式，而是采用了自我发现、自我探究打绳结的方法，这种实践体验法使技能掌握的更为牢固。整堂课就是这样通过精心设计的情景和提问，激发学生的情感和思维，在师生互动的氛围下引领学生积极参与到技术探究活动中去，学会技术，掌握技能。虽然我们只是看到了一节课，但是从这节课中我们感受到戴老师开发的《消防安全绳结》这门校本会议的实用性和可操作性。
+									        </span>
+									     </td>
+									  </tr>  -->
+									  <tfoot>
+								      	<tr>
+								      		<td colspan="100">
+								      		    <div ng-include="'html/page.html'"></div>
+											</td>
+								      	</tr>   
+								      </tfoot>
+								  </table>
+					       </div>
+</div>	  

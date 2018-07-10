@@ -1,0 +1,12 @@
+{
+    "name": "TeacherEdu_course_notice",
+    "viewUrl": "aps/content/notice/template.html",
+    "controllerUrl": "aps/content/notice/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "getUserInfoURL":"json/User_getUserInfo_data.json",
+            "findCourseListForNoticeURL":"json/Open_queryForList_findCourseListForNotice.json"
+	}
+}

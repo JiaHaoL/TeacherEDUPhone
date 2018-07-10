@@ -1,0 +1,10 @@
+{
+    "name": "TeacherEdu_teachEvaluate_list",
+    "viewUrl": "aps/content/teachEvaluate/template.html",
+    "controllerUrl": "aps/content/teachEvaluate/controller.js",
+    "config": 
+    {
+            "TeachEvaluateListURL":"json/Open_queryForList_TeachEvaluateList.json",
+            "findRoleByUserPkURL":"json/Open_queryForList_findRoleByUserPk.json"
+	}
+}

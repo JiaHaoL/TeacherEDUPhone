@@ -1,0 +1,15 @@
+{
+    "name": "TeacherEdu_signinVerify_verify",
+    "viewUrl": "aps/content/signinVerify/verify/template.html",
+    "controllerUrl": "aps/content/signinVerify/verify/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "scCourseTeacherUpdateURL":"json/Open_update_scCourseTeacherUpdate.json",
+            "getTeacherByQRCodeURL":"json/Open_queryForList_getTeacherByQRCode.json",
+            "getTeacherByCourseURL":"json/Open_queryForList_getTeacherByCourse.json",
+            "scCourseTeacherQRCodeUpdateURL":"json/Open_update_scCourseTeacherUpdateQRCode.json",
+            "getNoTeacherByCourseURL":"json/Open_queryForList_getNoTeacherByCourse.json"
+	}
+}

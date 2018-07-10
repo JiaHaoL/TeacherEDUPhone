@@ -1,0 +1,12 @@
+{
+    "name": "TeacherEdu_myCourse_courseDetail_notice",
+    "viewUrl": "aps/content/myCourse/courseDetail/notice/template.html",
+    "controllerUrl": "aps/content/myCourse/courseDetail/notice/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "findScCourseNoticeURL":"json/Open_queryForList_findScCourseNotice.json",
+            "ScCourseNoticeDeleteURL":"json/Open_delete_ScCourseNoticeDelete.json"
+	}
+}

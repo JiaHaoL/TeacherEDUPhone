@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<insert id="setUserGroupNameUser" parameterClass="java.util.HashMap">
+		insert into sc_teacher_mygroup_user
+		(
+			SC_TEACHER_MYGROUP_USER_PK,
+			FK_TEACHER,
+			FK_TEACHER_MYGROUP,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		select
+			SYS_GUID(),
+			fk_user,
+			#groupId#,
+			sysdate,
+			fk_user
+		from SHEET_XKDTR_SUBJECT where xkz = #xkz# and fk_user is not null and fk_unit is not null
+	</insert>
+	<insert id="setUserGroupName" parameterClass="java.util.HashMap">
+		insert into sc_teacher_mygroup
+		(
+			SC_TEACHER_MYGROUP_PK,
+			SC_MYGROUP_NAME,
+			SC_FK_TEACHER,
+			CREATE_TIME,
+			STATUS
+		)
+		values
+		(
+			#UUID#,
+			#xkz#,
+			#user_pk#,
+			sysdate,
+			0
+		)
+	</insert>
+	<select id="getZzFromSheet" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			username,
+			xkz,
+			zz,
+			fk_unit,
+			fk_user 
+		from SHEET_XKDTR_SUBJECT 
+		where zz is not null and fk_user is not null order by xkz
+	</select>
+ 	<update id="updateSheetSubjectUser" parameterClass="java.util.HashMap">
+ 		update SHEET_XKDTR_SUBJECT set
+ 			fk_user = #user_pk#
+ 		where username = #username#
+ 		and fk_unit = #fk_unit#
+	</update>
+	<select id="checkIsUserForUnit" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select
+			user_pk,
+			user_sn,
+			fk_unit
+		from sc_user where user_sn = #username# and fk_unit = #fk_unit#
+	</select>
+	<select id="getUserForSheetSubject" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+	   		username,
+	   		fk_unit
+	    from SHEET_XKDTR_SUBJECT where fk_unit is not null
+	</select>
+ 	<update id="updateUnitPkForSubjectGroup" parameterClass="java.util.HashMap">
+  		update SHEET_XKDTR_SUBJECT set FK_UNIT = #FK_UNIT# where unitname = #unitname#
+    </update>
+	<select id="getUnitPKForShortName" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select UNIT_PK from sc_unit where UNIT_ABBREVIATION like '%'||#unitname#||'%'
+	</select>
+	<select id="getUnitPKForLongName" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select UNIT_PK from sc_unit where UNIT_NAME like '%'||#unitname#||'%'
+	</select>
+	<select id="getSheetGroupZz" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			USERNAME,
+			UNITNAME,
+			XKZ,
+			ZZ,
+		  	UNIT_PK,
+		  (select user_pk from sc_user where user_sn = USERNAME and fk_unit = unit_pk)USER_PK
+		FROM
+		(
+			SELECT
+				USERNAME,
+				UNITNAME,
+				XKZ,
+				ZZ,
+		    (case when (select count(1) from sc_unit where unitname = UNIT_ABBREVIATION)=1 then (select unit_pk from sc_unit where unitname = UNIT_ABBREVIATION) 
+		        else (select unit_pk from sc_unit where unit_name like '%'||unitname||'%' ) 
+		    end)unit_pk
+			FROM SHEET_XKDTR_SUBJECT
+			WHERE XKZ = #groupName# AND ZZ IS NOT NULL
+		)
+	</select>
+	<select id="getSheetGroupName" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			DISTINCT
+			XKZ
+		FROM SHEET_XKDTR_SUBJECT
+	</select>
+	<select id="getDistinctUnitGroup" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			DISTINCT
+			UNITNAME
+		FROM SHEET_XKDTR_SUBJECT
+		where fk_unit is null
+	</select>
+</sqlMap>

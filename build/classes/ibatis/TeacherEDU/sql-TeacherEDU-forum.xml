@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+       <select id="findScForumTheme" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          select 
+            SC_FORUM_THEME_PK,
+		    FK_SC_COURSE,
+		    THEME_TITLE,
+		    THEME_SUBTITLE,
+		    CREATER,
+		    (select Teacher_xm from sc_user_teacher where fk_user=CREATER) CREATER_TEXT,
+		    CRATE_TIME 
+         from SC_FORUM_THEME where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_THEME_PK">
+				SC_FORUM_THEME_PK=#SC_FORUM_THEME_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+				FK_SC_COURSE=#FK_SC_COURSE#
+	        </isNotEmpty>
+	        order by CRATE_TIME desc
+     </select>
+     
+     <select id="findScForumThemeSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select 
+            count(1)
+         from SC_FORUM_THEME where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_THEME_PK">
+				SC_FORUM_THEME_PK=#SC_FORUM_THEME_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_COURSE">
+				FK_SC_COURSE=#FK_SC_COURSE#
+	        </isNotEmpty>
+     </select>
+     
+     <select id="findScForumPlate" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          select 
+		    SC_FORUM_PLATE_PK,
+		    FK_SC_FORUM_THEME,
+		    PLATE_TITLE,
+		    PLATE_SUBTITLE,
+		    CREATER,
+		    (select Teacher_xm from sc_user_teacher where fk_user=CREATER) CREATER_TEXT,
+		    (select count(1) from SC_FORUM_TOPIC where FK_SC_FORUM_PLATE = SC_FORUM_PLATE_PK) topiccount,
+		    CRATE_TIME
+         from SC_FORUM_PLATE where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_PLATE_PK">
+				SC_FORUM_PLATE_PK=#SC_FORUM_PLATE_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_FORUM_THEME">
+				FK_SC_FORUM_THEME=#FK_SC_FORUM_THEME#
+	        </isNotEmpty>
+	        order by CRATE_TIME desc
+     </select>
+     
+     
+      <select id="findScForumTopic" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          select 
+		    SC_FORUM_TOPIC_PK,
+		    FK_SC_FORUM_PLATE,
+		    TOPIC_TITLE,
+		    TOPIC_SUBTITLE,
+		    CREATER,
+		    (select Teacher_xm from sc_user_teacher where fk_user=CREATER) CREATER_TEXT,
+		    (select count(1) from SC_FORUM_COMMENT where FK_SC_FORUM_TOPIC=SC_FORUM_TOPIC_PK) commentcount,
+		    CRATE_TIME
+         from SC_FORUM_TOPIC where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_TOPIC_PK">
+				SC_FORUM_TOPIC_PK=#SC_FORUM_TOPIC_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_FORUM_PLATE">
+				FK_SC_FORUM_PLATE=#FK_SC_FORUM_PLATE#
+	        </isNotEmpty>
+	        order by CRATE_TIME desc
+     </select>
+     
+     
+     <select id="findScForumTopicSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select 
+            count(1)
+         from SC_FORUM_TOPIC where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_TOPIC_PK">
+				SC_FORUM_TOPIC_PK=#SC_FORUM_TOPIC_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_FORUM_PLATE">
+				FK_SC_FORUM_PLATE=#FK_SC_FORUM_PLATE#
+	        </isNotEmpty>
+     </select>
+     
+     
+      <select id="findScForumComment" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          select 
+		    SC_FORUM_COMMENT_PK,
+		    FK_SC_FORUM_TOPIC,
+		    REMARK,
+		    CREATER,
+		    (select Teacher_xm from sc_user_teacher where fk_user=CREATER) CREATER_TEXT,
+		    CRATE_TIME
+         from SC_FORUM_COMMENT where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_COMMENT_PK">
+				SC_FORUM_COMMENT_PK=#SC_FORUM_COMMENT_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_FORUM_TOPIC">
+				FK_SC_FORUM_TOPIC=#FK_SC_FORUM_TOPIC#
+	        </isNotEmpty>
+	        order by CRATE_TIME asc
+     </select>
+     
+     
+     <select id="findScForumCommentSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select 
+            count(1)
+         from SC_FORUM_COMMENT where 1=1
+          <isNotEmpty prepend="AND" property="SC_FORUM_COMMENT_PK">
+				SC_FORUM_COMMENT_PK=#SC_FORUM_COMMENT_PK#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="FK_SC_FORUM_TOPIC">
+				FK_SC_FORUM_TOPIC=#FK_SC_FORUM_TOPIC#
+	        </isNotEmpty>
+     </select>
+     
+     <update id="scForumThemeUpdate" parameterClass="java.util.HashMap">
+        update SC_FORUM_THEME set 
+            THEME_TITLE=#THEME_TITLE#,
+		    THEME_SUBTITLE=#THEME_SUBTITLE#
+        where 
+        SC_FORUM_THEME_PK = #SC_FORUM_THEME_PK#
+    </update>
+    
+    <update id="scForumTopicUpdate" parameterClass="java.util.HashMap">
+        update SC_FORUM_TOPIC set 
+            TOPIC_TITLE=#TOPIC_TITLE#,,
+		    TOPIC_SUBTITLE=#TOPIC_SUBTITLE#
+        where 
+        SC_FORUM_TOPIC_PK = #SC_FORUM_TOPIC_PK#
+    </update>
+    <delete id="scForumTopicDelete" parameterClass="java.util.HashMap">
+        delete from SC_FORUM_TOPIC where SC_FORUM_TOPIC_PK = #SC_FORUM_TOPIC_PK#
+    </delete>
+    <insert id="scForumTopicInsert" parameterClass="java.util.HashMap">
+        INSERT
+		INTO SC_FORUM_TOPIC
+		  (
+		    SC_FORUM_TOPIC_PK,
+		    FK_SC_FORUM_PLATE,
+		    TOPIC_TITLE,
+		    TOPIC_SUBTITLE,
+		    CREATER,
+		    CRATE_TIME
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_FORUM_PLATE#,
+		    #TOPIC_TITLE#,
+		    #TOPIC_SUBTITLE#,
+		    #userInfo.GUID#,
+		    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+		  )
+    </insert>
+    
+    <delete id="scForumThemeDelete" parameterClass="java.util.HashMap">
+        delete from SC_FORUM_THEME where SC_FORUM_THEME_PK = #SC_FORUM_THEME_PK#
+    </delete>
+    <insert id="scForumThemeInsert" parameterClass="java.util.HashMap">
+       INSERT
+		INTO SC_FORUM_THEME
+		  (
+		    SC_FORUM_THEME_PK,
+		    FK_SC_COURSE,
+		    THEME_TITLE,
+		    THEME_SUBTITLE,
+		    CREATER,
+		    CRATE_TIME
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_COURSE#,
+		    #THEME_TITLE#,
+		    #THEME_SUBTITLE#,
+		    #userInfo.GUID#,
+		    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+		  )
+    </insert>
+    
+    
+    <update id="scForumPlateUpdate" parameterClass="java.util.HashMap">
+        update SC_FORUM_PLATE set 
+            PLATE_TITLE=#PLATE_TITLE#,
+		    PLATE_SUBTITLE=#PLATE_SUBTITLE#
+        where 
+        SC_FORUM_PLATE_PK = #SC_FORUM_PLATE_PK#
+    </update>
+     <delete id="scForumPlateDelete" parameterClass="java.util.HashMap">
+        delete from SC_FORUM_PLATE where SC_FORUM_PLATE_PK=#SC_FORUM_PLATE_PK#
+    </delete>
+    <insert id="scForumPlateInsert" parameterClass="java.util.HashMap">
+       INSERT
+		INTO SC_FORUM_PLATE
+		  (
+		    SC_FORUM_PLATE_PK,
+		    FK_SC_FORUM_THEME,
+		    PLATE_TITLE,
+		    PLATE_SUBTITLE,
+		    CREATER,
+		    CRATE_TIME
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_FORUM_THEME#,
+		    #PLATE_TITLE#,
+		    #PLATE_SUBTITLE#,
+		    #userInfo.GUID#,
+		    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+		  )
+    </insert>
+    
+    <update id="scForumCommentUpdate" parameterClass="java.util.HashMap">
+        update SC_FORUM_COMMENT set 
+            REMARK=#REMARK#
+        where 
+        SC_FORUM_COMMENT_PK = #SC_FORUM_COMMENT_PK#
+    </update>
+     <delete id="scForumCommentDelete" parameterClass="java.util.HashMap">
+        delete from SC_FORUM_COMMENT where SC_FORUM_COMMENT_PK = #SC_FORUM_COMMENT_PK#
+    </delete>
+    <insert id="scForumCommentInsert" parameterClass="java.util.HashMap">
+       INSERT
+		INTO SC_FORUM_COMMENT
+		  (
+		    SC_FORUM_COMMENT_PK,
+		    FK_SC_FORUM_TOPIC,
+		    REMARK,
+		    CREATER,
+		    CRATE_TIME
+		  )
+		  VALUES
+		  (
+		    #UUID#,
+		    #FK_SC_FORUM_TOPIC#,
+		    #REMARK#,
+		    #userInfo.GUID#,
+		    to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+			   
+		  )
+    </insert>
+    
+</sqlMap>

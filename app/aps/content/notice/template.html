@@ -1,0 +1,43 @@
+<div style="padding:10px;">
+				 <table class="table">  
+				      <tbody ng-switch on="noticeList.length">
+				      	<tr ng-switch-when="0">
+				      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+				      	</tr>
+				        <tr ng-repeat='data in noticeList' ng-click="viewclick(data.FK_SC_COURSE);">
+				          <td>
+				              <table>
+							   <tr>
+									<!-- <td rowspan="4" style="width:80px;height:90px;padding-right: 10px;" ><a href="" ng-click="trClick(row.STUDY_WEIKE_PK,row.SECTION_ID,row.THEME_ID,row.CREATE_BY);"><img  class="img-thumbnail" ng-src="{{row.IDENTIFIER}}" style="width:70px;height:90px;"></a></td> -->	    
+							 		<td valign="middle" style="font-size:18px;">{{data.TITLE}}</td>
+							 	</tr>
+							 	<!-- 
+							 	<tr>
+							 		<td rowspan="3"><img  class="img-thumbnail" ng-src="{{row.IDENTIFIER}}" style="height:90px;"></td>
+							 		<td valign="middle"><a href="" ng-click="viewclick(row.RES_ATTR_PK)"><h5>{{row.TITLE}}</h5></a></td>
+							 	</tr>
+							 	 -->
+							 	
+							 	<tr>
+							 		<td valign="middle" valign="middle" style="color: blue;">组织教师：{{data.TEACHER_XM}}</td>
+							 	</tr>
+							 	
+							 	<tr>
+							 		<td valign="middle" style="color: #888;">
+							 		<!-- 
+							 		文件大小：<span style="color: #31708f;">{{row.FILE_SIZE }}</span> &nbsp; 
+							 		下载量：<span style="color: #3c763d;">{{row.DOWNMUM }}</span>&nbsp;<br> -->
+							 		创建时间：{{data.CREATE_TIME}}   
+							 		</td>
+							 	</tr>
+							 </table>
+				          </td>
+
+				         
+				        </tr>
+				       
+				      </tbody>
+				    </table>
+ </div>
+   
+

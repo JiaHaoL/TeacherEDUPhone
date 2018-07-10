@@ -1,0 +1,46 @@
+<div class="div_course div_class_study">
+		         <div align="right" style="padding-top:10px;padding-bottom:10px;">
+			         <button type="button" class="btn btn-info uploadRES" ng-click="uploadRES();"> <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> 上传资料</button>
+			        
+		         </div>
+		         <div class="panel panel-info">
+			         <table class="table table-hover table-striped table-bordered ">  
+					      <thead>
+					        <tr>
+					          <th column="TITLE" class="sorting" ng-click="order($event.target)">标题</th>
+					          <th column="EXTNAME" class="sorting" ng-click="order($event.target)">格式</th>
+					          <th column="FILE_SIZE" class="sorting" ng-click="order($event.target)">文件大小</th>
+					          <th column="CONTENTCLASS" class="sorting" ng-click="order($event.target)">资源内容</th>
+					          <th column="MTIME" class="sorting" ng-click="order($event.target)">上传时间</th>
+					          <th>下载</th>
+					        </tr>
+					      </thead>
+					      <tbody ng-switch on="page.current_num">
+					      	<tr ng-switch-when="0">
+					      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+					      	</tr>
+					        <tr ng-repeat='res in resList'>
+					          <td>{{res.TITLE}}</td>
+					          <td>{{res.EXTNAME}}</td>
+					          <td>{{res.FILE_SIZE}}</td>
+					          <td>{{res.CONTENTCLASS}}</td>
+					          <td>{{res.MTIME}}</td>
+					          <td>
+					               <a href="" ng-click="downloadRes(res.FK_RES_FILE_LINK)" style="cursor:pointer;"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><span style="color:blue;">下载</span></a>
+					               <span ng-if='action==1'>
+					               &nbsp;<a href="" ng-click="downloadRes(res.RES_ATTR_TEA_PK)" style="cursor:pointer;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span><span style="color:red;">删除</span></a>
+					               </span>
+					               
+					          </td>
+					        </tr>
+					      </tbody>
+					      <tfoot>
+					      	<tr>
+					      		<td colspan="100">
+					      		    <div ng-include="'html/page.html'"></div>
+								</td>
+					      	</tr>
+					      </tfoot>
+					    </table>   
+		       </div>
+		    </div>

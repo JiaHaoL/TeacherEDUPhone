@@ -1,0 +1,17 @@
+{
+    "name": "TeacherEdu_course_view",
+    "viewUrl": "aps/content/courseView/template.html",
+    "controllerUrl": "aps/content/courseView/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "loadObjURL":"json/Open_queryForObject_findCourseById.json",
+            "loadTeacherURL":"json/Open_queryForList_findTeacherByCourse.json",
+            "getTeacherByCourseURL":"json/Open_queryForList_getTeacherByCourse.json",
+            "menu":{
+	            "buttons":[
+				]
+			}	
+	}
+}

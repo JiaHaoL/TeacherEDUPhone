@@ -1,0 +1,49 @@
+	<ul class="nav nav-tabs" >
+	  <li role="presentation" class="onlineTab tab_qrcode active" ng-click="tabClick(0);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-qrcode"> 签到二维码</span></a></li>
+	  <!-- <li role="presentation" class="onlineTab tab_verify" ng-click="tabClick(1);" style="font-size:16px;"><a href=""><span class="glyphicon glyphicon-ok"></span> 签到确认</a></li> -->
+	</ul>
+<div class="panel panel-default signin-qrcode">
+  <div class="panel-body">
+	<table align="center" style="width: 100%;">
+		<tr>
+			<td valign="top" style="text-align: center;" colspan="2">
+				<br/>
+		      	<img alt="" class="qrcodeLoginImg" width="300px" height="300px"><br/>
+		    </td>
+		</tr>
+
+	</table>
+
+  </div>
+  
+  <!-- 
+	  <div class="panel-footer">
+	       <span style="font-size:18px;">请使用微信扫描上方二维码进行签到</span>
+	  </div>
+   -->
+</div>
+
+<div style="disply:none" class="signin-verify">
+
+	 <table class="table table-striped">  
+	      <tbody ng-switch on="page.current_num">
+	      	<tr ng-switch-when="0" align="center">
+	      		<td colspan="100" class="NoSelectHistory">没有已签到教师</td>
+	      	</tr>
+	        <tr ng-repeat='data in dataList'>
+	          <td>
+	               <table width="100%">
+				   <tr>
+				 		<td valign="middle" style="font-size:18px;"><span style="font-weight:bold;">{{data.TEACHER_XM}}</span>({{data.UNIT_NAME}})</td>
+				 		<td valign="middle" style="font-size:18px;" align="right" class="verif-btn" ><button type="button" class="btn btn-info btn-sm" ng-click="signinClick(data);"><span class="glyphicon glyphicon-ok"  aria-hidden="true"></span> 确认 </button></td>
+				 	</tr>
+
+				 </table>
+	          </td>
+	        </tr>
+	      </tbody>
+
+	    </table>
+ </div>
+
+

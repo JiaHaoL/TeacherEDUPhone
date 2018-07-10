@@ -1,0 +1,9 @@
+{
+    "name": "app_top",
+    "viewUrl": "aps/top/template.html",
+    "controllerUrl": "aps/top/controller.js",
+    "config": 
+    {
+           
+	}
+}

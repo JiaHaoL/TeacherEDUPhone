@@ -1,0 +1,57 @@
+<div >
+
+				 <table class="table table-striped">  
+				      <tbody ng-switch on="page.current_num">
+				      	<tr ng-switch-when="0" align="center">
+				      		<td colspan="100" class="NoSelectHistory">没有需要签到的会议</td>
+				      	</tr>
+				        <tr ng-repeat='data in dataList'>
+				          <td>
+				               <table width="100%">
+							   <tr>
+									<!-- <td rowspan="4" style="width:80px;height:90px;padding-right: 10px;" ><a href="" ng-click="trClick(row.STUDY_WEIKE_PK,row.SECTION_ID,row.THEME_ID,row.CREATE_BY);"><img  class="img-thumbnail" ng-src="{{row.IDENTIFIER}}" style="width:70px;height:90px;"></a></td> -->	    
+							 		<td valign="middle" style="font-size:18px;">{{data.TITLE}}</td>
+							 	</tr>
+
+							 	<tr>
+							 		<td valign="middle" valign="middle" style="color:#888;">主讲教师：{{data.COURSESPEAKER_TEXT }} &nbsp;&nbsp;学科：{{data.FK_SUBJECT_TEXT}}</td>
+							 	</tr>
+							 	<tr>
+							 		<td valign="middle" valign="middle" style="color:#888;">
+							 		会议级别:
+								 	    <span ng-switch on="data.COURSELEVEL">
+								          	<span ng-switch-when="1">校内</span>
+								          	<span ng-switch-when="2">校际</span>
+										  	<span ng-switch-when="3">区级</span>
+											<span ng-switch-default>{{data.COURSELEVEL}}</span>
+								 		</span>
+							 		 &nbsp;&nbsp;开始时间：{{data.CLASS_START_TIME }} 
+							 		</td>
+							 		
+							 	</tr>
+							 	<tr>
+							 		<td valign="middle" style="color: #888;" align="right">
+							 		    <button type="button" class="btn btn-success btn-sm" ng-click="viewclick(data);"><span class="glyphicon glyphicon-list-alt"  aria-hidden="true"></span> 会议详情 </button>
+										<span ng-if='data.STATUS > 4'>
+										    <button type="button" class="btn btn-warning btn-sm" ng-click="qrcode(data);" disabled="disabled"><span class="glyphicon glyphicon-qrcode"  aria-hidden="true"></span> 签到二维码 </button>
+										</span>
+										<span ng-if='data.STATUS == 4'>
+										    <button type="button" class="btn btn-warning btn-sm" ng-click="qrcode(data);"><span class="glyphicon glyphicon-qrcode"  aria-hidden="true"></span> 签到二维码 </button>
+							 		    </span>
+							 		</td>
+							 	</tr>
+							 </table>
+				          </td>
+				        </tr>
+				      </tbody>
+				      <tfoot>
+				      	<tr>
+				      		<td colspan="100">
+				      		<div ng-include="'html/page.html'"></div>
+							</td>
+				      	</tr>
+				      </tfoot>
+				    </table>
+ </div>
+   
+

@@ -1,0 +1,48 @@
+<div class="div_course div_class_study" style="padding:10px;">
+		         <div class="panel panel-info">
+			         <table class="table table-info">  
+					      <tbody ng-switch on="page.current_num">
+					      	<tr ng-switch-when="0" style="padding-top:10px;">
+					      		<td colspan="100" class="NoSelectHistory" align="center">查询无记录</td>
+					      	</tr>
+
+					        <tr ng-repeat='res in resList'>
+					           <td>
+							          <table width="100%">
+									   <tr>
+			 		<td rowspan="5" style="width:80px;height:90px;padding-right: 10px;"><a href="" ng-click="viewclick(row)"> <img  class="img-thumbnail" ng-src="{{res.IDENTIFIER}}" style="width:70px;height:90px;"></a></td>
+									 		<td valign="middle" style="font-size:18px;">{{res.TITLE}}</td>
+									 	</tr>
+		
+									 	<tr>
+									 		<td valign="middle" valign="middle" style="color:#888;">文件格式：{{res.EXTNAME }}</td>
+									 	</tr>
+									 	<tr>
+									 		<td valign="middle" valign="middle" style="color:#888;">大小：{{res.FILE_SIZE}} KB</td>
+									 	</tr>
+									 	<tr>
+									 		<td valign="middle" valign="middle" style="color:#888;">
+									 		内容类型:
+										 	    {{res.CONTENTCLASS}}
+									 		</td>
+									 		
+									 	</tr>
+									 	<tr>
+									 		<td valign="middle" style="color: #888;" align="right">
+												<button type="button" class="btn btn-info btn-sm" ng-click="downloadRes(res.FK_RES_FILE_LINK)"><span class="glyphicon glyphicon-download-alt"  aria-hidden="true"></span> 下载 </button>
+									 		</td>
+									 	</tr>
+									 </table>
+								</td>	 
+					        </tr>
+					      </tbody>
+					      <tfoot>
+					      	<tr>
+					      		<td colspan="100">
+					      		    <div ng-include="'html/page.html'"></div>
+								</td>
+					      	</tr>
+					      </tfoot>
+					    </table>   
+		       </div>
+		    </div>

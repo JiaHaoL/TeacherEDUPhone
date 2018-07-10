@@ -1,0 +1,13 @@
+{
+    "name": "TeacherEdu_mycourse_list_all",
+    "viewUrl": "aps/content/mycourse/template.html",
+    "controllerUrl": "aps/content/mycourse/controller.js",
+    "config": 
+    {
+            "timeout": 60000,
+            "contentName": "content",
+            "getUserInfoURL":"json/User_getUserInfo_data.json",
+            "findCourseApplyListURL":"json/Open_queryForList_findCourseApplyList.json",
+            "scCourseStatusUpdateURL":"json/Open_update_scCourseStatusUpdate.json"
+	}
+}

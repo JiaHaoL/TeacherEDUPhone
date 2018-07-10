@@ -1,0 +1,41 @@
+ <div class="div_course div_class_notice" style="margin-top: 5px;">
+		          <div align="right" style="padding-top:10px;padding-bottom:10px;" class="select_notice">
+			         <button type="button" class="btn btn-primary" ng-click="publicNotice();"> <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 发布通告</button>
+			         <button type="button" class="btn btn-info" ng-click="updateNotice();"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 修改通告</button>
+			         <button type="button" class="btn btn-danger" ng-click="deleteNotice();"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除通告</button>
+		         </div>
+		        
+			         <table class="table table-hover table-striped table-bordered " style="background-color:white">  
+					      <thead>
+					        <tr>
+					          <th style="width:50px">操作</th>
+					          <th column="SC_COURSE_NOTICE_PK" class="sorting" ng-click="order($event.target)">标题</th>
+					          <th column="NOTICECONTENT" class="sorting" ng-click="order($event.target)">通知内容</th>
+					          <th column="CREATE_TIME" class="sorting" ng-click="order($event.target)">发布时间</th>
+   					          <th style="width:80px" column="CREATER" class="sorting" ng-click="order($event.target)">发布人</th>
+					        </tr>
+					      </thead>
+					      <tbody ng-switch on="page.current_num">
+					      	<tr ng-switch-when="0">
+					      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+					      	</tr>
+					        <tr ng-repeat='notice in noticeList'>
+					          <td>
+					             <input type="checkbox" name="datalist_checkbox" value="{{notice.SC_COURSE_NOTICE_PK}}">
+		                      </td>
+					          <td>{{notice.TITLE}}</td>
+					          <td><div ng-bind-html="notice.NOTICECONTENT|trustHtml"></div></td>
+					          <td>{{notice.CREATE_TIME}}</td>
+					          <td>{{notice.CREATER_TEXT}}</td>
+					        </tr>
+					      </tbody>
+					      <tfoot>
+					      	<tr>
+					      		<td colspan="100">
+					      		    <div ng-include="'html/page.html'"></div>
+								</td>
+					      	</tr>
+					      </tfoot>
+					    </table>   
+		      
+		    </div>

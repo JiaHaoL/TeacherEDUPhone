@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+    
+    <select id="getCourseLatLng" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	 	select 
+		  lng,
+		  lat
+		from sc_unit
+		where unit_address = (select ACTIVITY_PLACE from sc_course where sc_course_pk = #coursePk#)
+	</select>
+	
+    <select id="checkIsQrCode" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	 	select
+	 		*
+	 	from sc_course_teacher_qrcode
+	 	where fk_teacher = #FK_TEACHER#
+	 	and fk_course = #FK_COURSE#
+
+	</select>
+    
+    <update id="ScCourseTeacherQrcodeUpdate" parameterClass="java.util.HashMap">
+         update SC_COURSE_TEACHER_QRCODE set STATUS=1 where SC_COURSE_TEACHER_QRCODE_PK = #SC_COURSE_TEACHER_QRCODE_PK#
+    </update>
+    
+    <update id="updateUserCouseState" parameterClass="java.util.HashMap">
+    	update SC_COURSE_TEACHER set 
+    		status = 2
+    	where fk_sc_course = #coursePk#
+    	and FK_TEACHER = #userPk#
+    </update>
+    <update id="updateUserCourseStat" parameterClass="java.util.HashMap">
+    	UPDATE SC_COURSE_TEACHER_QRCODE SET
+    		STATUS = #state#,
+    		LAT = #Lat#,
+    		LNG = #Lng#,
+    		UPDATE_TIME = SYSDATE
+    	WHERE FK_COURSE = #coursePk# AND  FK_TEACHER = #userPk#
+    </update>
+    
+    <insert id="ScCourseTeacherQrcodeInsert" parameterClass="java.util.HashMap">
+            INSERT
+			INTO SC_COURSE_TEACHER_QRCODE
+			  (
+			    SC_COURSE_TEACHER_QRCODE_PK,
+			    FK_COURSE,
+			    FK_TEACHER,
+			    STATUS,
+			    CREATE_TIME
+			  )
+			  VALUES
+			  (
+			    #UUID#,
+			    #FK_COURSE#,
+			    #FK_TEACHER#,
+			    0,
+			    sysdate
+			  )
+    </insert>
+</sqlMap>

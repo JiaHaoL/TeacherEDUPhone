@@ -1,0 +1,31 @@
+<div style="height: 60px;line-height: 40px;border-bottom: 1px solid #eee;margin-right: 15px;margin-left: 15px;padding-top: 10px;margin-bottom: 10px;" >
+
+<div style="float: left">
+<h5 style="margin-top: 15px;font-size: 1.2em;font-weight: normal;">
+<span style="font-family: 'Glyphicons Halflings';" class="glyphicon glyphicon-blackboard" aria-hidden="true">
+</span> {{text}}</h5>
+</div>
+
+<div style="float: right;margin-right: 15px;margin-top: 5px;">
+<!-- <a ng-click="goBack();"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> 返回</a> -->
+</div>
+
+</div>
+
+
+<div style="padding:15px;">
+            <ul class="nav nav-tabs" >
+				  <li role="presentation" class="onlineTab tab_speak active" ng-click="onlineTabclick(0);"><a href=""><span class="glyphicon glyphicon-blackboard"></span> <span class="coursedetail_online">说课</span><span class="coursedetail_offline" style="display:none">会议说明</span></a></li>
+				  <li role="presentation" class="onlineTab tab_study" ng-click="onlineTabclick(1);"><a href=""><span class="glyphicon glyphicon-duplicate"></span> 会议资料</a></li>
+				  <li role="presentation" class="onlineTab tab_notice" ng-click="onlineTabclick(2);"><a href=""><span class="glyphicon glyphicon-envelope"></span> 通知公告</a></li>
+				 <li role="presentation" class="onlineTab tab_moke" ng-click="onlineTabclick(3);"><a href=""><span class="glyphicon glyphicon-inbox"></span> 磨课</a></li>
+				 <!--  <li role="presentation" class="onlineTab tab_point" ng-click="onlineTabclick(4);"><a href=""><span class="glyphicon glyphicon-scissors"></span> 切片评课</a></li> -->
+				  <li role="presentation" class="onlineTab tab_WEB" ng-click="onlineTabclick(5);"><a href=""><span class="glyphicon glyphicon-facetime-video"></span> WEB视频课堂</a></li>
+				   
+		    </ul>
+		    
+		    
+		    <div class="contentDiv" style="padding:5px;margin-top:0px;" 
+			    app-part src="appPartSrc"  random="true" ></div>
+</div>
+	  

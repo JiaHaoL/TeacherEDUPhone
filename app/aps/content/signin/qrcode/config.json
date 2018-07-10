@@ -1,0 +1,12 @@
+{
+    "name": "TeacherEdu_signin_qrcode",
+    "viewUrl": "aps/content/signin/qrcode/template.html",
+    "controllerUrl": "aps/content/signin/qrcode/controller.js",
+    "config": 
+    {   
+           "scCourseTeacherUpdateURL":"json/Open_update_scCourseTeacherUpdate.json",
+           "getTeacherByCourseURL":"json/Open_queryForList_getTeacherByCourse.json",
+           "getTeacherByQRCodeURL":"json/Open_queryForList_getTeacherByQRCode.json",
+           "scCourseTeacherQRCodeUpdateURL":"json/Open_update_scCourseTeacherUpdateQRCode.json"
+	}
+}
