@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<!-- 教师 -->
+	<select id="findTeacherList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  USER_PK,
+			  USER_NAME,
+			  substr(USER_EMAIL,1,1)||'*'||substr(USER_EMAIL,instr(USER_EMAIL,'@',-1,1)-1,length(USER_EMAIL)-instr(USER_EMAIL,'@',-1,1)+2 ) USER_EMAIL,
+			  replace(USER_PHONE,substr(USER_PHONE,4,4),'****') USER_PHONE,
+			  USER_CARD,
+			  USER_TYPE,
+			  (select (select DICTIONARY_NAME from SC_DICTIONARY where DICTIONARY_PK=TEACHER_JZGLBM) 
+			  from SC_USER_TEACHER where TEACHER_PK = USER_PK) TEACHER_JZGLBM,
+			  (select (select UNIT_ABBREVIATION from SC_UNIT where UNIT_PK=TEACHER_GZDWPK) 
+			  from SC_USER_TEACHER where TEACHER_PK = USER_PK) TEACHER_GZDW,
+			  (select (select UNIT_ABBREVIATION from SC_UNIT where UNIT_PK=TEACHER_RSDWPK) 
+			  from SC_USER_TEACHER where TEACHER_PK = USER_PK) TEACHER_RSDW,
+			  USER_STATUS,
+			  CREATE_BY,
+			  CREATE_TIME,
+			  UPDATE_BY,
+			  UPDATE_TIME,
+			  FK_UNIT,
+			  USER_WX,
+			  USER_SN,
+			  USER_BG,
+			  USER_MN,
+			  replace(ID_NUMBER,substr(ID_NUMBER,4,11),'***********') ID_NUMBER,
+			  XJFH
+		from 
+			SC_USER
+		where USER_STATUS = 0 
+	  	and USER_TYPE = 1
+	  	and (select TEACHER_STATE from SC_USER_TEACHER where TEACHER_PK = USER_PK) != '4'
+	    and USER_PK not in (select FK_USER from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+	    <isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">  
+		    USER_SN LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_EMAIL">  
+		    USER_EMAIL LIKE '%'||#USER_EMAIL#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_PHONE">  
+		    USER_PHONE LIKE '%'||#USER_PHONE#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    ID_NUMBER LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="TEACHER_GZDWPK">  
+		    (select TEACHER_GZDWPK from SC_USER_TEACHER where TEACHER_PK = USER_PK) = #TEACHER_GZDWPK#
+		</isNotEmpty>
+		<isNotEmpty prepend="ORDER BY" property="page.column">
+			$page.column$ $page.order$
+		</isNotEmpty>
+	</select>
+	<select id="findTeacherListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			count(*)
+		from 
+			SC_USER
+		where 
+		    USER_STATUS = 0
+		and USER_TYPE = 1
+        and (select TEACHER_STATE from SC_USER_TEACHER where TEACHER_PK = USER_PK) != '4'
+       	and USER_PK not in (select FK_USER from SURVEY_ANSWER_V  where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+	    <isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+	    <isNotEmpty prepend="AND" property="USER_SN">  
+		    USER_SN LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_EMAIL">  
+		    USER_EMAIL LIKE '%'||#USER_EMAIL#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_PHONE">  
+		    USER_PHONE LIKE '%'||#USER_PHONE#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    ID_NUMBER LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="TEACHER_GZDWPK">  
+		    (select TEACHER_GZDWPK from SC_USER_TEACHER where TEACHER_PK = USER_PK) = #TEACHER_GZDWPK#
+		</isNotEmpty>
+	</select>
+	<!-- 学生 -->
+	<select id="findStudentList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  USER_PK,
+			  USER_NAME,
+			  substr(USER_EMAIL,1,1)||'*'||substr(USER_EMAIL,instr(USER_EMAIL,'@',-1,1)-1,length(USER_EMAIL)-instr(USER_EMAIL,'@',-1,1)+2 ) USER_EMAIL,
+			  replace(USER_PHONE,substr(USER_PHONE,4,4),'****') USER_PHONE,
+			  USER_CARD,
+			  USER_TYPE,
+			  USER_STATUS,
+			  SC_USER.CREATE_BY,
+			  SC_USER.CREATE_TIME,
+			  SC_USER.UPDATE_BY,
+			  SC_USER.UPDATE_TIME,
+			  SC_USER_STUDENT.FK_UNIT,
+			  (SELECT UNIT_ABBREVIATION FROM SC_UNIT WHERE SC_USER_STUDENT.FK_UNIT=UNIT_PK) FK_UNIT_NAME,
+			  (SELECT DICTIONARY_NAME FROM SC_DICTIONARY where FK_RULE = 'SJAAAAA10061' and DICTIONARY_PK = STUDENT_STATE) STUDENT_STATE_NAME,
+        	  STUDENT_STATE,
+			  USER_WX,
+			  USER_SN,
+			  USER_BG,
+			  USER_MN,
+			  STUDENT_NJID,
+			  (select GRADE_NAME from SC_GRADE where GRADE_PK=STUDENT_NJID) GRADE_NAME,
+			  STUDENT_BJID,
+			  (select (SELECT GRADE_NAME from SC_GRADE where GRADE_PK=STUDENT_NJID)||nvl2(CLASS_BH,'('||CLASS_BH||')班','未分班') from SC_CLASS where CLASS_PK=STUDENT_BJID) CLASS_NAME,
+			  replace(ID_NUMBER,substr(ID_NUMBER,4,11),'***********') ID_NUMBER,
+			  XJFH
+		from 
+			SC_USER,SC_USER_STUDENT
+		where USER_PK = STUDENT_PK
+		and	USER_STATUS = 0 and USER_TYPE = 2
+		and USER_PK not in (select FK_USER from SURVEY_ANSWER_V  where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				SC_USER_STUDENT.FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+	    <isNotEmpty prepend="AND" property="STUDENT_NJID">  
+		    SC_USER_STUDENT.STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+		    SC_USER_STUDENT.STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">  
+		    USER_SN LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_EMAIL">  
+		    USER_EMAIL LIKE '%'||#USER_EMAIL#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_PHONE">  
+		    USER_PHONE LIKE '%'||#USER_PHONE#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    ID_NUMBER LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+		    SC_USER_STUDENT.FK_UNIT = #FK_UNIT#
+		</isNotEmpty> 	
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+		    STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="XJFH">  
+		    XJFH = #XJFH#
+		</isNotEmpty>
+		<isNotEmpty prepend="ORDER BY" property="page.column">
+			$page.column$ $page.order$
+		</isNotEmpty>
+	</select>
+	<select id="findStudentListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			  count(*)
+		from 
+			SC_USER,SC_USER_STUDENT
+		where USER_PK = STUDENT_PK
+		and	USER_STATUS = 0 and USER_TYPE = 2
+		and USER_PK not in (select FK_USER from SURVEY_ANSWER_V  where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				SC_USER_STUDENT.FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+	    <isNotEmpty prepend="AND" property="STUDENT_NJID">  
+		    STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+		    STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">  
+		    USER_SN LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_EMAIL">  
+		    USER_EMAIL LIKE '%'||#USER_EMAIL#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_PHONE">  
+		    USER_PHONE LIKE '%'||#USER_PHONE#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    ID_NUMBER LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+		    SC_USER_STUDENT.FK_UNIT = #FK_UNIT#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+		    STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="XJFH">  
+		    XJFH = #XJFH#
+		</isNotEmpty>
+	</select>
+	<!-- 学生监护人 -->
+	<select id="findParentList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			  STUDENT_XM USER_SN,
+			  FK_UNIT,
+			  (SELECT UNIT_ABBREVIATION FROM SC_UNIT WHERE FK_UNIT=UNIT_PK) FK_UNIT_NAME,
+			  (SELECT DICTIONARY_NAME FROM SC_DICTIONARY where FK_RULE = 'SJAAAAA10061' and DICTIONARY_PK = STUDENT_STATE) STUDENT_STATE_NAME,
+        	  STUDENT_STATE,
+			  STUDENT_NJID,
+			  (select GRADE_NAME from SC_GRADE where GRADE_PK=STUDENT_NJID) GRADE_NAME,
+			  STUDENT_BJID,
+			  (select (select GRADE_NAME from SC_GRADE where GRADE_PK=STUDENT_NJID)||nvl2(CLASS_BH,'('||CLASS_BH||')班','未分班') from SC_CLASS where CLASS_PK=STUDENT_BJID) CLASS_NAME,
+			  PARENT_PK USER_PK,
+			  up.FK_USER,
+			  (select USER_TYPE from SC_USER where USER_PK = up.FK_USER) USER_TYPE,
+    		  PARENT_NAME,
+    		  replace(PARENT_CARD,substr(PARENT_CARD,4,11),'***********') ID_NUMBER,
+    		  replace(PARENT_MOBILE,substr(PARENT_MOBILE,4,4),'****') PARENT_MOBILE 
+		from 
+			SC_USER_PARENT up,SC_USER_STUDENT us,SC_STUDENT_PARENT sp 
+		where up.PARENT_PK = sp.FK_PARENT AND sp.FK_STUDENT = us.STUDENT_PK
+		and up.FK_USER not in (select FK_USER from SURVEY_ANSWER_V  where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+	  	<isNotEmpty prepend="AND" property="STUDENT_NJID">  
+		    STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+		    STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+		    FK_UNIT = #FK_UNIT#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+		    STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">  
+		    STUDENT_XM LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+	  	<isNotEmpty prepend="AND" property="PARENT_NAME">  
+		    PARENT_NAME LIKE '%'||#PARENT_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    PARENT_CARD LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="PARENT_MOBILE">  
+		    PARENT_MOBILE LIKE '%'||#PARENT_MOBILE#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="ORDER BY" property="page.column">
+			$page.column$ $page.order$
+		</isNotEmpty>
+	</select>
+	<select id="findParentListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select 
+			 COUNT(*)
+		from 
+			 SC_USER_PARENT up,SC_USER_STUDENT us,SC_STUDENT_PARENT sp 
+		where up.PARENT_PK = sp.FK_PARENT AND sp.FK_STUDENT = us.STUDENT_PK
+		and up.FK_USER not in (select FK_USER from SURVEY_ANSWER_V  where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				FK_UNIT = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+	  	<isNotEmpty prepend="AND" property="STUDENT_NJID">  
+		    STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+		    STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+		    FK_UNIT = #FK_UNIT#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT_SCHOLL">  
+		    FK_UNIT = #FK_UNIT_SCHOLL#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+		    STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">  
+		    STUDENT_XM LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+	    <isNotEmpty prepend="AND" property="PARENT_NAME">  
+		    PARENT_NAME LIKE '%'||#PARENT_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ID_NUMBER">  
+		    PARENT_CARD LIKE '%'||#ID_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="PARENT_MOBILE">  
+		    PARENT_MOBILE LIKE '%'||#PARENT_MOBILE#||'%'
+		</isNotEmpty>
+	</select>
+
+</sqlMap>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+    
+	<!-- 问卷题目 -->
+    <select id="findQuestionInfoById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+   		SELECT 
+			SURVEY_TITLE_ID,
+			SURVEY_TITLE_TXT,
+			SURVEY_TITLE_NAME 
+		FROM SURVEY_TITLE 
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		ORDER BY to_number(SURVEY_TITLE_ORDER)
+    </select>
+    
+    <!-- 用户答案 -->
+    <select id="findResultInfoById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT 
+			SURVEY_CONTENT_ID,
+			(select SURVEY_CONTENT_CHOOSE from SURVEY_CONTENT where SURVEY_CONTENT.SURVEY_CONTENT_ID = SURVEY_SYNTH.SURVEY_CONTENT_ID) SURVEY_CONTENT_CHOOSE
+		FROM SURVEY_SYNTH 
+		WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+		order by SURVEY_SYNTH_TIME
+	</select>
+</sqlMap>

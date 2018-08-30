@@ -1,0 +1,16 @@
+{
+    "name": "app_support_questupdate",
+    "viewUrl": "aps/content/questionnaire/edit/update/update/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/update/update/controller.js",
+    "config": 
+    {
+          "findTypeListURL":"json/Open_queryForList_findTypeList.json",
+          "findRelTitleListByIdURL": "json/Open_queryForList_findRelTitleListById.json",
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findOptionListByIdURL":"json/Open_queryForList_findOptionListById.json",
+          "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json",
+	      "deleteTitleURL":"json/Title_deleteTitle_data.json" ,
+	      "updateTitleURL":"json/Title_updatetitleByid_data.json"
+	}
+}

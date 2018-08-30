@@ -1,0 +1,28 @@
+{
+	"name" : "app_questionnaire_supplement",
+    "viewUrl": "aps/content/questionnaire/supplement/template.html",
+    "controllerUrl": "aps/content/questionnaire/supplement/controller.js",
+    "config": {
+        "findURL": "json/Open_queryForList_findAnswerUserList.json",
+        "sendWxURL" : "json/Message_supplement_data.json",
+    	"menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_questionnaire_supplement.cancel"
+		        	},
+		        	{
+		            	"buttonName":"发布",
+		            	"buttonStyle":"success",
+		            	"buttonImg":"ok",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_questionnaire_supplement.confirm"
+		        	}
+				]
+			
+		}
+	}
+}

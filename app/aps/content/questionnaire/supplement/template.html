@@ -1,0 +1,11 @@
+<div class="form-group">
+	<input type="text" class="form-control"  ng-model="form.USER_SN" placeholder="姓名">
+  	<button type="submit" class="btn btn-primary" ng-click="select()"> <span class="glyphicon glyphicon-search"></span> 查询 </button>
+</div>
+<hr>
+<div style="margin-top:15px;padding-left:24px;" >
+	<span ng-repeat="row in userList" style="float:left;padding-left:10px;width:90px;">          		
+		<input type="checkbox" name="dataPk" value="{{row.FK_USER}}" />
+	    <span>{{row.USER_SN}}</span>
+	</span>
+</div>

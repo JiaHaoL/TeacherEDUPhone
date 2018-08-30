@@ -1,0 +1,429 @@
+<div style="padding:15px;">
+<div class="panel panel-info">
+
+<div style="background: #eeeeee;">
+ 	<!-- <div class="nav container-fluid navbar-fixed-top" 
+ 	style="background-color:#f0f9fe;height:50px;padding-right: 0px;padding-left: 0px;">
+ 	<div class="container" style="width: 900px;padding-left: 0px;padding-right: 0px;">
+ 		<div style="float: right; margin-left: 30px;margin-top:7px;">
+ 			<button type="button" ng-click="goBack()" class="btn btn-warning">
+ 			<span class="glyphicon glyphicon-share-alt"></span> 返回
+ 			</button>
+ 		</div>
+ 		<div style="float: left; margin-right: 30px;margin-top:7px;">
+			<button type="button" ng-click="updateTitle();" class="btn btn-primary">
+				<span class="glyphicon glyphicon-floppy-saved"></span> 完成编辑
+			</button>
+			
+ 			<button type="button" ng-click="scann();" class="btn btn-default">
+ 				<span class="glyphicon glyphicon-eye-open"></span> 预览问卷
+ 			</button>
+		</div>
+	</div>
+	</div> -->
+	
+	<!-- <div style="width: 100%;height: 20px;background: #eeeeee;">
+		<button type="button" ng-click="goBack()" class="btn btn-warning">
+ 			<span class="glyphicon glyphicon-share-alt"></span> 返回
+ 		</button>
+	</div> -->
+	
+   <!--  <nav class="navbar navbar-inverse navbar-static-top" role="navigation" 
+    style="background-color: #428bca;color: #fff;width: 900px;position:fixed;top:70px;
+    left: 50%;margin-left: -449px;margin-bottom: 0px;border: none;"> -->
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <form class="form-inline" style="background-color: #428bca;color: #fff;width: 100%;
+    padding-left: 10%;margin-bottom: 0px;border: none;">
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="text-align: center">
+	      <ul class="nav navbar-nav">
+	        <li><a ng-click="addChoice(1)" style="color: #fff;"><img src="assets/img/designqpic7.png"/> 单选题 </a></li>
+	        
+	        <li><a ng-click="addChoice(2)" style="color: #fff;"><img src="assets/img/designqpic8.png"/> 多选题</a></li>
+	        
+	        
+	        <li><a ng-click="addVacancy(3)" style="color: #fff;"><img src="assets/img/designqpic9.png"/> 填空题</a></li>
+	        
+	        <li><a ng-click="addJudge(4)" style="color: #fff;"><span class="glyphicon glyphicon-ok"></span> 判断题</a></li>
+	        
+	 
+	        <li class="dropdown">
+	          <a style="color: #fff;" href="" class="dropdown-toggle" data-toggle="dropdown">
+	          <span class="glyphicon glyphicon-hand-up"></span> 投票题 <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a ng-click="addVoteSignal(5)">投票单选题</a></li>
+	            <li><a ng-click="addVoteMultiple(6)">投票多选题</a></li>
+	          </ul>
+	        </li>
+	        
+	        <li class="dropdown">
+	          <a style="color: #fff;" href="" class="dropdown-toggle" data-toggle="dropdown">
+	          <span class="glyphicon glyphicon-sort-by-order"></span> 评分题 <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a  ng-click="addScoreSignal(7)">评分单选题</a></li>
+	            <li><a  ng-click="addScoreMultiple(8)">评分多选题</a></li>
+	          </ul>
+	        </li>
+	        
+	        <li><a ng-click="addSubjective(9)" style="color: #fff;">
+	        <span class="glyphicon glyphicon-edit"></span> 主观题</a></li>
+	        
+	        <li class="dropdown">
+	          <a style="color: #fff;" href="" class="dropdown-toggle" data-toggle="dropdown">
+	          <span class="glyphicon glyphicon-list"></span> 矩阵题 <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a ng-click="addMatrixSignal(10)">矩阵单选题</a></li>
+				<li><a ng-click="addMatrixMultiple(11)" >矩阵多选题</a></li>
+	          </ul>
+	        </li> 
+	      </ul> 
+	    </div><!-- /.navbar-collapse -->
+	<!-- </nav> -->
+	</form>
+	<div style="width: 100%;height: 20px;background: #eeeeee;">
+		<div style="float: right; margin-left: 30px;margin-top:7px;padding-right:30px">
+ 			<button type="button" ng-click="goBack()" class="btn btn-warning">
+ 			<span class="glyphicon glyphicon-share-alt"></span> 返回
+ 			</button>
+ 		</div>
+ 		<div style="float: left; margin-right: 30px;margin-top:7px;padding-left:30px">
+			<button type="button" ng-click="updateTitle();" class="btn btn-primary">
+				<span class="glyphicon glyphicon-floppy-saved"></span> 完成编辑
+			</button>
+			
+ 			<button type="button" ng-click="scann();" class="btn btn-default">
+ 				<span class="glyphicon glyphicon-eye-open"></span> 预览问卷
+ 			</button>
+		</div>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+	<!--内容-->
+    <div class="container" style=" width: 900px;background: #fff;border: 1px solid #428bca;border-top: none;">
+       <table class="table table-hover" style="margin-top:10px; border-collapse:separate; border-spacing:10px;" >
+           <thead>
+	    	   <tr style="text-align:center;">
+		           <td style="font-size: 20px; color: blue;" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</td>
+	           </tr>
+	           <tr>
+		          <td>
+		          	<span style="float:left;" ng-bind-html="questionnaire.SURVEY_QUEST_REMARK | trustHtml"></span>  
+		          	<span style="float:right;"><a href="" style="float:right;" ng-click="updateQnInfo();">修改问卷</a></span>
+		          </td>   
+               </tr>
+	       </thead>
+	       <tbody>        
+	       	   <tr ng-repeat="title in titleList" ng-switch on="title.SURVEY_TYPE_ID">	
+	       	        <!-- 1.单选题 -->
+	   				<td ng-switch-when="1" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[单选题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[单选题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>  			   				  
+	   				   <table style="float: none;">
+	                       <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}" >
+	                           <td>
+		                           <input  disabled type="radio" name="{{title.SURVEY_TITLE_NAME}}" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}} 
+		                           <span  ng-if="row.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+		                           </span>
+	                           </td>
+	                       </tr>  
+                       </table> 
+                       <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!--                             <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button>  -->
+                            <button ng-click="updateChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copyChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>               
+   				   </td>	
+   			       <!-- 2.多选题 -->
+	   				<td ng-switch-when="2"  ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[多选题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[多选题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	   				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	   				   <table>
+	                       <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>
+	                           	 <input  disabled type="checkbox" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}} 
+	                             <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                              </span>
+	                           </td> 
+	                       </tr>  
+	                   </table> 
+	                   <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+	      <!--                   <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button>  -->
+                            <button ng-click="updateChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copyChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>                 
+	   				</td>	
+	   				<!--3.填空题 -->
+	 			   <td ng-switch-when="3"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[填空题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[填空题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>	  
+	                     <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+	            <!--              <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button>  -->
+                             <button ng-click="updateVacancy(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                             <button ng-click="copyVacancy(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                             <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                             <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                             <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                             <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                             <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                         </div>               
+	 				</td>
+	 				<!-- 4.判断题 -->
+	 				<td ng-switch-when="4"  ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[判断题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[判断题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	   				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>			  
+	   				   <table>
+	                       <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>
+	                           	 <input  disabled type="radio" name="{{title.SURVEY_TITLE_NAME}}" ng-checked="{{row.IS_CHECKED}}" > {{row.SURVEY_CONTENT_CHOOSE}} 
+	                             <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                              </span>
+	                           </td>
+	                       </tr>  
+	                    </table> 
+	                    <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+	        <!--                 <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                            <button ng-click="updateChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copyChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>                 
+	   				</td>
+	   				<!-- 5.投票单选 -->
+	   				<td ng-switch-when="5"  ng-switch on="title.CHECKED">
+	   				    <span style="float:left;color: red;" ng-switch-when="true">*[投票单选题]&nbsp;</span>
+	   				    <span style="float:left;color: red;" ng-switch-when="false">[投票单选题]&nbsp;</span>	
+	   				    <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	   				    <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>			  
+	   				   <table>
+	                       <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>
+	                           	  <input  disabled type="radio" name="{{title.SURVEY_TITLE_NAME}}" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}} 
+	                              <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                              </span>
+	                           </td>
+	                       </tr>  
+	                  </table>  
+	                  <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!-- 	                      <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+						  <button ng-if="questionnaire.SURVEY_QUEST_TYPE  == '1'" ng-click="expandInfo(title)" type="button" class="btn btn-default"><sapn style="color:rgba(22, 118, 60, 0.76);" class="glyphicon glyphicon-cog"></sapn> 设置</button>
+                          <button ng-click="updateChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                          <button ng-click="copyChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                          <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                          <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                          <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                          <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                          <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                      </div>                
+	   			  </td>	
+	   		      <!-- 6.投票多选 -->
+	   			  <td ng-switch-when="6"  ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[投票多选题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[投票多选题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	   				   <span style="float:right;color:blue;font-weight: bold;">[请选择{{title.MINIMUN_VALUE}}-{{title.MAXIMUN_VALUE}}项]</span>	
+	   				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>	  
+	   				   <table>
+	                       <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>
+	                              <input  disabled type="checkbox" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}} 
+	                              <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                              </span>
+	                           </td>
+	                       </tr>  
+	                   </table>   
+	                   <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!-- 	                       <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+	                       <button ng-if="questionnaire.SURVEY_QUEST_TYPE == '1'" ng-click="expandInfo(title)" type="button" class="btn btn-default"><sapn style="color:rgba(22, 118, 60, 0.76);" class="glyphicon glyphicon-cog"></sapn> 设置</button>
+                           <button ng-click="updateChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                           <button ng-click="copyChoice(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                           <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                           <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                           <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                           <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                           <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                       </div>               
+	   			</td>
+	   			<!-- 7.评分单选题 -->
+	 			<td ng-switch-when="7"  ng-switch on="title.CHECKED">
+	 				   <span style="float:left;color: red;" ng-switch-when="true">*[评分单选题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[评分单选题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>		  
+	 				   <table>
+	                     <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                         <td>
+	                             <input  disabled type="radio" name="{{title.SURVEY_TITLE_NAME}}" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}}
+	                             <span style="color: orange; margin-left:  15px;">(分值：{{row.SURVEY_CONTENT_VALUE}}) </span>
+	                             <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                             </span>
+	                         </td>
+	                     </tr>  
+	               	  </table>   
+              	      <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!--               	          <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                          <button ng-click="updateScore(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                          <button ng-click="copyScore(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                          <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                          <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                          <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                          <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                          <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                      </div>               
+	 			</td>	
+	 			<!-- 8.评分多选题 -->
+	 			<td ng-switch-when="8"  ng-switch on="title.CHECKED">
+	 				   <span style="float:left;color: red;" ng-switch-when="true">*[评分多选题]&nbsp;</span>
+	   				   <span style="float:left;color: red;" ng-switch-when="false">[评分多选题]&nbsp;</span>	
+	   				   <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				   <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 				  
+	 				   <table>
+	                     <tr ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                         <td>
+	                          	  <input disabled type="checkbox" ng-checked="{{row.IS_CHECKED}}"> {{row.SURVEY_CONTENT_CHOOSE}}
+	                              <span style="color: orange; margin-left:  15px;">(分值：{{row.SURVEY_CONTENT_VALUE}}) </span>
+	                              <span ng-if="row.SURVEY_CONTENT_IMG!=null">
+	                                	<img style="width: {{row.IMAGE_WIDTH}}px;height:{{row.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{row.SURVEY_CONTENT_IMG}}">
+	                              </span>
+	                         </td>
+	                     </tr>  
+	                  </table> 
+	                  <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!-- 	                     <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                         <button ng-click="updateScore(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                         <button ng-click="copyScore(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                         <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                         <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                         <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                         <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                         <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                      </div>                 
+	 			</td>
+	 			<!-- 9.主观题 -->
+	 			<td ng-switch-when="9"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[主观题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[主观题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	 				     <table>
+		                     <tr>
+		                         <td>
+		                         	 <textarea  disabled class="form-control" wrap="soft" rows="4"  tabindex="1"  ng-model="SURVEY_CONTENR_CHOOSE"
+			                             style="width: 400px; height: 70px; overflow: auto; padding: 5px 0px 0px 5px; border: 1px solid rgb(204, 204, 204);" not-null="yes">
+			                         </textarea>
+		                         </td>
+		                     </tr>  
+	                     </table>  
+	                     <div class="btn-group-xs" role="button" style="padding-top: 8px; float: right;">
+<!-- 	                        <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                            <button ng-click="updateSubjective(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copySubjective(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>                 
+	 			  </td>
+	 			  <!-- 10.矩阵单选题 -->
+	 			  <td ng-switch-when="10"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[矩阵单选题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[矩阵单选题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	 				     <table style="width: 85%;">
+	 				     	 <thead>
+								<tr>
+									<th style=""></th>
+									<th style="padding:10px;text-align: center;" ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">{{row.SURVEY_CONTENT_CHOOSE}}</th>
+								</tr>
+	 				     	 </thead>
+	 				     	 <tbody>
+			                     <tr ng-repeat="heading in headingList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         	<td>{{heading.LINE_HEADING}}</td>
+		                         	<td style="padding:10px;text-align:center;" ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         		<input type="radio" disabled />
+		                         	</td>
+		                     	 </tr>    
+		                    </tbody>
+	                    </table>   
+	                    <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+<!-- 	                        <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                            <button ng-click="updateMatrix(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copyMatrix(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>                
+	 			  </td>
+	 			  <!-- 11.矩阵多选题 -->
+	 			  <td ng-switch-when="11"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[矩阵多选题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[矩多单选题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	 				     <table style="width: 85%;">
+	 				     	 <thead>
+								<tr>
+									<th style=""></th>
+									<th style="padding:10px;text-align: center;" ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">{{row.SURVEY_CONTENT_CHOOSE}}</th>
+								</tr>
+	 				     	 </thead>
+	 				     	 <tbody>
+			                     <tr ng-repeat="heading in headingList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         	<td>{{heading.LINE_HEADING}}</td>
+		                         	<td style="padding:10px;text-align:center;" ng-repeat="row in contentList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         		<input  disabled type="checkbox" ng-checked="{{row.IS_CHECKED}}"/>
+		                         	</td>
+		                     	 </tr>    
+		                    </tbody>
+	                    </table>
+	                    <div class="btn-group-xs" role="button" style="padding-top:8px; float: right;">
+	   <!--                      <button ng-click="rel(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 关联逻辑</button> -->
+                            <button ng-click="updateMatrix(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicedit.png" /> 编辑</button> 
+                            <button ng-click="copyMatrix(title)" type="button" class="btn btn-default"><img src="assets/img/designqpiccopy.png" /> 复制</button>   
+                            <button ng-click="removeTitle(title)" type="button" class="btn btn-default"><img src="assets/img/designqpicremove.png" /> 删除</span></button>
+                            <button ng-click="updata($index)" type="button" class="btn btn-default"><img src="assets/img/designqpicup.png" /> 上移</span></button>
+                            <button ng-click="down($index)"  type="button" class="btn btn-default"><img src="assets/img/designqpicdown.png" /> 下移</span></button>
+                            <button ng-click="frist($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic3.png" /> 最前</button>
+                            <button ng-click="last($index)" type="button" class="btn btn-default"><img src="assets/img/designqpic4.png" /> 最后</button>
+                        </div>                    
+	 			  </td>
+          </tbody>
+      </table>
+	</div>
+	
+	<br/><br/>
+
+</div>
+
+</div>
+</div>

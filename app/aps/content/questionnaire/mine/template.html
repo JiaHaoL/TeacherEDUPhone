@@ -1,0 +1,50 @@
+<div style="padding:15px;">
+<div class="panel panel-info">
+<div class="container" style="text-align:  center;">
+	<div class="btn-group" data-toggle="buttons" style="width:100%">
+	    <label class="btn btn-default active" ng-click="disFinished()" style="border-radius: 0px;width:50%;">
+	    	<input type="radio" name="options" id="option1" autocomplete="off" checked> 未完成问卷
+	    </label>
+	    <label class="btn btn-default" ng-click="finished()" style="border-radius: 0px;width:50%;">
+	    	<input type="radio"  name="options" id="option2" autocomplete="off"> 已完成问卷
+	    </label>
+	</div>
+	<div ng-if="num > '0'" style="border:0px solid #ccc;border-top: 0px;margin-right:1px;">
+		<div ng-repeat="data in dataList" ng-click="choice(data)" style="border-bottom:1px solid #ccc;" ng-switch on="data.SURVEY_QUEST_STATE" >
+			<table>
+				<tr>
+					<td ng-if="data.SURVEY_QUEST_TYPE == '0'">
+						<img  src="assets/img/qs_write.png"  style="border-right: 1px double gainsboro;margin:8px;padding-right: 8px;width:85px;height:85px;"/>
+					</td>
+					<td ng-if="data.SURVEY_QUEST_TYPE == '1'">
+						<img  src="assets/img/qs_vote.png"  style="border-right: 1px double gainsboro;margin:8px;padding-right: 8px;width:85px;height:85px;"/>
+					</td>
+					<td>
+						<ul class="qs_write">	
+							<li style="color:#000;">
+								{{data.SURVEY_QUEST_NAME}} 
+								<!-- <span ng-if="data.SURVEY_QUEST_TYPE == '0'">(普通问卷)</span> -->
+								<!-- <span ng-if="data.SURVEY_QUEST_TYPE == '1'">[评选问卷]</span> -->
+							</li>
+							<li ng-switch-when="1" style="color: darkgrey;">收集中</li>
+							<li ng-switch-when="2" style="color: darkgrey;">已结束</li>
+							<li ng-if="data.WRITE_NUMBER > 0" style="color:blue;">未填写</li>
+							<li ng-if="data.WRITE_NUMBER == '0'" style="color:blue;">已填写</li>
+							<li ng-switch-when="1" style="color: grey;">发布日期:{{data.START_DATE | date:'yyyy-MM-dd'}}</li>
+							<li ng-switch-when="2" style="color: grey;">结束日期:{{data.END_DATE | date:'yyyy-MM-dd'}}</li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="padding-top:6px;margin:8px;" ng-include="'html/page.html'"></div>
+	</div>
+	<div ng-if="num < '1'"  style="margin-top:160px;" align="center">
+        <span class="noteText">
+        	<font ng-if="flag == '0'" size="3" color="red"><b>您没有需要填写的问卷</b></font>
+        	<font ng-if="flag == '1'" size="3" color="blue"><b>您没有填写过任何问卷</b></font>
+    	</span>
+	</div> 
+</div>
+</div>
+</div>

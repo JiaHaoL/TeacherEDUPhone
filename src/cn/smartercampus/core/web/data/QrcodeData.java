@@ -189,6 +189,7 @@ private static final long serialVersionUID = 1L;
 		try {
 			Map<String, Object> map = getParameterMap();
 			System.out.println("checkLngLat"+map);
+			String webUrl = "http://hygl.pdedu.sh.cn/TeacherEDUPhone/qrcode_success_success.jsp";
 			
 			//查找会议地点经纬度
 			map.put("sqlMapId", "getCourseLatLng");
@@ -197,21 +198,31 @@ private static final long serialVersionUID = 1L;
 			
 			
 			//会议地点与用户地点经纬度比较
-			boolean flag = checkLatLng(map.get("Lat").toString(),map.get("Lng").toString(),courseMap.get("LAT").toString(),courseMap.get("LNG").toString());
-			if(flag) {
+			//boolean flag = checkLatLng(map.get("Lat").toString(),map.get("Lng").toString(),courseMap.get("LAT").toString(),courseMap.get("LNG").toString());
+			//计算用户与会议地点经纬度直线距离
+			double dif1 = distanceByLongNLat(Double.parseDouble(map.get("Lng").toString()),Double.parseDouble(map.get("Lat").toString()),Double.parseDouble(courseMap.get("LNG").toString()),Double.parseDouble(courseMap.get("LAT").toString()));
+			double dif2 = 1000;
+			if(dif2 > dif1) {
 				System.out.println("自动识别经纬度成功！");
+				System.out.println("误差"+dif1+"m");
 				map.put("state", "2");
 				map.put("sqlMapId", "updateUserCouseState");
 				boolean qdFlag = openService.update(map);
 				System.out.println("签到"+qdFlag);
 			}else {
 				System.out.println("自动识别经纬度失败！");
+				System.out.println("误差"+dif1+"m");
 				map.put("state", "0");
+				webUrl = "http://hygl.pdedu.sh.cn/TeacherEDUPhone/qrcode_success_error.jsp";
 			}
 			
 			map.put("sqlMapId", "updateUserCourseStat");
 			boolean updateFlag = openService.update(map);
 			System.out.println("update--course"+map.get("coursePk").toString()+"--teacherPk"+ map.get("userPk").toString()+"--flag is " + updateFlag);
+			
+			
+			output(map.get("state").toString());
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -262,7 +273,7 @@ private static final long serialVersionUID = 1L;
 			map.put("sqlMapId", "getNewTicket");
 			Map<String, Object> ticketMap = (Map<String, Object>) openService.queryForObject(map);
 			String url = map.get("url").toString();
-			url = URLDecoder.decode(url);
+			url = URLDecoder.decode(url,"UTF-8");
 			System.out.println("url:"+url);
 			Map<String, String> signMap = SIGN.sign(ticketMap.get("TICKET").toString(),url);
 		
@@ -363,6 +374,21 @@ private static final long serialVersionUID = 1L;
 
     }
 	
+    public static double distanceByLongNLat(double long1, double lat1, double long2, double lat2) {
+        double a, b, R;
+        R = 6378137;//地球半径
+        lat1 = lat1 * Math.PI / 180.0;
+        lat2 = lat2 * Math.PI / 180.0;
+        a = lat1 - lat2;
+        b = (long1 - long2) * Math.PI / 180.0;
+        double d;
+        double sa2, sb2;
+        sa2 = Math.sin(a / 2.0);
+        sb2 = Math.sin(b / 2.0);
+        d = 2 * R * Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1) * Math.cos(lat2) * sb2 * sb2));
+        return d;
+    }
+    
 	public String getOpenIdByCode(String code){
 		String url = PropertiesUtil.get("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);

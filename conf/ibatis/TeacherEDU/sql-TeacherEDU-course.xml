@@ -3,7 +3,7 @@
 
 <sqlMap>
 
-<!--  20171019修改二维码签到，由主讲教师改为申请教师 -->
+<!--  20171019修改二维码签到，由组织教师改为申请教师 -->
 <select id="findCourseApplyListFor" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" remapResults="true">
 	    select 
             SC_COURSE_PK,

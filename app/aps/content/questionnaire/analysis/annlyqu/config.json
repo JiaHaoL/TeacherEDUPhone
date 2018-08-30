@@ -1,0 +1,13 @@
+{
+    "name": "app_analysis",
+    "viewUrl": "aps/content/questionnaire/analysis/annlyqu/template.html",
+    "controllerUrl": "aps/content/questionnaire/analysis/annlyqu/controller.js",
+    "config": 
+    {
+    	"findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+        "findTitleListByIdURL":"json/Title_findTitleListById_data.json",
+        "findOptionListByIdURL":"json/Title_findOptionListById_data.json",
+        "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json",
+        "findHeadingAndValueListByIdURL" : "json/Open_queryForList_findHeadingAndValueListById.json"
+    }
+}

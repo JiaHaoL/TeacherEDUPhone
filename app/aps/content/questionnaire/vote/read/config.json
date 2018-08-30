@@ -1,0 +1,11 @@
+{
+    "name": "app_vote_read",
+    "viewUrl": "aps/content/questionnaire/vote/read/template.html",
+    "controllerUrl": "aps/content/questionnaire/vote/read/controller.js",
+    "config": 
+    {
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findExpandInfoByQsIdURL":"json/Open_queryForList_findExpandInfoByQsId.json"
+    }
+}

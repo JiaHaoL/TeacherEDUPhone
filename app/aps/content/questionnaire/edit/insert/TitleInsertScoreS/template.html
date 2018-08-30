@@ -1,0 +1,64 @@
+<!-- 添加评分多选题 -->
+<form class="form-horizontal form-horizontal-condensed" >
+		<div>
+			<span style="padding-left:6px;font-weight: bold; font-size: 14px; line-height: 27px; font-family: "微软雅黑","Lucida Grande",Helvetica,Arial,Verdana,sans-serif;">题目标题</span>
+			<span style="margin-right:10px;float:right;"><input type="checkbox" name="dataPk" ng-checked="{{form.SURVEY_TITLE_QUE}}" ng-model="form.SURVEY_TITLE_QUE" /> 必答题</span>
+			<span style="float:right;margin-right:10px;" class="pictxt"><a style="font-size:12px; text-decoration: none;" href="" ng-click="showEditor();"><span class="glyphicon glyphicon-picture"></span> 图文信息</a></span>
+			<span style="float:right;margin-right:10px; display:none;" class="txt"><a style="font-size:12px; text-decoration: none;" href="" ng-click="hideEditor();"><span class="glyphicon glyphicon-text-width"></span> 文本信息</a></span>
+		</div>
+		<!-- UEditor富文本框 -->
+		<div id="titlename" name="titlename" type="text/plain" style="width:560px;height:112px;" hidden="yes"></div>
+		<div class="txtFiled"><textarea style="width:560px;height:60px;border:1px solid #d4d4d4;border-radius:4px;overflow: hidden;"></textarea></div>
+		
+		<div class="panel panel-info" style="margin-top:15px;margin-right:8px;border:1px solid #d4d4d4">
+			 <table class="table table-condensed">
+			 	<thead>
+					<tr>
+						<th>选项文字</th>
+						<th>图片</th>
+						<th>大小</th>
+						<th>默认</th>
+						<th>分数</th>
+						<th>操作</th>				
+					</tr>
+				</thead>
+	         	<tbody>
+		   			<tr ng-repeat="content in contents" on-finish-render-filters>
+						<td style="vertical-align: middle;border-top: 0px;">
+						    <input type="text" class="form-control" style="width: 150px;"  ng-model="content.SURVEY_CONTENT_CHOOSE">
+						</td>
+						<td style="vertical-align: middle;border-top: 0px;">	    	   
+						   <input type="file" name="uploadify{{$index}}" id="uploadify{{$index}}"/>
+						   <input type="hidden" id="uploadIndex"/>
+						</td>
+						<td style="vertical-align: middle;border-top: 0px;" >
+						   <div ng-if="content.SURVEY_CONTENT_IMG != null" id="lr_systembtn">
+						   	 <div style="float:left;">
+					   	 		 <img style="width:{{content.IMAGE_WIDTH}}px;height:{{content.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{content.SURVEY_CONTENT_IMG}}"/>
+					   	 	 </div>
+					   	 	 <div style="float:left;">
+							     &nbsp;宽:
+							   	 <input type="text"  ng-model="content.IMAGE_WIDTH" style="width:40px;height:15px;"/></br>
+							   	 &nbsp;高:
+							   	 <input type="text"  ng-model="content.IMAGE_HEIGHT" style="width:40px;height:15px;"/>
+						   	 </div>
+						   </div> 
+						</td>
+						<td style="vertical-align: middle;border-top: 0px;" class="test">
+							<input type="checkbox" name="choice" value="{{content.SURVEY_CONTENT_DEF}}" 
+								ng-model="content.SURVEY_CONTENT_DEF" ng-click="optionIsDefault($index)" id="index"/>
+					 	</td>
+					 	<td style="vertical-align: middle;border-top: 0px;">
+					 		<input type="text"  style="width: 30px;" ng-model="content.SURVEY_CONTENT_VALUE"  />分
+					 	</td>
+						<td style="vertical-align: middle;border-top: 0px;">	
+							<a  ng-click="addContent();"><img src="assets/img/designqpic2.png" title="新增选项"  /></a>
+							<a  ng-click="removeContent(content);"><img src="assets/img/designqpic.png" title="删除选项" /></a>
+							<a  ng-click="updata($index)"><img src="assets/img/designqpic3.png" title="上移一行"  /></a>
+							<a  ng-click="downdata($index)"><img src="assets/img/designqpic4.png" title="下移一行" /></a>
+						</td>
+		   			</tr>
+	         	</tbody>
+	      </table>
+	 </div>
+ </form>

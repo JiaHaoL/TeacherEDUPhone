@@ -1,0 +1,29 @@
+{
+    "name": "app_support_quest_add",
+    "viewUrl": "aps/content/questionnaire/question/add/template.html",
+    "controllerUrl": "aps/content/questionnaire/question/add/controller.js",
+    "config": 
+    {
+            "addURL": "json/Question_addQuestionnaire_data.json",
+            "addCourseTeacher":"json/Open_insert_TeacherAnswerInfoInsertForCourse.json",
+             "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_quest_add.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_quest_add.save"
+		        	}
+				]
+			
+		}	
+	}
+}

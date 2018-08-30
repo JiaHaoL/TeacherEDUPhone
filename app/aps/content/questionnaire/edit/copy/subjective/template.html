@@ -1,0 +1,17 @@
+<!-- 修改主观题 -->
+<form class="form-horizontal form-horizontal-condensed" >	
+		<div>
+			<span style="padding-left:6px;font-weight: bold; font-size: 14px; line-height: 27px; font-family: "微软雅黑","Lucida Grande",Helvetica,Arial,Verdana,sans-serif;">题目标题</span>
+			<span style="margin-right:10px;float:right;"><input type="checkbox" name="dataPk" ng-true-value="true" ng-false-value="false" ng-model="form.SURVEY_TITLE_QUE" /> 必答题</span>
+			<span style="float:right;margin-right:10px;" class="pictxt"><a style="font-size:12px; text-decoration: none;" href="" ng-click="showEditor();"><span class="glyphicon glyphicon-picture"></span> 图文信息</a></span>
+			<span style="float:right;margin-right:10px; display:none;" class="txt"><a style="font-size:12px; text-decoration: none;" href="" ng-click="hideEditor();"><span class="glyphicon glyphicon-text-width"></span> 文本信息</a></span>
+		</div>
+		<!-- UEditor富文本框 -->
+		<div id="titlename" name="titlename" type="text/plain" style="width:560px;height:112px;" hidden="yes"></div>
+		<div class="txtFiled"><textarea style="width:560px;height:60px;border:1px solid #d4d4d4;border-radius:4px;overflow: hidden;"></textarea></div>
+		
+		<div ng-repeat="content in Ucontentlist">
+			<input type="hidden"  ng-model="content.SURVEY_CONTENT_CHOOSE">
+		    <input type="hidden" ng-checked="{{content.IS_CHECKED}}" ng-model="content.IS_CHECKED"/>
+		</div>						
+</form>

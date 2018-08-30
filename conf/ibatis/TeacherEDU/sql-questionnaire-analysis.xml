@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<!-- *********************** 评测分析 CRUD *********************** -->
+	<select id="findTitleListByTeacherPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          SELECT 
+        	SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_QUE CHECKED, 
+			SURVEY_TITLE_HINT,
+			SURVEY_TITLE_REL,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			FK_USER,
+			SERIES,
+			DELETE_FLAG,
+			SURVEY_QUEST_ID,
+			IDS,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,
+          	(select count(distinct SURVEY_ANSWER_ID) from SURVEY_SYNTH where STATE = 0 
+          		and SURVEY_TITLE.SURVEY_TITLE_ID = SURVEY_SYNTH.SURVEY_TITLE_ID
+          		and SURVEY_ANSWER_ID in 
+          		(select SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_SUBJECTTEACHER_ID in
+          		(select SURVEY_SUBJECTTEACHER_ID 
+          			from SURVEY_SUBJECTTEACHER
+					where FK_TEACHER = #FK_TEACHER# 
+					and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+					<isNotEmpty prepend="AND" property="STUDENT_BJID">
+						FK_CLASS = #STUDENT_BJID#
+					</isNotEmpty>
+				))) ANSWER_NUM
+	      FROM SURVEY_TITLE
+	      WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+	      ORDER BY SURVEY_TITLE_ORDER
+    </select>
+    
+    <select id="findOptionListByTeacherPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+         	SURVEY_CONTENT_ID,
+			SURVEY_CONTENT_CHOOSE,
+			SURVEY_CONTENT_IMG,
+			SURVEY_CONTENT_MENU,
+			SURVEY_CONTENT_FILL,
+			SURVEY_CONTENT_DEF IS_CHECKED,
+			SURVEY_QUEST_MIN,
+			SURVEY_QUEST_MAX,
+			SURVEY_QUEST_ORDER,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			DELETE_FLAG,
+			IMAGE_WIDTH,
+			IMAGE_HEIGHT,
+			SURVEY_TITLE_ID,
+			SURVEY_CONTENT_VALUE,
+			(select count(*)
+          		from SURVEY_SYNTH
+          		where STATE = 0 
+          			and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+          			and SURVEY_ANSWER_ID in
+          			(select SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_SUBJECTTEACHER_ID in
+          			(select SURVEY_SUBJECTTEACHER_ID from SURVEY_SUBJECTTEACHER where FK_TEACHER = #FK_TEACHER# and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+          			<isNotEmpty prepend="AND" property="STUDENT_BJID">
+						FK_CLASS = #STUDENT_BJID#
+					</isNotEmpty>
+				 ))) OPTION_NUM
+         FROM SURVEY_CONTENT
+         WHERE SURVEY_TITLE_ID in (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)
+         ORDER BY SURVEY_QUEST_ORDER
+	</select>
+	
+	 <!-- 根据评测人pk查询选项及答案 -->
+     <select id="findSynthByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        SELECT 
+        	SURVEY_SYNTH_ID,
+			(select ANSWER_TIME from SURVEY_ANSWER where SURVEY_ANSWER.SURVEY_ANSWER_ID = SURVEY_SYNTH.SURVEY_ANSWER_ID) ANSWER_TIME,
+			SURVEY_QUEST_ID,
+			SURVEY_TITLE_ID,
+			STATE,
+			USER_PK,
+			(select USER_SN from SC_USER where SC_USER.USER_PK = SURVEY_SYNTH.USER_PK) USER_NAME,
+			SURVEY_VALUE,
+			SURVEY_CONTENT_ID,
+			SURVEY_ANSWER_ID,
+			SURVEY_SYNTH_ORDER,
+			(select TEACHER_XM from SC_USER_TEACHER  where TEACHER_PK = #FK_TEACHER#) TEACHER_XM
+        FROM SURVEY_SYNTH
+        WHERE STATE = 0
+        and SURVEY_CONTENT_ID = #SURVEY_CONTENT_ID#
+        <isNotEmpty prepend="AND" property="FK_TEACHER">
+        	SURVEY_ANSWER_ID in (select SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_SUBJECTTEACHER_ID in
+          			(select SURVEY_SUBJECTTEACHER_ID from SURVEY_SUBJECTTEACHER where FK_TEACHER = #FK_TEACHER# and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+          			<isNotEmpty prepend="AND" property="STUDENT_BJID">
+						FK_CLASS = #STUDENT_BJID#
+					</isNotEmpty>
+					))
+        </isNotEmpty> 
+        ORDER BY SURVEY_SYNTH_TIME desc	
+     </select>
+     
+     <select id="findSynthByUserPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT COUNT(*)
+         FROM SURVEY_SYNTH
+         WHERE SURVEY_CONTENT_ID=#SURVEY_CONTENT_ID# and STATE = 0
+         <isNotEmpty prepend="AND" property="FK_TEACHER">
+        	USER_PK in (select SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_SUBJECTTEACHER_ID in
+          			(select SURVEY_SUBJECTTEACHER_ID from SURVEY_SUBJECTTEACHER where FK_TEACHER = #FK_TEACHER# and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+          			<isNotEmpty prepend="AND" property="STUDENT_BJID">
+						FK_CLASS = #STUDENT_BJID#
+					</isNotEmpty>
+					))
+        </isNotEmpty> 
+     </select>
+    
+	<!-- *********************** 系统分析 CRUD *********************** -->	
+	<!-- 填空/主观详情 -->
+	<select id="findTitleById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT 
+           	SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_QUE CHECKED,
+			SURVEY_TITLE_HINT,
+			SURVEY_TITLE_REL,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			FK_USER,
+			SERIES,
+			DELETE_FLAG,
+			SURVEY_QUEST_ID,
+			IDS,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,
+			(select ANONYMOUS from SURVEY_QUEST where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) ANONYMOUS
+        FROM SURVEY_TITLE
+        WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#  
+        <isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">  
+        	SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+        </isNotEmpty>
+    </select>
+    
+    <!-- 统计 查询行标题和答案 -->
+    <select id="findHeadingAndValueListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap"> 
+    	SELECT 
+		  SURVEY_MATRIX_ID,
+		  LINE_HEADING,
+		  SURVEY_MATRIX.SURVEY_TITLE_ID,
+		  LINE_HEADING_ORDER,
+		  SURVEY_CONTENT_ID,
+		  SURVEY_CONTENT_CHOOSE,
+      	  SURVEY_QUEST_ORDER,
+		  (select SURVEY_VALUE from SURVEY_SYNTH
+		  		where STATE = 0
+         	 	and SURVEY_SYNTH.SURVEY_MATRIX_ID = SURVEY_MATRIX.SURVEY_MATRIX_ID
+		        and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+			    and  SURVEY_ANSWER_ID = (select  SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and  SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID# and FK_USER = #userInfo.GUID#)) VALS,
+	      (select NVL2(SURVEY_SYNTH_ID,'true','false') from SURVEY_SYNTH
+	            where STATE = 0
+                and SURVEY_SYNTH.SURVEY_MATRIX_ID = SURVEY_MATRIX.SURVEY_MATRIX_ID
+                and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+	            and  SURVEY_ANSWER_ID = (select  SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID# and FK_USER = #userInfo.GUID#)) IS_CHECKED,
+      	  (select COUNT(*) from SURVEY_SYNTH
+				where STATE = 0 
+				and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+        	 	and SURVEY_SYNTH.SURVEY_MATRIX_ID = SURVEY_MATRIX.SURVEY_MATRIX_ID
+      			group by SURVEY_CONTENT_ID,SURVEY_MATRIX_ID) NUMS,
+      	  (select COUNT(*) from SURVEY_SYNTH
+          		where STATE = 0 
+         		and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+         		and SURVEY_SYNTH.SURVEY_MATRIX_ID = SURVEY_MATRIX.SURVEY_MATRIX_ID
+         		and SURVEY_ANSWER_ID in
+         		(select SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_SUBJECTTEACHER_ID in
+         		(select SURVEY_SUBJECTTEACHER_ID from SURVEY_SUBJECTTEACHER where FK_TEACHER = #FK_TEACHER# and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+         		<isNotEmpty prepend="AND" property="STUDENT_BJID">
+					FK_CLASS = #STUDENT_BJID#
+				</isNotEmpty>
+			 ))) OPTION_NUM
+		FROM SURVEY_MATRIX,SURVEY_CONTENT
+		WHERE SURVEY_MATRIX.SURVEY_TITLE_ID IN (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_TITLE.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)
+		and  SURVEY_MATRIX.SURVEY_TITLE_ID = SURVEY_CONTENT.SURVEY_TITLE_ID
+   		order by LINE_HEADING_ORDER
+     </select>
+</sqlMap>

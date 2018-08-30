@@ -1,0 +1,17 @@
+{
+    "name": "app_questionnaire_analyse",
+    "viewUrl": "aps/content/questionnaire/evaluateAnalyse/template.html",
+    "controllerUrl": "aps/content/questionnaire/evaluateAnalyse/controller.js",
+    "config": 
+    {
+    	   "findQuestionnaireByIdURL" : "json/Open_queryForObject_findQuestionnaireById.json",
+           "findTitleListByTeacherPkURL" : "json/Open_queryForList_findTitleListByTeacherPk.json",
+           "findOptionListByTeacherPkURL" : "json/Open_queryForList_findOptionListByTeacherPk.json",
+           "findAllUnit" : "json/Open_queryForList_findAllUnit.json",
+      	   "findGradeBySchoolIDURL" : "json/Open_queryForList_findGradeBySchoolID.json",
+      	   "findClassURL" : "json/Open_queryForList_findClassList.json",
+      	   "findTeacherListByClassPkURL" : "json/Open_queryForList_findTeacherListByClassPk.json",
+      	   "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json",
+           "findHeadingAndValueListByIdURL" : "json/Open_queryForList_findHeadingAndValueListById.json"
+    }
+}

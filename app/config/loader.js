@@ -3,33 +3,33 @@
 		baseUrl : './',
 		urlArgs: "v=5",
 		paths : {
-			jqueryUi : 'http://hygl.pdedu.sh.cn/js/jqueryUi/js/jquery-ui-1.9.2.custom.min',
-			jqueryUiZh : 'http://hygl.pdedu.sh.cn/js/jqueryUi/jqueryUi_ZH',
+			jqueryUi : 'http://hygl.pdedu.sh.cn/CDN/js/jqueryUi/js/jquery-ui-1.9.2.custom.min',
+			jqueryUiZh : 'http://hygl.pdedu.sh.cn/CDN/js/jqueryUi/jqueryUi_ZH',
 			
-			jztree : 'http://hygl.pdedu.sh.cn/js/zTree/js/jquery.ztree.all-3.5.min',
-			smartMenu : 'http://hygl.pdedu.sh.cn/js/jquerySmartMenu/js/jquery-smartMenu-min',
-			jqueryUpload : 'http://hygl.pdedu.sh.cn/js/jqueryUpload/jquery.upload',
+			jztree : 'http://hygl.pdedu.sh.cn/CDN/js/zTree/js/jquery.ztree.all-3.5.min',
+			smartMenu : 'http://hygl.pdedu.sh.cn/CDN/js/jquerySmartMenu/js/jquery-smartMenu-min',
+			jqueryUpload : 'http://hygl.pdedu.sh.cn/CDN/js/jqueryUpload/jquery.upload',
 			
-			umeditorConfig : 'http://hygl.pdedu.sh.cn/js/umeditor/umeditor.config',
-			umeditorMin : 'http://hygl.pdedu.sh.cn/js/umeditor/umeditor',
-			umeditorLang : 'http://hygl.pdedu.sh.cn/js/umeditor/lang/zh-cn/zh-cn',
+			umeditorConfig : 'http://hygl.pdedu.sh.cn/CDN/js/umeditor/umeditor.config',
+			umeditorMin : 'http://hygl.pdedu.sh.cn/CDN/js/umeditor/umeditor',
+			umeditorLang : 'http://hygl.pdedu.sh.cn/CDN/js/umeditor/lang/zh-cn/zh-cn',
 			
 			jwplayer:"js/jwplayer/jwplayer",
 	        flexpaper:"js/FlexPaper/flexpaper_flash",
 	        wx:"http://res.wx.qq.com/open/js/jweixin-1.0.0",
-	        videourl:"http://hygl.pdedu.sh.cn/js/util-video/video.util",
+	        videourl:"http://hygl.pdedu.sh.cn/CDN/js/util-video/video.util",
 			
-			highcharts: 'http://hygl.pdedu.sh.cn/js/highcharts/highcharts',
-			highchartsMore: 'http://hygl.pdedu.sh.cn/js/highcharts/highcharts-more',
-			highcharts3D: 'http://hygl.pdedu.sh.cn/js/highcharts/highcharts-3d',
+			highcharts: 'http://hygl.pdedu.sh.cn/CDN/js/highcharts/highcharts',
+			highchartsMore: 'http://hygl.pdedu.sh.cn/CDN/js/highcharts/highcharts-more',
+			highcharts3D: 'http://hygl.pdedu.sh.cn/CDN/js/highcharts/highcharts-3d',
 			
-			date: 'http://hygl.pdedu.sh.cn/js/bootstrap-daterangepicker/date',
-			daterangepicker: 'http://hygl.pdedu.sh.cn/js/bootstrap-daterangepicker/daterangepicker',
-			bootstrapDatetimepicker : 'http://hygl.pdedu.sh.cn/js/bootstrap-datetimepicker/js/bootstrap-datetimepicker',
-			bootstrapDatetimepickerZhCn : 'http://hygl.pdedu.sh.cn/js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN',
+			date: 'http://hygl.pdedu.sh.cn/CDN/js/bootstrap-daterangepicker/date',
+			daterangepicker: 'http://hygl.pdedu.sh.cn/CDN/js/bootstrap-daterangepicker/daterangepicker',
+			bootstrapDatetimepicker : 'http://hygl.pdedu.sh.cn/CDN/js/bootstrap-datetimepicker/js/bootstrap-datetimepicker',
+			bootstrapDatetimepickerZhCn : 'http://hygl.pdedu.sh.cn/CDN/js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN',
 			
-			pageController: 'http://hygl.pdedu.sh.cn/js/page',
-			validateController: 'http://hygl.pdedu.sh.cn/js/validate'
+			pageController: 'http://hygl.pdedu.sh.cn/CDN/js/page',
+			validateController: 'http://hygl.pdedu.sh.cn/CDN/js/validate'
 		},
 		shim : {
 			highchartsMore : {

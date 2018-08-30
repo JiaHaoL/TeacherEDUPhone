@@ -1,0 +1,12 @@
+{
+    "name": "app_read",
+    "viewUrl": "aps/content/questionnaire/read/template.html",
+    "controllerUrl": "aps/content/questionnaire/read/controller.js",
+    "config": 
+    {
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findOptionListByIdURL":"json/Open_queryForList_findOptionListById.json",
+          "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json"
+    }
+}

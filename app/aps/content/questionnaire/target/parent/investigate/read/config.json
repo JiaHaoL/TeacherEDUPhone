@@ -1,0 +1,14 @@
+{
+    "name": "app_parent_investigate_read",
+    "viewUrl": "aps/content/questionnaire/target/parent/investigate/read/template.html",
+    "controllerUrl": "aps/content/questionnaire/target/parent/investigate/read/controller.js",
+    "config": 
+    {
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findOptionAndValueListByIdURL":"json/Open_queryForList_findOptionAndValueListById.json",  
+          "findTeacherListByUserPkURL" : "json/Open_queryForList_findTeacherListByUserPk.json",
+          "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json", 
+          "findHeadingAndValueListByIdURL" : "json/Open_queryForList_findHeadingAndValueListById.json"
+    }
+}

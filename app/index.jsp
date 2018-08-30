@@ -13,7 +13,8 @@ Object userIno = session.getAttribute("userInfo");
 if(userIno == null){
 	%>
 	<script type="text/javascript">
-		var url = "http://hygl.pdedu.sh.cn/?userinfo=0";
+		console.log("Phone");
+		var url = "http://hygl.pdedu.sh.cn";
 		window.location.href = url;
 	</script>
 	<%
@@ -38,31 +39,31 @@ if(userIno == null){
     <title>会议管理系统</title>
     <base href="<%=basePath %>" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link href="http://hygl.pdedu.sh.cn/js/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://hygl.pdedu.sh.cn/CDN/js/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 	<link href="assets/css/style.css" rel="stylesheet">
 	
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="http://hygl.pdedu.sh.cn/js/html5/html5shiv.js"></script>
-      <script src="http://hygl.pdedu.sh.cn/js/html5/respond.min.js"></script>
+      <script src="http://hygl.pdedu.sh.cn/CDN/js/html5/html5shiv.js"></script>
+      <script src="http://hygl.pdedu.sh.cn/CDN/js/html5/respond.min.js"></script>
     <![endif]-->
     
     <!--[if lt IE 8]>
-	<script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/json3/json3.min.js"></script>
+	<script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/json3/json3.min.js"></script>
 	<![endif]-->
   </head>
-  <body class="theme-blue"  style="padding:0px;background:#f1faff url('assets/img/left.png') top left repeat-y;">
+  <body class="theme-blue"  style="padding:0px;">
     <div class="ng-view" ></div>
   </body>
   
-  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/jquery/1.11.3/jquery.min.js"></script>
   <script type="text/javascript" src="js/jquery.uploadify-v2.1.4/swfobject.js"></script>
   <script type="text/javascript" src="js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min.js"></script>
   
-  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/angular/1.2.0/angular.min.js"></script>
-  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/angular/1.2.0/angular-route.min.js"></script>
-  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/util.js"></script>
+  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/angular/1.2.0/angular.min.js"></script>
+  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/angular/1.2.0/angular-route.min.js"></script>
+  <script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/util.js"></script>
   <script type="text/javascript" src="config/app.js?v=5"></script>
-  <script data-main="config/loader.js?v=5" src="http://hygl.pdedu.sh.cn/js/require/require.min.js"></script>
+  <script data-main="config/loader.js?v=5" src="http://hygl.pdedu.sh.cn/CDN/js/require/require.min.js"></script>
 </html>

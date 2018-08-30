@@ -1,0 +1,13 @@
+{
+	"name" : "app_questionnaire_answerUser_list",
+    "viewUrl": "aps/content/questionnaire/answerUser/list/template.html",
+    "controllerUrl": "aps/content/questionnaire/answerUser/list/controller.js",
+    "config": {
+    	"findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+		"findAnswerUserListURL": "json/Open_queryForList_findAnswerUserList.json",
+		"findSubjectTeacherListURL" : "json/Open_queryForList_findSubjectTeacherByQuestID.json",
+		"removeCollectTargetURL" : "json/Answer_removeCollectTargetInfo_data.json",
+		"removeSurveyTargetURL" : "json/Answer_removeSurveyTargetInfo_data.json",
+		"findAnswerByUserIdURL" : "json/Open_queryForList_findAnswerByUserId.json"
+	}
+}

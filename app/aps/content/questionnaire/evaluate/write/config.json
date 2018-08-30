@@ -1,0 +1,14 @@
+{
+    "name": "app_questionnaire_evaluate_write",
+    "viewUrl": "aps/content/questionnaire/evaluate/write/template.html",
+    "controllerUrl": "aps/content/questionnaire/evaluate/write/controller.js",
+    "config": 
+    {
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findOptionListByIdURL":"json/Open_queryForList_findOptionListById.json",
+          "findTeacherNameByIdURL":"json/Open_queryForObject_findTeacherNameById.json",
+          "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json",
+          "addURL":"json/Title_answerSubmit_data.json"        
+    }
+}

@@ -65,11 +65,11 @@ public class UserData extends BaseData {
 						request.getSession().setAttribute("userInfo", userInfo);
 						System.out.println(session.getAttribute("userInfo").toString());
 						System.out.println(request.getSession().getAttribute("userInfo").toString());
-						response.sendRedirect("/index.jsp");
+						response.sendRedirect("/TeacherEDUPhone/index.jsp");
 					}
 				}
 			}else {
-				response.sendRedirect("/index.jsp");
+				response.sendRedirect("/TeacherEDUPhone/index.jsp");
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

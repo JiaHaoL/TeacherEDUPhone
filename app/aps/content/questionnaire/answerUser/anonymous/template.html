@@ -1,0 +1,41 @@
+<div style="float: right;margin-top: 30px; margin-right: 60px;">
+   	<button type="button" ng-click="goBack()" class="btn btn-warning"><span class="glyphicon glyphicon-share-alt"></span> 返回</button>
+</div>
+<div style="padding:40px 60px 0px 60px;">
+	<div style="text-align:center;">
+		<span style="color: blue; font-size: 20px;" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</span>
+	</div>
+</div>
+
+<div style="padding:20px 60px 10px 60px;">
+	<div role="tabpanel" class="tab-pane" id="collect">
+		<table class="table table-hover">
+			<thead>
+				<tr style="text-align:center;font-weight: bold;">
+					<td style="width: 20px;"><input type="checkbox" id="selectAll" class="isCheckll" ng-click="checkAll($event.target)" /></td>
+					<td column="FK_USER">IP地址</td>
+          			<td column="ANSWER_TIME">投票日期</td>
+         			<td column="ANSWER_COUNT">已提交</td>
+				</tr>
+			</thead>
+			<tbody ng-switch on = "page.current_num" align="center">
+				<tr ng-switch-when = "0">
+					<td colspan="100" class="NoSelectHistory">查询无纪录</td>
+				</tr>
+				<tr ng-repeat="answerInfo in answerInfoList" ng-switch on="answerInfo.SURVEY_TYPE">
+					<td><input type="checkbox" name="usrPk" value="{{answerInfo.FK_USER}}" /></td>
+					<td>{{answerInfo.FK_USER}}</td>
+					<td>{{answerInfo.ANSWER_TIME | date:'yyyy-MM-dd'}}</td>
+					<td ng-switch on="answerInfo.ANSWER_COUNT">{{answerInfo.ANSWER_COUNT}} 份</td>
+				</tr>
+			</tbody>
+			<tfoot>
+		      	<tr>
+					<td colspan="100">
+						<div ng-include="'html/page.html'"></div>
+					</td>
+		    	</tr>
+		    </tfoot>
+		</table>
+	</div>
+</div>

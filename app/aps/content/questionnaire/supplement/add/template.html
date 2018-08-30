@@ -1,0 +1,88 @@
+<form style="margin-bottom:15px;" class="form-inline" role="form">
+	<div class="form-group">
+		<label class="control-label">用户类型:</label>
+		<select class="form-control has-feedback" not-null="yes" ng-model="form.USER_TYPE" ng-change="userTypeChange();">
+			<option value="1">教师</option>
+			<option value="2">学生</option>
+			<option value="3">家长</option>
+		</select>
+	</div>
+	<div class="form-group unit">
+		<label class="control-label">单位名称:</label>
+		<select class="form-control" ng-model="form.TEACHER_GZDWPK"
+  			ng-options="dic.UNIT_PK as dic.UNIT_ABBREVIATION for dic in units">
+			<option value="">--请选择--</option>
+		</select>
+	</div>
+	<div class="form-group school">
+		<label class="control-label">学校名称:</label>
+		<select class="form-control" ng-model="form.FK_UNIT" ng-change="getGrade();"
+  			ng-options="dic.UNIT_PK as dic.UNIT_ABBREVIATION for dic in units">
+			<option value="">--请选择--</option>
+		</select>
+	</div>
+	<div class="form-group grade">
+		<label class="control-label">年级:</label>
+	  	<select class="form-control"  ng-model="form.STUDENT_NJID"
+    		ng-options="grade.GRADE_PK as grade.GRADE_NAME for grade in gradeData"  ng-change="getClass();">
+ 		 	<option value="">--请选择--</option>
+ 		</select>
+	</div>
+	<div class="form-group classes">
+		<label class="control-label">班级:</label>
+	   	<select class="form-control"  ng-model="form.STUDENT_BJID" 
+    		ng-options="class.CLASS_PK as class.CLASS_NAME for class in classList ">
+  			<option value="">--请选择--</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control"  ng-model="form.USER_SN" placeholder="姓名">
+	</div>
+	<div class="form-group parent">
+		<input type="text" class="form-control"  ng-model="form.PARENT_NAME" placeholder="监护人姓名">
+	</div>
+	<div class="form-group">
+  		<input type="text" class="form-control"  ng-model="form.ID_NUMBER" placeholder="身份证号">
+  		<button type="submit" class="btn btn-primary" ng-click="select()"> <span class="glyphicon glyphicon-search"></span> 查询 </button>
+	</div>
+</form>
+
+<div class="panel panel-info">
+    <table class="table table-hover table-striped  table-bordered">
+	    <thead>
+	    	<tr>
+	        	<th style="width: 20px;"><input type="checkbox" class="isCheckll" ng-click="checkAll($event.target)" /></th>
+	          	<th column="USER_SN" class="sorting" ng-click="order($event.target)">姓名</th>
+	          	<th ng-if="form.USER_TYPE == '3'" column="PARENT_NAME" class="sorting" ng-click="order($event.target)">监护人姓名</th>
+	          	<th column="ID_NUMBER" class="sorting" ng-click="order($event.target)">身份证号</th>
+	          	<th ng-if="form.USER_TYPE == '1' && form.ROLE_CODE == '0'" column="TEACHER_GZDW" class="sorting unit" ng-click="order($event.target)">工作单位</th>
+	          	<th ng-if="form.USER_TYPE != '1' && form.ROLE_CODE == '0'" column="FK_UNIT_NAME" class="sorting school" ng-click="order($event.target)">所在学校</th>
+	          	<th ng-if="form.USER_TYPE != '1'" column="CLASS_NAME" class="sorting classes" ng-click="order($event.target)">所在年（班）级</th>
+	        </tr>
+		</thead>
+	    <tbody ng-switch on="page.current_num">
+	      	<tr ng-switch-when="0">
+	      		<td colspan="100" class="NoSelectHistory">查询无记录</td>
+	      	</tr>
+	        <tr ng-repeat="row in userList">
+	          	<td>
+	          		<input type="checkbox" name="dataPk" value="{{row.USER_PK}}" />
+	          	</td>
+	          	<td>{{row.USER_SN}}</td>
+	          	<td ng-if="row.USER_TYPE == '3'">{{row.PARENT_NAME}}</td>
+	          	<td>{{row.ID_NUMBER}}</td>
+	          	<td ng-if="row.USER_TYPE == '1' && form.ROLE_CODE == '0'">{{row.TEACHER_GZDW}}</td>
+	          	<td ng-if="row.USER_TYPE != '1' && form.ROLE_CODE == '0'">{{row.FK_UNIT_NAME}}</td>
+	          	<td ng-if="row.USER_TYPE != '1'">{{row.CLASS_NAME}}</td>
+	        </tr>    
+		</tbody>
+	    <tfoot>
+	      	<tr>
+	      		<td colspan="10" >
+	      			<div ng-include="'html/page.html'"></div>
+				</td>
+	      	</tr>
+	    </tfoot>
+	</table>
+</div>
+

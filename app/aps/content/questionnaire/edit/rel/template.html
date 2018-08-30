@@ -1,0 +1,29 @@
+<form class="form-horizontal form-horizontal-condensed">
+	<div class="form-group">
+		<label class="col-sm-3 control-label"><b>当前题目:</b></label>
+		<div class="col-sm-8" style="padding-top: 7px;">
+			<span style="float:left;">{{titleInfo.SURVEY_TITLE_ORDER}}.&nbsp; </span>
+			<span ng-bind-html="titleInfo.SURVEY_TITLE_NAME | trustHtml"></span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label"><b>关联题目:</b></label>
+		<div class="col-sm-8">
+			<select class="form-control" ng-options="title.SURVEY_TITLE_ID as title.SURVEY_TITLE_TXT for title in titleList" ng-model="SURVEY_TITLE_ID" 
+				ng-change="selectChange();">
+				<option value="">--请选择关联的题目--</option>
+			</select>
+		</div>
+	</div>
+	<div class="optDiv" style="padding-left: 67px;" hidden="yes">
+		<div class='div1'>
+			<label class="control-label">当关联的题目选择下面的选项:</label>
+			<div  ng-repeat="option in optionList">
+	 			<input type="checkbox" name="relOption" value="{{option.SURVEY_CONTENT_ID}}" /> {{option.SURVEY_CONTENT_CHOOSE}}
+	 		</div> 
+		</div>
+		<div class='div2'>
+			<label class="control-label">中的任意一个时当前题目才显示</label>
+		</div>
+	</div>
+</form>

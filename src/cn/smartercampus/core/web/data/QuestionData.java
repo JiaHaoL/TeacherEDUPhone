@@ -4,13 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import cn.smartercampus.core.service.OpenService;
 import cn.smartercampus.core.vo.ExceptionVo;
+import cn.smartercampus.core.vo.PageVo;
 import cn.smartercampus.core.web.data.BaseData;
 
 
@@ -31,6 +35,33 @@ public class QuestionData extends BaseData {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
+	
+	
+	//查询我的问卷列表
+    public void findQuestionnaireList(){
+		HttpServletRequest request = ServletActionContext.getRequest();
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("userInfo", request.getSession().getAttribute("userInfo"));
+			//JSONObject userInfo = JSONObject.fromObject(map.get("userInfo"));
+			
+			Object obj = request.getSession().getAttribute("userInfo");
+			Map<String, Object> contentMap = (Map<String, Object>)obj;
+			
+			PageVo pgae = readPage();
+			map.put("page", pgae);
+			
+			map.put("sqlMapId", "findQsListByUserPk");
+			map.put("FK_USER", contentMap.get("GUID").toString());
+
+			output("0000", openService.queryForList(map), pgae);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			output("9999"," Exception ",e);
+			logger.error(e, e);
+		}	  
+    }
 	
 	public void getUserInfo(){
 		output(request.getSession().getAttribute("userInfo"));

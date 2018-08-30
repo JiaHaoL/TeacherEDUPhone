@@ -1,0 +1,20 @@
+{
+    "name": "app_content_question_welcome",
+    "viewUrl": "aps/content/questionnaire/question/welcome/template.html",
+    "controllerUrl": "aps/content/questionnaire/question/welcome/controller.js",
+    "config":
+    {
+    		"findUserRoleCodeURL" : "json/Parent_findUserRoleCode_data.json",
+            "findURL": "json/Open_queryForList_findQuestionnaireList.json",
+            "findAllUnit": "json/Open_queryForList_findAllUnit.json",
+            "findRuleURL": "json/Open_queryForList_QuestFindRule.json",
+            "deleteURL": "json/Open_update_QuestionnaireDelete.json",
+            "updateStateURL": "json/Open_update_QuestionnaireStatusUpdate.json",
+            "updateQuestionnaireStateIsEndURL":"json/Open_update_updateQuestionnaireStateIsEnd.json",
+            "findRemovedListURL":"json/Open_queryForList_findRemovedQuestionnaireList.json",
+            "copyURL" : "json/Question_copyQuestionnaire_data.json",
+            "sendWxMessage" : "json/Message_sendXxgg_data.json",
+            "sendVoteMessage" : "json/Message_sendVoteMessage_data.json",
+            "exportURL" : "json/ResultExport_exportToExcel_data.json"
+	}
+}

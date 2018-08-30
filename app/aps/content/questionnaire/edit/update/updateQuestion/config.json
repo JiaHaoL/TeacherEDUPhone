@@ -1,0 +1,29 @@
+{
+    "name": "app_content_updatequestion",
+    "viewUrl": "aps/content/questionnaire/edit/update/updateQuestion/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/update/updateQuestion/controller.js",
+    "config": 
+    {
+            "findQuestionnaireByIdURL":"json/Open_queryForObject_findQuestionnaireById.json",
+            "QuestionnaireUpdateURL": "json/Open_update_QuestionnaireUpdate.json",
+            "menu":{
+	        "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_content_updatequestion.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_content_updatequestion.save"
+		        	}
+				]
+			
+		}	
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"name" : "app_questionnaire_answerUser_add",
+    "viewUrl": "aps/content/questionnaire/answerUser/add/template.html",
+    "controllerUrl": "aps/content/questionnaire/answerUser/add/controller.js",
+    "config": {
+        "findAllUnit": "json/Open_queryForList_findAllUnit.json",
+        "findGradeBySchoolIDURL":"json/Open_queryForList_findGradeBySchoolID.json",
+        "findClassURL": "json/Open_queryForList_findClassList.json",
+        "findURL" : "json/User_findEvaluateUserList_data.json",
+        "addURL" : "json/Answer_addAppraisalUser_data.json",
+    	"menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_questionnaire_answerUser_add.cancel"
+		        	},
+		        	{
+		            	"buttonName":"确认",
+		            	"buttonStyle":"success",
+		            	"buttonImg":"ok",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_questionnaire_answerUser_add.confirm"
+		        	}
+				]
+			
+		}
+	}
+}

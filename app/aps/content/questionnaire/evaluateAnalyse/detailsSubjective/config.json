@@ -1,0 +1,21 @@
+{
+    "name": "app_evaluateAnalyse_detailsSubjective",
+    "viewUrl": "aps/content/questionnaire/evaluateAnalyse/detailsSubjective/template.html",
+    "controllerUrl": "aps/content/questionnaire/evaluateAnalyse/detailsSubjective/controller.js",
+    "config": 
+    {
+        "findTitleByIdURL":"json/Open_queryForList_findTitleById.json",
+        "findSynthByUserPkURL":"json/Open_queryForList_findSynthByUserPk.json",
+        "menu":{
+            "buttons":[
+	        	{
+	            	"buttonName":"关闭窗口",
+	            	"buttonStyle":"primary",
+	            	"buttonImg":"remove",
+	            	"buttonStatus":"0",
+	            	"buttonLink":"app_evaluateAnalyse_detailsSubjective.close"
+	        	}
+			]
+		}
+    }
+}

@@ -1,0 +1,34 @@
+<!-- 修改问卷标题 -->
+<form class="form-horizontal form-horizontal-condensed">
+	<div class="form-group row">
+		<label class="col-sm-2 control-label"><b>问卷名称:</b></label>
+		<div class="col-sm-9">
+			<input style="width:600px;" type="text" class="form-control"
+				not-null="yes" ng-model="form.SURVEY_QUEST_NAME">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-xs-2 control-label"><b>问卷类型:</b></label>
+		<div class="col-sm-9"  style="padding-top: 7px;">
+			<span><input type="radio" name="qsType" value="0" ng-model="form.SURVEY_QUEST_TYPE" /> 普通问卷</span>
+			<span style="padding-left:20px;" ><input type="radio" ng-model="form.SURVEY_QUEST_TYPE"  name="qsType" value="1" /> 评选问卷</span>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-xs-2 control-label"><b>是否匿名:</b></label>
+		<div class="col-sm-9"  style="padding-top: 7px;">
+			<span><input type="radio" name="anonymous" value="0" ng-model="form.ANONYMOUS" /> 实名</span>
+			<span style="padding-left:20px;" ><input type="radio" ng-model="form.ANONYMOUS"  name="anonymous" value="1"/> 匿名</span>
+			<span style="padding-left:20px;display: none;" class="allowTag" >
+				<input type="checkbox" value="{{form.WRITE_TAG}}" ng-model="form.WRITE_TAG" name="allowTag" /> 允许一个ip地址填写多次
+			</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label"><b>说明:</b></label>
+		<div class="col-sm-9">
+			<!-- UEditor富文本框 -->
+			<div id="titlename" name="titlename" type="text/plain" style="width:600px;height:480px;"></div>
+		</div>
+	</div>
+</form>

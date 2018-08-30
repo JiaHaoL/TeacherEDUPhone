@@ -1,0 +1,50 @@
+<div style="padding:40px 60px 20px 60px;">
+	<div style="text-align:center;">
+		<span style="color:blue; font-size: 20px;" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</span>
+	</div>
+	<div style="float:right;">
+		<button type="button" class="btn btn-info" ng-click="inspect();" ><span class="glyphicon glyphicon-eye-open"></span>查看问卷</button>
+		<button type="button" class="btn btn-primary" ng-click="write();"><span class="glyphicon glyphicon-plus"></span>填写问卷</button>
+<!-- 		<button type="button" class="btn btn-warning" ng-click="edit();" ><span class="glyphicon glyphicon-edit"></span>修改问卷</button> -->
+<!-- 		<button type="button" class="btn btn-danger" ng-click="removeAll();"><span class="glyphicon glyphicon-remove"></span>删除</button> -->
+	</div>
+</div>
+<div style="padding:20px 60px 10px 60px;">
+	<table class="table table-hover">
+		<thead>
+			<tr align="center">
+				<td style="width: 20px;"><input type="checkbox" class="isCheckll" ng-click="checkAll($event.target)" /></td>
+				<td>调查对象</td>
+				<td>问卷状态</td>
+			</tr>
+		</thead>
+		<tbody ng-switch on = "page.current_num" align="center">
+			<tr ng-switch-when = "0">
+				<td colspan="100" class="NoSelectHistory">查询无纪录</td>
+			</tr>
+			<tr ng-repeat="data in dataList">
+				<td>
+					<input type="checkbox" name="dataPk" value="{{data.SURVEY_SUBJECTTEACHER_ID}}" />
+					<input type="hidden" id="dataPk{{data.SURVEY_SUBJECTTEACHER_ID}}_num" value="{{data.NUM}}"/>
+				</td>
+				<td>{{data.TEACHER_NAME}}</td>
+<!-- 				<td ng-switch on = "data.NUM">
+					<span ng-switch-when='0'>未填写</span>
+					<span ng-switch-when='1'>已填写</span>
+				</td> -->
+				<td ng-if="data.NUM==0">未填写</td>
+				<td ng-if="data.NUM>0">已填写</td>
+				<td></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<td colspan="100">
+      			<div ng-include="'html/page.html'"></div>
+			</td>
+		</tfoot>
+	</table>
+	<div align="center">
+		<button ng-click="submitAnswer();" type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>提交</button>  
+		<button ng-click="goBack();" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span>返回</button>
+	</div>
+</div>

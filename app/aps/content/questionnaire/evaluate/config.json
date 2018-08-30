@@ -1,0 +1,10 @@
+{
+    "name": "app_questionnaire_evaluate",
+    "viewUrl": "aps/content/questionnaire/evaluate/template.html",
+    "controllerUrl": "aps/content/questionnaire/evaluate/controller.js",
+    "config": 
+    {
+    	"findQuestionnaireByIdURL" : "json/Open_queryForObject_findQuestionnaireById.json",
+    	"findEvaluateListURL" : "json/Answer_findEvaluateList_data.json"
+    }
+}

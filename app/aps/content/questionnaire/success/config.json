@@ -1,0 +1,9 @@
+{
+    "name": "app_content_success",
+    "viewUrl": "aps/content/questionnaire/success/template.html",
+    "controllerUrl": "aps/content/questionnaire/success/controller.js",
+    "config": 
+    {
+        "findURL": ""
+	}
+}

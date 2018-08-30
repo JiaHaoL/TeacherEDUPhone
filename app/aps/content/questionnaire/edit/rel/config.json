@@ -1,0 +1,32 @@
+{
+    "name": "app_support_rel",
+    "viewUrl": "aps/content/questionnaire/edit/rel/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/rel/controller.js",
+    "config": 
+    {
+    		"findCurrentTitleListByIdURL" : "json/Open_queryForObject_findCurrentTitleListById.json",
+            "findRelTitleListByIdURL": "json/Open_queryForList_findRelTitleListById.json",
+            "findOptionListByPkURL": "json/Open_queryForList_findOptionListByPk.json",
+            "updateURL" : "json/Open_update_TitleRelUpdate.json",
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonStyle":"info",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_rel.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonStyle":"success",
+		            	"buttonImg":"ok",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_rel.confirm"
+		        	}
+				]
+			}
+	}
+}
+
+

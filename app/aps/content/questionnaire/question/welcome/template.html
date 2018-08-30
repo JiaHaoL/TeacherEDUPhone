@@ -1,0 +1,145 @@
+<div class="div_course div_class_toupiao" style="margin-top: 5px;">
+<div class="panel panel-info">
+
+<div  class="" style="margin-top:50px;padding-left:15px;position: relative;" >
+	<div class="btn-group" >
+		<button ng-click="add()" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-plus"></span> 创建新问卷</button>
+	</div>
+	<div class="btn-group" data-toggle="buttons" >
+	    <label class="btn btn-default active" ng-click="disRemove()" >
+	    	<input type="radio" name="options" id="option1" autocomplete="off" checked> 未删除问卷
+	    </label>
+	    <label class="btn btn-default" ng-click="remove()">
+	    	<input type="radio"  name="options" id="option2" autocomplete="off"> 已删除问卷
+	    </label>
+	</div>
+	<form class="form-inline" style="float: right;padding-right:15px">
+    	<div class="form-group school">
+			<label class="control-label">学校名称:</label>
+  			<select class="form-control" ng-model="form.UNIT_PK" 
+     			ng-options="dic.UNIT_PK as dic.UNIT_ABBREVIATION for dic in units">
+	  			<option value="">--请选择--</option>
+  			</select>
+		</div>
+		<div class="form-group">
+			<label class="control-label">问卷名称:</label>
+    		<input type="text" class="form-control"  ng-model="form.SURVEY_QUEST_NAME" placeholder="输入问卷名称">
+    		<button type="submit" class="btn btn-primary" ng-click="select()"> <span class="glyphicon glyphicon-search"></span> 查询 </button>
+    	</div>
+	</form>
+	<table class="table table-hover " style="margin-top:30px" >
+		<tdead>
+			  <tr style="text-align:center;font-weight: bold;">
+			       <td style="width:30%;" column="SURVEY_QUEST_NAME" class="sorting" ng-click="order($event.target)">标题</td>
+			       <td column="SURVEY_QUEST_STATE" class="sorting" ng-click="order($event.target)">状态</td>
+			       <td column="NUM" class="sorting" ng-click="order($event.target)">收到数据</td>
+			       <td column="CREATE_TIME" class="sorting" ng-click="order($event.target)">创建时间</td>
+			       <td style="widtd:47%;" column="" class="sorting" ng-click="order($event.target)">操作</td>
+			  </tr>
+	    </tdead>
+	    
+	    <tbody ng-switch on="page.current_num" align="center">
+	    	<tr ng-switch-when="0">
+   				<td colspan="100" class="NoSelectdistory">查询无记录</td>
+   			</tr>
+		     <tr ng-repeat='row in dataList' ng-switch on="row.SURVEY_QUEST_STATE"> 
+		       	<td>
+		       		<div style="text-align: left;" class="hiden-overstep-txt caozuo"><a ng-click="anonymousQsLinkAddress(row)">{{row.SURVEY_QUEST_NAME}}</a></div>
+		       		<!-- <div style="text-align: left;" class="hiden-overstep-txt caozuo"><a >{{row.SURVEY_QUEST_NAME}}</a></div> -->
+		       	</td>
+		      	<td ng-switch-when='0'>未发布</td>
+		      	<td ng-switch-when='1'>收集中</td>
+		      	<td ng-switch-when='2'>已结束</td>
+		        <td><span style="color: red;">{{row.NUM}}</span>份</td>
+		        <td>{{row.CREATE_TIME | date:'yyyy-MM-dd'}}</td>
+		        <td class="caozuo">
+			       	<a href="" ng-click="update(row)"><span style="color:#0f3ec5;" class="glyphicon glyphicon-edit"></span> 编辑</a>
+			       	<!-- <a href="" ng-click="setAnswerUser(row)"><span style="color:#0ec0e6;" class="glyphicon glyphicon-user"></span> 人员设置</a> -->
+			       	<a href="" ng-click="see(row)" class="see" ><span style="color:#259d19;" class="glyphicon glyphicon-eye-open"></span> 预览</a>
+			        <a href="" ng-click="issue(row);" style="cursor: pointer;"><span style="color:#f8a506;" class="glyphicon glyphicon-play"></span> 发布</a>
+			        <a href="" ng-click="over(row)"><span style="color:#221f17;" class="glyphicon glyphicon-stop"></span> 结束</a>
+					<span ng-if="row.SURVEY_QUEST_TYPE == '0'" class="dropdown analyse">
+						<a  class="dropdown-toggle" data-toggle="dropdown"><span style="color:#0f3ec5;" class="glyphicon glyphicon-stats"></span> 分析<span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu" style="background-color: #f0f9fe;line-height: 30px;min-widtd: 120px;">
+							<a href="" ng-click="answer(row)"><span class="glyphicon glyphicon-chevron-right"></span> 结果分析</a><br/>
+							<a href="" ng-click="analysis(row)"><span class="glyphicon glyphicon-chevron-right"></span> 系统分析</a><br/>
+				        	<!-- <a ng-if="row.ANONYMOUS == '0'" href="" ng-click="evaluateAnalyse(row)"><span class="glyphicon glyphicon-chevron-right"></span> 评比分析</a> -->
+						</ul>
+					</span>
+					<span ng-if="row.SURVEY_QUEST_TYPE == '1'" class="dropdown analyse">
+						<a  class="dropdown-toggle" data-toggle="dropdown"><span style="color:#0f3ec5;" class="glyphicon glyphicon-stats"></span> 分析<span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu" style="background-color: #f0f9fe;line-height: 30px;min-widtd: 120px;">
+							<a href="" ng-click="result(row)"><span class="glyphicon glyphicon-chevron-right"></span> 投票结果</a><br/>
+<!-- 				        	<a href="" ng-click="evaluateAnalyse(row)"><span class="glyphicon glyphicon-chevron-right"></span> 评比分析</a><br/>
+				        	<a href="" ng-click="analysis(row)"><span class="glyphicon glyphicon-chevron-right"></span> 系统分析</a> -->
+						</ul>
+					</span>
+					<!-- <a href="" ng-click="copy(row)"><img src="assets/img/designqpiccopy.png" /> 复制</a>  -->
+			       	<a href="" ng-click="deleteData(row)"><span style="color:#ce0e0e;" class="glyphicon glyphicon-remove"></span> 删除</a>
+			       	<!-- <a href="" ng-click="exportToExcel(row)"><span style="color:#cec10e;" class="glyphicon glyphicon-export"></span> 结果导出</a> -->
+		        </td>
+		     </tr>
+   		</tbody>
+   		<tfoot>
+      	<tr>
+      		<td colspan="100">
+      		<div ng-include="'html/page.html'"></div>
+			</td>
+      	</tr>
+      </tfoot>
+	</table>
+	<div style="background: rgba(0,0,0,.5);width:100%;">
+		<div style="text-align: center;display: none;position:fixed;top: 50%; margin-top: -75px; left: 50%; margin-left: -75px;" id="loading"><img alt="" src="https://cdn.sjedu.cn/img/loading_1.gif"/></div>
+	</div>
+</div>
+
+<!-- ModalAlert -->
+<div class="modal fade" id="issueModalAlert"
+	style="top: 50%; margin-top: -150px;" tabindex="-1" role="dialog"
+	aria-labelledby="issueModalAlert">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title issueModalLabelAlertTitle" ></h4>
+			</div>
+			<div class="modal-body issueModalAlertContent">
+				<table>
+					<tr>
+						<td>
+							<div id="qrcode" style="padding: 10px 10px 5px;border: 1px solid #e5e5e5;"></div>
+						</td>
+						<td style="padding-left: 15px;">
+							<div style="width:450px;line-height:45px;">
+						    	<input type="radio" name="linkUrl" value="1" ng-checked="true" ng-click="addressUrlChange(1)" /> PC端
+						    	<input type="radio" name="linkUrl" value="2" ng-click="addressUrlChange(2)" /> 移动端
+						    </div>
+						    <div style="">
+						    	<input type="text" ng-model="addressUrl" class="webAddress form-control" style="width:420px;border-radius: 0px;" />
+						    	<input type="text" ng-model="mobileAddressUrl" class="mobileAddress form-control" style="width:420px;display:none;" />
+						    </div>
+						    <div style="line-height:45px;">
+						        <a id="download" download="qrcode.png"></a>
+						        <a id="saveQrCode" ng-click="downloadQrcode()"  style="cursor: pointer;">下载二维码</a>
+						    </div>
+						</td>
+					</tr>
+				</table>
+				<!-- <div class="alertContent">PC端：<span style="color:blue;">{{addressUrl}}</span></div>
+				<div class="alertContent">移动端：<span style="color:blue;">{{mobileAddressUrl}}</span></div> -->
+			</div>
+			<div class="modal-footer">
+				<!-- <button type="button" class="btn btn-default"
+					ng-click="closeAlert()">关闭</button> -->
+				<button type="button" class="btn btn-primary"
+					ng-click="closeAlert()" id="copyUrl">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+</div>
+

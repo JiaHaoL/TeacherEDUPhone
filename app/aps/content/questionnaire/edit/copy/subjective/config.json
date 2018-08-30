@@ -1,0 +1,32 @@
+{
+    "name": "app_support_copy_subjective",
+    "viewUrl": "aps/content/questionnaire/edit/copy/subjective/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/copy/subjective/controller.js",
+    "config": 
+    {
+           
+            "findTitleByPkURL": "json/Open_queryForObject_findTitleByPk.json",
+            "findOptionListByPkURL": "json/Open_queryForList_findOptionListByPk.json",
+            "addURL": "json/Question_saveQuestion_data.json",
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_copy_subjective.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_copy_subjective.save"
+		        	}
+				]
+			}
+	}
+}
+
+

@@ -1,0 +1,12 @@
+{
+	"name" : "app_vote_result",
+	"viewUrl" : "aps/content/questionnaire/vote/result/template.html",
+	"controllerUrl" : "aps/content/questionnaire/vote/result/controller.js",
+	"config" : {
+		"findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+        "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+        "findExpandInfoByQsIdURL":"json/Open_queryForList_findExpandInfoByQsId.json",
+		"findURL" : "json/Vote_findVoteResultList_data.json",
+		"findOptionListByIdURL":"json/Open_queryForList_findOptionListById.json"
+	}
+}

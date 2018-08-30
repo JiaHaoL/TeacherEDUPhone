@@ -1,0 +1,35 @@
+{
+    "name": "app_support_matrix",
+    "viewUrl": "aps/content/questionnaire/edit/update/matrix/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/update/matrix/controller.js",
+    "config": 
+    {
+           
+            "findTitleByPkURL": "json/Open_queryForObject_findTitleByPk.json",
+            "findOptionListByPkURL": "json/Open_queryForList_findOptionListByPk.json",
+            "findHeadingByTitleIdURL" : "json/Open_queryForList_findHeadingByTitleId.json",
+            "updateURL": "json/Question_updateMatrixInfo_data.json",
+            "deleteContentURL" :"json/Open_delete_deleteChoose.json",
+            "uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_data.json", 
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_matrix.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_matrix.save"
+		        	}
+				]
+			}
+	}
+}
+
+

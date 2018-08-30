@@ -3,7 +3,7 @@
         return [
             '$scope','httpService','config','params', 'eventBusService','controllerName','loggingService', function($scope,$httpService,config,params, eventBusService,controllerName,loggingService) {
             	loggingService.info(controllerName,"loaded");
-            	$httpService.css("http://hygl.pdedu.sh.cn/js/umeditor/themes/default/css/umeditor.min.css");
+            	$httpService.css("http://hygl.pdedu.sh.cn/CDN/js/umeditor/themes/default/css/umeditor.min.css");
             	$scope.form={};
                 var pk = params.pk;
                 var type = params.type;

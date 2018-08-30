@@ -1,0 +1,28 @@
+{
+    "name": "app_support_TitleInsertTwo",
+    "viewUrl": "aps/content/questionnaire/edit/insert/TitleInsertTwo/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/insert/TitleInsertTwo/controller.js",
+    "config": 
+    {
+            "addURL": "json/Question_saveQuestion_data.json",     
+             "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_TitleInsertTwo.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_TitleInsertTwo.save"
+		        	}
+				]
+			
+		}	
+	}
+}

@@ -1,0 +1,32 @@
+<div class="index_xi">
+	<div class="index_xitop">
+		<h1>{{dataInfo.SURVEY_QUEST_NAME}}</h1>
+	</div>
+	<div class="index_xicen">
+ 		<h1 ng-bind-html="dataInfo.SURVEY_TITLE_NAME | trustHtml"></h1>
+
+ 		<div class="index_xicen_n">
+ 			<h2>作品名称：{{dataInfo.SURVEY_CONTENT_CHOOSE}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单位：{{dataInfo.UNIT_NAME}}</h2>
+ 		</div>
+		<div class="index_text">
+			<div align="center">
+				<div id="container"></div>	
+				<p>
+		       		<span ng-bind-html="dataInfo.EXPAND_SUMMARY | trustHtml"></span>
+		    	</p>
+			</div>
+		</div>
+		<div class="index_xibtncen" style="padding: 15px 0 15px 0;">
+	   		<button class="index_xibtn" ng-click="goBack()" type="button"> 返回</button>  
+	   	</div>	
+	</div>
+	<div class="index_di">
+		<span class="font">上海市松江区教育局 地址：中山中路38号 电话：021-57820485 邮政编码：201600<br/>
+        	 Email:sjjyj@sjedu.cn 上海市松江区教育局 <span lang="en">&copy;</span>2006版权所有 <br/>
+        	 <a href="http://www.shmec.gov.cn/web/hdpt/wsgs_detail.php?subject_id=237" target="_blank" class="link-03">沪教Z2-20100035号</a> 　
+         	 <a href="http://www.miibeian.gov.cn" target="_blank" class="link-03">沪ICP备11030667号</a> 
+		</span>
+	</div>
+</div>
+
+

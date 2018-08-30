@@ -1,0 +1,11 @@
+{
+    "name": "app_target_investigate_format",
+    "viewUrl": "aps/content/questionnaire/target/investigate/format/template.html",
+    "controllerUrl": "aps/content/questionnaire/target/investigate/format/controller.js",
+    "config": 
+    {
+    	"findQuestionnaireByIdURL" : "json/Open_queryForObject_findQuestionnaireById.json",
+    	"findTeacherListByClassIdURL" : "json/Open_queryForList_findTeacherListByClassPk.json",
+    	"addURL" : "json/Open_insert_AnswerInsert.json"
+    }
+}

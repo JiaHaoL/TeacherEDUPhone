@@ -89,8 +89,30 @@
                 		   eventBusService.publish(controllerName,'appPart.load.modal.alert', {"title":"操作提示","content":"直播还未开始，请耐心等待！"});
                 	   }
                 		
-                	}else{
-                        alert("暂未实现");
+                	}else if(obj==6){//投票问卷
+                		//管理者
+                		/*if($scope.dataVO.FK_TEACHER == $scope.userInfo.USER_PK){
+                			var m2 = {
+                     				  url:config.toupiaoURL+"?pk="+params.pk,
+                  	                  contentName:"content",
+                  	                  hasButton:"right",
+                  	                  data:{MENU_PK:"none",MENU_NAME:"会议说明"}
+                  	                }
+                            		eventBusService.publish(controllerName,'appPart.load.content', m2);
+                			//$scope.appPartSrc = config.toupiaoURL+"?pk="+params.pk;
+                		}else{//参与者
+*/                			var m2 = {
+                   				  	  url:config.toupiaoUserURL+"?pk="+params.pk,
+                	                  contentName:"content",
+                	                  hasButton:"right",
+                	                  data:{MENU_PK:"none",MENU_NAME:"投票问卷"}
+                	                }
+                          		eventBusService.publish(controllerName,'appPart.load.content', m2);
+                			//$scope.appPartSrc = config.toupiaoUserURL+"?pk="+params.pk;
+                		//}
+                		
+                		$('#'+controllerName+' .tab_toupiao').addClass("active");
+                		//$scope.$apply();
                 	}
                 	
                 }

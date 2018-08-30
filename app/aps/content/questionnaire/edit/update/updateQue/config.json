@@ -1,0 +1,32 @@
+{
+    "name": "app_support_updateQue",
+    "viewUrl": "aps/content/questionnaire/edit/update/updateQue/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/update/updateQue/controller.js",
+    "config": 
+    {
+            "findTitleByPkURL": "json/Open_queryForObject_findTitleByPk.json",
+            "findOptionListByPkURL": "json/Open_queryForList_findOptionListByPk.json",
+            "updatetitleURL": "json/Title_contentUpdate_data.json",
+            "uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_data.json", 
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_updateQue.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_updateQue.save"
+		        	}
+				]
+			}
+	}
+}
+
+

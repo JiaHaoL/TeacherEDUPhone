@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<!-- 查询投票结果 -->
+	<select id="findVoteResultList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		  FK_SURVEY_CONTENT,
+		  (select SURVEY_CONTENT_CHOOSE from SURVEY_CONTENT where SURVEY_CONTENT_ID = FK_SURVEY_CONTENT) SURVEY_CONTENT_CHOOSE,
+		  FK_UNIT,
+		  (select UNIT_NAME from SC_UNIT where UNIT_PK = FK_UNIT) UNIT_NAME,
+		  GAIN_VOTE,
+		  (select SURVEY_TITLE_NAME from SURVEY_TITLE where SURVEY_TITLE_ID = 
+		      (select SURVEY_TITLE_ID from SURVEY_CONTENT where SURVEY_CONTENT_ID = FK_SURVEY_CONTENT)) SURVEY_TITLE_NAME
+		FROM EXPAND_INFORMATION
+		WHERE DELETE_FLAG = 0
+		AND FK_SURVEY_CONTENT IN 
+			(select SURVEY_CONTENT_ID from SURVEY_CONTENT where SURVEY_TITLE_ID in 
+				(select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#))
+	</select>
+	
+	<select id="findVoteResultListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(*) 
+		FROM EXPAND_INFORMATION 
+		WHERE DELETE_FLAG = 0
+		AND FK_SURVEY_CONTENT IN 
+			(select SURVEY_CONTENT_ID from SURVEY_CONTENT where SURVEY_TITLE_ID in 
+				(select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#))
+	</select>
+	
+	<!-- 根据id查询竞选人员扩展信息 -->
+	<select id="findExpandInfoById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		  EXPAND_INFO_PK,
+		  FK_SURVEY_CONTENT,
+		  FK_UNIT,
+		  (select UNIT_NAME from SC_UNIT where UNIT_PK = FK_UNIT) UNIT_NAME,
+		  GAIN_VOTE,
+		  EXPAND_IMG,
+		  EXPAND_VIDEO,
+		  EXPAND_VIDEO_IMG,
+		  EXPAND_SUMMARY,
+		  (select SURVEY_CONTENT_CHOOSE from SURVEY_CONTENT where SURVEY_CONTENT_ID = FK_SURVEY_CONTENT) SURVEY_CONTENT_CHOOSE,
+		  (select SURVEY_TITLE_NAME 
+		  		from SURVEY_TITLE 
+		  		where SURVEY_TITLE_ID = 
+		  			(select SURVEY_TITLE_ID 
+		  			from SURVEY_CONTENT 
+		  			where SURVEY_CONTENT_ID = FK_SURVEY_CONTENT)) SURVEY_TITLE_NAME,
+		  (select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) SURVEY_QUEST_NAME
+		FROM EXPAND_INFORMATION
+		WHERE  EXPAND_INFO_PK = #EXPAND_INFO_PK#	
+	</select>
+	
+	<!-- 根据问卷id查询竞选人员扩展信息 -->
+	<select id="findExpandInfoByQsId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		  EXPAND_INFO_PK,
+		  FK_SURVEY_CONTENT,
+		  FK_UNIT,
+		  (select UNIT_NAME from SC_UNIT where UNIT_PK = FK_UNIT) UNIT_NAME,
+		  (select count(*) from SURVEY_SYNTH where SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID) GAIN_VOTE,
+		  EXPAND_IMG,
+		  EXPAND_VIDEO,
+		  EXPAND_VIDEO_IMG,
+		  EXPAND_SUMMARY,
+		  SURVEY_CONTENT_CHOOSE,
+		  SURVEY_CONTENT_ID,
+		  SURVEY_TITLE_ID
+		FROM SURVEY_CONTENT JOIN EXPAND_INFORMATION ON FK_SURVEY_CONTENT = SURVEY_CONTENT_ID
+		WHERE  SURVEY_TITLE_ID in (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)			
+	</select>
+	
+	<!-- 竞选人员查询 -->
+	<select id="findExpandInfoByOptionId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			EXPAND_INFO_PK,
+			FK_SURVEY_CONTENT,
+			FK_UNIT,
+			GAIN_VOTE,
+			EXPAND_IMG,
+			EXPAND_VIDEO,
+			EXPAND_VIDEO_IMG,
+			EXPAND_SUMMARY,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			DELETE_FLAG,
+			VIDEO_FILE_NAME,
+			IMG_FILE_NAME,
+			VIDEO_IMG_FILE_NAME
+		FROM EXPAND_INFORMATION
+		WHERE FK_SURVEY_CONTENT = #FK_SURVEY_CONTENT#
+		AND DELETE_FLAG = 0
+	</select>
+	
+	<!-- 得票数更新 -->
+	<update id="GainVoteNumberUpdate" parameterClass="java.util.HashMap">
+		UPDATE EXPAND_INFORMATION SET
+			GAIN_VOTE = GAIN_VOTE + 1,
+			UPDATE_BY = #userInfo.GUID#,
+			UPDATE_TIME = sysdate
+		WHERE EXPAND_INFO_PK = #EXPAND_INFO_PK#
+	</update>
+	
+	<!-- 竞选人员扩展信息插入 -->
+	<insert id="ExpandInformationInsert" parameterClass="java.util.HashMap">
+		INSERT INTO EXPAND_INFORMATION
+		(
+			EXPAND_INFO_PK,
+			FK_SURVEY_CONTENT,
+			FK_UNIT,
+			GAIN_VOTE,
+			EXPAND_IMG,
+			EXPAND_VIDEO,
+			EXPAND_VIDEO_IMG,
+			EXPAND_SUMMARY,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			DELETE_FLAG,
+			VIDEO_FILE_NAME,
+			IMG_FILE_NAME,
+			VIDEO_IMG_FILE_NAME
+		)
+		VALUES
+		(
+			#UUID#,
+			#FK_SURVEY_CONTENT#,
+			#FK_UNIT#,
+			nvl(#GAIN_VOTE#,0),
+			#EXPAND_IMG#,
+			#EXPAND_VIDEO#,
+			#EXPAND_VIDEO_IMG#,
+			#EXPAND_SUMMARY#,
+			#userInfo.GUID#,
+			sysdate,
+			#UPDATE_BY#,
+			#UPDATE_TIME#,
+			0,
+			#VIDEO_FILE_NAME#,
+			#IMG_FILE_NAME#,
+			#VIDEO_IMG_FILE_NAME#
+		)
+	</insert>
+	
+	<!-- 竞选人员扩展信息更新 -->
+	<update id="ExpandInformationUpdate" parameterClass="java.util.HashMap">
+		UPDATE EXPAND_INFORMATION SET
+			FK_SURVEY_CONTENT = #FK_SURVEY_CONTENT#,
+			FK_UNIT = #FK_UNIT#,
+			EXPAND_IMG = #EXPAND_IMG#,
+			EXPAND_VIDEO = #EXPAND_VIDEO#,
+			EXPAND_VIDEO_IMG = #EXPAND_VIDEO_IMG#,
+			EXPAND_SUMMARY = #EXPAND_SUMMARY#,
+			VIDEO_FILE_NAME = #VIDEO_FILE_NAME#,
+			IMG_FILE_NAME = #IMG_FILE_NAME#,
+			VIDEO_IMG_FILE_NAME = #VIDEO_IMG_FILE_NAME#,
+			UPDATE_BY = #userInfo.GUID#,
+			UPDATE_TIME = sysdate
+		WHERE EXPAND_INFO_PK = #EXPAND_INFO_PK#
+	</update>
+	
+	<!-- 投票结果插入 -->
+    <insert id="VoteResultInsert" parameterClass="java.util.HashMap">
+        INSERT INTO SURVEY_SYNTH
+        (
+          	SURVEY_SYNTH_ID,
+			SURVEY_SYNTH_TIME,
+			SURVEY_QUEST_ID,
+			SURVEY_TITLE_ID,
+			STATE,
+			USER_PK,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			SURVEY_VALUE,
+			SURVEY_CONTENT_ID,
+			SURVEY_ANSWER_ID,
+			SURVEY_SYNTH_ORDER,
+			SURVEY_MATRIX_ID
+        ) 
+        VALUES 
+        (
+	       	#UUID#,
+	       	sysdate,
+	       	#SURVEY_QUEST_ID#,
+	       	(select SURVEY_TITLE_ID from SURVEY_CONTENT where SURVEY_CONTENT_ID = #SURVEY_CONTENT_ID#),
+	       	0,
+	       	#FK_USER#,
+	       	#userInfo.GUID#,
+	       	sysdate,
+	       	#UPDATE_BY#,
+			#UPDATE_TIME#,
+			#SURVEY_VALUE#,
+	       	#SURVEY_CONTENT_ID#,
+	       	#SURVEY_ANSWER_ID#,
+	        #SURVEY_SYNTH_ORDER#,
+	        #SURVEY_MATRIX_ID#
+        )   
+    </insert>
+</sqlMap>

@@ -6,8 +6,8 @@
 	 	select 
 		  lng,
 		  lat
-		from sc_unit
-		where unit_address = (select ACTIVITY_PLACE from sc_course where sc_course_pk = #coursePk#)
+		from sc_course
+		where sc_course_pk = #coursePk#
 	</select>
 	
     <select id="checkIsQrCode" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">

@@ -1,0 +1,54 @@
+<div style="padding:15px;">
+<div class="panel panel-info">
+<div style="float: right;margin-top: 30px; margin-right: 60px;">
+  	<button type="button" ng-click="goBack()" class="btn btn-warning"><span class="glyphicon glyphicon-share-alt"></span> 返回</button>
+</div>
+<div style="padding:40px 60px 0px 60px;">
+<!-- 	<div style="text-align:center;">
+		<span style="color: blue; font-size: 20px;" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</span>
+	</div> -->
+	<form class="form-inline" role="form">
+		<div class="form-group" >
+			<label class="control-label">答题用户:</label>
+			<input class="form-control" type="text" ng-model="form.USER_SN" value="{{form.USER_SN}}" placeholder="用户姓名/IP地址"/>
+			<button type="button" class="btn btn-info" ng-click="select();"><span class="glyphicon glyphicon-search"></span> 查询</button>
+		</div>
+	</form>
+</div>
+<div style="padding:20px 60px 10px 60px;">
+      <table class="table table-hover">
+	       <thead>
+	          <tr style="text-align:center;font-weight: bold;">
+		         <td>答案编号</td>
+		         <td>问卷名称</td>
+		         <td>答题用户</td>
+		         <td>答题日期</td>
+	<!-- 	         <td>答题详情</td> -->
+		         <td>操作</td>
+	          </tr>
+	       </thead>
+           <!-- 当没有数据时，显示为无记录 -->
+       	   <tbody ng-switch on = "page.current_num" align="center">
+				<tr ng-switch-when = "0">
+					<td colspan="100" class="NoSelectHistory">查询无纪录</td>
+				</tr>
+	       	  	<tr ng-repeat="answer in answerList">
+	       	        <td>{{$index+1}}</td> 
+	   				<td>{{answer.QUESTIONNAIRE_NAME}}</td>	
+	   				<td>{{answer.USER_SN}}</td>	
+	   				<td>{{answer.ANSWER_TIME | date:'yyyy-MM-dd'}}</td>	
+<!-- 	   				<td><a  ng-click="seeAnswer(answer)">{{answer.SURVEY_ANSWER_ID}}</a></td> -->
+	   				<td><a  ng-click="remove(answer)">删除</a></td>			
+	   			</tr> 	
+	       </tbody>
+	       <tfoot>
+		      	<tr>
+		      	   <td colspan="100">
+		      		  <div ng-include="'html/page.html'"></div>
+				   </td>
+		      	</tr>
+	      </tfoot>
+      </table>
+</div>
+</div>
+</div>

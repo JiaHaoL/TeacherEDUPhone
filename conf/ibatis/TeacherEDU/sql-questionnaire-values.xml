@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+     
+     <select id="findAnswer" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select 
+			SURVEY_ANSWER_ID,
+			SURVEY_QUEST_ID,
+			FK_USER,
+			ANSWER_TIME,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			SURVEY_SUBJECTTEACHER_ID
+		from SURVEY_ANSWER SA
+		where SURVEY_SUBJECTTEACHER_ID = 'SUBJECTTEACHER4180A1127B7A681E0'
+		and SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		and FK_USER = #userInfo.GUID#
+	</select>
+	
+	<!-- 每提交一份答题份数减1 -->
+	<update id="UpdateWriteNumber" parameterClass="java.util.HashMap">
+		UPDATE SURVEY_ANSWER_V SET
+			WRITE_NUMBER = WRITE_NUMBER － 1
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		AND FK_USER = #FK_USER#
+	</update>
+	
+	<!-- 查找评测教师 -->
+	<select id="findTeacherNameById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+     	SELECT 
+		    SURVEY_SUBJECTTEACHER_ID,
+		    FK_TEACHER,
+		    (select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+		    SURVEY_QUEST_ID,
+		    CREATE_BY,
+		    CREATE_TIME,
+		    STATE,
+		    FK_CLASS,
+		    SURVEY_TYPE
+      	FROM SURVEY_SUBJECTTEACHER
+      	WHERE SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID#
+        AND STATE = 0
+    </select>
+	
+	<!-- 根据用户pk查找所在班级，再根据班级pk查找任课老师 -->
+	<select id="findTeacherListByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		  SURVEY_SUBJECTTEACHER_ID,
+		  FK_TEACHER,
+		  (select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+		  SURVEY_QUEST_ID,
+		  CREATE_BY,
+		  CREATE_TIME,
+		  UPDATE_BY,
+		  UPDATE_TIME,
+		  STATE,
+		  FK_CLASS,
+		  (select count(*) 
+		  		from SURVEY_ANSWER 
+		  		where FK_USER = #FK_USER# and STATE = 0
+		  		and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SURVEY_SUBJECTTEACHER.SURVEY_SUBJECTTEACHER_ID) NUM,
+		  (select ANSWER_TIME 
+		  		from SURVEY_ANSWER 
+		  		where FK_USER = #FK_USER# and STATE = 0
+		  		and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SURVEY_SUBJECTTEACHER.SURVEY_SUBJECTTEACHER_ID) ANSWER_TIME,
+		  	SURVEY_TYPE
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE STATE = 0
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+		<isEqual property="TEACHER_FLAG" compareValue="1">
+			<isNotEmpty prepend="AND" property="USER_TYPE">
+				<isEqual property="USER_TYPE" compareValue="2">
+					FK_CLASS = (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = #FK_USER#)
+				</isEqual>
+				<isEqual property="USER_TYPE" compareValue="3">
+					FK_CLASS in 
+						(select STUDENT_BJID
+							from SC_USER_STUDENT
+							where STUDENT_PK in (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0))
+				</isEqual>
+			</isNotEmpty>
+		</isEqual>
+		order by NUM desc 
+	</select>
+	
+	<select id="findTeacherListByUserPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+		  count(*)
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE STATE = 0
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+		<isEqual property="TEACHER_FLAG" compareValue="1">
+			<isNotEmpty prepend="AND" property="USER_TYPE">
+				<isEqual property="USER_TYPE" compareValue="2">
+					FK_CLASS = (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = #FK_USER#)
+				</isEqual>
+				<isEqual property="USER_TYPE" compareValue="3">
+					FK_CLASS in 
+						(select STUDENT_BJID
+							from SC_USER_STUDENT
+							where STUDENT_PK in (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0))
+				</isEqual>
+			</isNotEmpty>
+		</isEqual>
+	</select>
+	
+	<!-- 根据班级pk查询评测教师 -->
+	<select id="findTeacherListByClassPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			USER_SN TEACHER_NAME,
+			USER_PK FK_TEACHER
+		FROM SC_USER
+		WHERE FK_UNIT = #FK_UNIT#
+		and USER_PK in
+		 (select distinct FK_TEACHER from SURVEY_SUBJECTTEACHER where STATE = 0
+			<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+				SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="STUDENT_NJID">
+				FK_CLASS in (select CLASS_PK from SC_CLASS where FK_GRADE = #STUDENT_NJID#)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="STUDENT_BJID">
+				FK_CLASS = #STUDENT_BJID#
+			</isNotEmpty>
+		  )
+	</select>
+
+	<!-- 查询某个问卷的评比对象 （任课教师） -->
+	<select id="findSubjectTeacherByQuestID" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			SURVEY_SUBJECTTEACHER_ID,
+			FK_TEACHER,
+			(select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+			SURVEY_QUEST_ID,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			FK_CLASS,
+<!-- 			(select (select UNIT_NAME from SC_UNIT where UNIT_PK = FK_UNIT_SCHOLL) from SC_CLASS where CLASS_PK = FK_CLASS) SCHOOL_NAME, -->
+			<!-- (select (select GRADE_NAME from SC_GRADE where GRADE_PK=FK_GRADE)||nvl2(CLASS_BH,'('||CLASS_BH||')班','未分班') from SC_CLASS where CLASS_PK=FK_CLASS) CLASS_NAME, -->
+			(select UNIT_NAME 
+				from SC_UNIT
+				where UNIT_PK  = (select FK_UNIT from SC_USER where USER_PK = FK_TEACHER)) SCHOOL_NAME,
+			SURVEY_TYPE
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				(select FK_UNIT_SCHOLL from SC_CLASS where CLASS_PK = FK_CLASS) = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">
+			(select USER_SN from SC_USER where USER_PK = FK_TEACHER) LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_TYPE">
+			SURVEY_TYPE = #SURVEY_TYPE#
+		</isNotEmpty>
+		order by CREATE_TIME desc
+	</select>
+	
+	<select id="findSubjectTeacherByQuestIDSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0
+		<isNotEmpty  prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				(select FK_UNIT_SCHOLL from SC_CLASS where CLASS_PK = FK_CLASS) = #userInfo.FK_UNIT#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="USER_SN">
+			(select USER_SN from SC_USER where USER_PK = FK_TEACHER) LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_TYPE">
+			SURVEY_TYPE = #SURVEY_TYPE#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 查询问卷要调查的用户 -->
+	<select id="findUsersByQuestId"  parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			FK_USER
+		FROM  SURVEY_ANSWER_V 
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0
+		<!-- and <![CDATA[rownum <= 100091]]> -->
+	</select>
+	
+	<!-- 查询被评测人是否是任课教师 -->
+	<select id="findTeacherFlag"  parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			TEACHER_FLAG
+		FROM  SURVEY_ANSWER_V 
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		 and FK_USER = #FK_USER#
+		 and STATE = 0
+	</select>
+	
+	<!-- 查询问卷用户 -->
+	<select id="findAnswerUserList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			(select USER_SN from SC_USER where USER_PK = v.FK_USER) USER_SN,
+			(select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) QUEST_NAME,
+			SURVEY_QUEST_ID,
+			(select MAX(ANSWER_TIME) 
+				from SURVEY_ANSWER 
+				where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and FK_USER = v.FK_USER and STATE = 0) ANSWER_TIME,
+			(select COUNT(*) 
+				from SURVEY_ANSWER  
+				where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and FK_USER = v.FK_USER and STATE = 0) ANSWER_COUNT,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			(select UNIT_NAME 
+				from SC_UNIT
+				where UNIT_PK  = (select FK_UNIT from SC_USER where USER_PK = v.FK_USER)) SCHOOL_NAME,
+			SURVEY_TYPE,
+			TEACHER_FLAG
+		FROM SURVEY_ANSWER_V v
+		WHERE STATE = 0
+		and SURVEY_TYPE != '4'
+		<isNotEmpty prepend="AND" property="USER_SN">
+			(select USER_SN from SC_USER where USER_PK = v.FK_USER) LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_TYPE">
+			SURVEY_TYPE = #SURVEY_TYPE#
+		</isNotEmpty>
+		order by ANSWER_TIME desc nulls last,ANSWER_COUNT desc
+	</select>
+	
+	<select id="findAnswerUserListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM SURVEY_ANSWER_V
+		WHERE  STATE = 0
+		and SURVEY_TYPE != '4'
+		<isNotEmpty prepend="AND" property="USER_SN">
+			(select USER_SN from SC_USER where USER_PK = FK_USER) LIKE '%$USER_SN$%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_TYPE">
+			SURVEY_TYPE = #SURVEY_TYPE#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 查询匿名投票用户 -->
+	<select id="findAnonymousAnswerUserList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			(select MAX(ANSWER_TIME) 
+				from SURVEY_ANSWER 
+				where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and FK_USER = v.FK_USER and STATE = 0) ANSWER_TIME,
+			(select COUNT(*) 
+				from SURVEY_ANSWER  
+				where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and FK_USER = v.FK_USER and STATE = 0) ANSWER_COUNT
+		FROM SURVEY_ANSWER_V v
+		WHERE STATE = 0
+		and SURVEY_TYPE = '4'
+		order by ANSWER_TIME desc nulls last,ANSWER_COUNT desc
+	</select>
+	
+	<select id="findAnonymousAnswerUserListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM SURVEY_ANSWER_V
+		WHERE  STATE = 0
+		and SURVEY_TYPE = '4'
+	</select>
+	
+	<!-- 补入填写用户 -->
+	<insert id="SupplementUserInsert" parameterClass="java.util.HashMap">
+		INSERT INTO 	SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		)
+		VALUES
+		(
+			#UUID#,
+			#FK_USER#,
+			#SURVEY_QUEST_ID#,
+			#userInfo.GUID#,
+			sysdate,
+			#UPDATE_BY#,
+			#UPDATE_TIME#,
+			0,
+			#USER_TYPE#,
+			#TEACHER_FLAG#,
+			#WRITE_NUMBER#
+		)
+	</insert>
+	
+	<!-- 添加评比对象 -->
+	<insert id="AppraiseUserInsert" parameterClass="java.util.HashMap">
+		INSERT INTO SURVEY_SUBJECTTEACHER
+		(
+			SURVEY_SUBJECTTEACHER_ID,
+			FK_TEACHER,
+			SURVEY_QUEST_ID,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			FK_CLASS,
+			SURVEY_TYPE
+		)
+		VALUES
+		(
+			 #UUID#,
+			 #USER_PK#,
+			 #SURVEY_QUEST_ID#,
+			 #userInfo.GUID#,
+			 sysdate,
+			 #UPDATE_BY#,
+			 #UPDATE_TIME#,
+			 0,
+			 (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = #USER_PK#),
+			 #USER_TYPE#
+		)
+	</insert>
+	
+	<!-- 添加问卷用户 (教师) -->
+	<insert id="TeacherAnswerInfoInsert"  parameterClass="java.util.HashMap">
+		INSERT INTO 
+		SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		) 
+		select
+			 sys_guid(),
+			 USER_PK,
+			 #SURVEY_QUEST_ID#,
+			 sysdate,
+			 #userInfo.GUID#,
+			 null,
+			 null,
+			 0,
+			 1,
+			 #TEACHER_FLAG#,
+			 #WRITE_NUMBER#
+		from 
+			SC_USER
+		where USER_STATUS = 0 and USER_TYPE = 1
+		  and (select TEACHER_STATE from SC_USER_TEACHER where TEACHER_PK = USER_PK) != '4'
+		  and USER_PK not in (select FK_USER from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty prepend="AND" property="TEACHER_GZDWPK">  
+			FK_UNIT = #TEACHER_GZDWPK#
+		</isNotEmpty>
+	</insert>
+	
+	<insert id="TeacherAnswerInfoInsertForCourse"  parameterClass="java.util.HashMap">
+		INSERT INTO 
+		SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		) 
+		select
+			 sys_guid(),
+			 FK_TEACHER,
+			 #SURVEY_QUEST_ID#,
+			 sysdate,
+			 #userInfo.GUID#,
+			 null,
+			 null,
+			 0,
+			 1,
+			 #TEACHER_FLAG#,
+			 #WRITE_NUMBER#
+		from 
+			SC_COURSE_TEACHER
+		where FK_SC_COURSE = #FK_COURSE#
+	</insert>
+	
+	<!-- 添加问卷评比对象  (任课教师) -->
+	<insert id="SuvTeacherAnswerInfoInsert"  parameterClass="java.util.HashMap">
+		INSERT INTO
+		SURVEY_SUBJECTTEACHER
+		(
+			SURVEY_SUBJECTTEACHER_ID,
+			FK_TEACHER,
+			SURVEY_QUEST_ID,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			FK_CLASS,
+			SURVEY_TYPE
+		)
+		select 
+			sys_guid(),
+			PK_USER,
+			#SURVEY_QUEST_ID#,
+			#userInfo.GUID#,
+			sysdate,
+			null,
+			null,
+			0,
+			PK_CLASS,
+			1
+		from SC_LESSON_TASK 
+		where DELETEFLAG = 0  
+		and PK_USER not in (select FK_TEACHER from SURVEY_SUBJECTTEACHER where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+			PK_REFERENCEID = #FK_UNIT#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_NJID">  
+			PK_CLASS in (select CLASS_PK from SC_CLASS where FK_GRADE = #STUDENT_NJID#)
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+			PK_CLASS = #STUDENT_BJID#
+		</isNotEmpty>
+		group by PK_USER,PK_CLASS
+	</insert>
+	
+	<!-- 添加问卷用户/采集对象  (学生)  -->
+	<insert id="StudentAnswerInfoInsert"  parameterClass="java.util.HashMap">
+		INSERT INTO 
+		SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		) 
+		select
+			 sys_guid(),
+			 STUDENT_PK,
+			 #SURVEY_QUEST_ID#,
+			 sysdate,
+			 #userInfo.GUID#,
+			 null,
+			 null,
+			 0,
+			 #SURVEY_TYPE#,
+			 #TEACHER_FLAG#,
+			 #WRITE_NUMBER#
+		from 
+			SC_USER,SC_USER_STUDENT
+		where USER_PK = STUDENT_PK
+		and	USER_STATUS = 0 and USER_TYPE = 2
+		and STUDENT_PK not in (select FK_USER from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty prepend="AND" property="STUDENT_NJID">  
+			SC_USER_STUDENT.STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+			SC_USER_STUDENT.STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+			SC_USER_STUDENT.FK_UNIT = #FK_UNIT#
+		</isNotEmpty> 	
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+			STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+	</insert>
+	
+	<!-- 添加问卷用户/采集对象 (家长) -->
+	<insert id="ParentAnswerInfoInsert"  parameterClass="java.util.HashMap">
+		INSERT INTO 
+		SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		) 
+		select
+			 sys_guid(),
+			 PARENT_PK,
+			 #SURVEY_QUEST_ID#,
+			 sysdate,
+			 #userInfo.GUID#,
+			 null,
+			 null,
+			 0,
+			 #SURVEY_TYPE#,
+			 #TEACHER_FLAG#,
+			 #WRITE_NUMBER#
+		from 
+			SC_USER_PARENT up,SC_USER_STUDENT us,SC_STUDENT_PARENT sp 
+		where up.PARENT_PK = sp.FK_PARENT AND sp.FK_STUDENT = us.STUDENT_PK
+		and up.PARENT_PK not in (select FK_USER from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+	  	<isNotEmpty prepend="AND" property="STUDENT_NJID">  
+		    STUDENT_NJID =#STUDENT_NJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_BJID">  
+		    STUDENT_BJID =#STUDENT_BJID#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_UNIT">  
+		    FK_UNIT = #FK_UNIT#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="STUDENT_STATE">  
+		    STUDENT_STATE = #STUDENT_STATE#
+		</isNotEmpty>
+	</insert>
+	
+	<!-- 添加问卷用户 (角色)  -->
+	<insert id="RoleAnswerInfoInsert"  parameterClass="java.util.HashMap">
+		INSERT INTO 
+		SURVEY_ANSWER_V
+		(
+			SURVEY_ANSWER_V_ID,
+			FK_USER,
+			SURVEY_QUEST_ID,
+			CREATE_TIME,
+			CREATE_BY,
+			UPDATE_TIME,
+			UPDATE_BY,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		) 
+		select
+			 sys_guid(),
+			 USER_PK,
+			 #SURVEY_QUEST_ID#,
+			 sysdate,
+			 #userInfo.GUID#,
+			 null,
+			 null,
+			 0,
+			 1,
+			 #TEACHER_FLAG#,
+			 #WRITE_NUMBER#
+		from SC_USER
+		where USER_PK in (select FK_USER  from SC_USER_ROLE  where FK_ROLE = #ROLE_PK#)
+		and USER_PK not in (select FK_USER from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0)
+		<isNotEmpty prepend="AND" property="TEACHER_GZDWPK">  
+			FK_UNIT = #TEACHER_GZDWPK#
+		</isNotEmpty>
+	</insert>
+	
+	<!-- 更新问卷用户填写份数 -->
+	<update id="WriteNumberUpdate" parameterClass="java.util.HashMap">
+		update SURVEY_ANSWER_V set
+			WRITE_NUMBER =  
+				(SELECT 
+				  count(*)
+				FROM SURVEY_SUBJECTTEACHER
+				WHERE STATE = 0 
+				and SURVEY_SUBJECTTEACHER.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+				<isEqual property="TEACHER_FLAG" compareValue="1">
+					<isNotEmpty prepend="AND" property="SURVEY_TYPE">
+						<isEqual property="SURVEY_TYPE" compareValue="2">
+							FK_CLASS = (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = SURVEY_ANSWER_V.FK_USER)
+						</isEqual>
+						<isEqual property="SURVEY_TYPE" compareValue="3">
+							FK_CLASS in 
+								(select STUDENT_BJID
+									from SC_USER_STUDENT
+									where STUDENT_PK in (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = SURVEY_ANSWER_V.FK_USER and STATUS = 0))
+						</isEqual>
+					</isNotEmpty>
+				</isEqual>)
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#	
+		and STATE = 0		
+	</update>
+		
+    <!-- 删除评比对象任课教师 -->
+	<update id="RemoveAllSurveyTarget" parameterClass="java.util.HashMap">
+		update SURVEY_SUBJECTTEACHER set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+	</update>
+	
+	<!-- 删除问卷用户 -->
+	<!-- 1.删除SURVEY_ANSWER_V表中数据 -->
+	<update id="RemoveCollectTarget" parameterClass="java.util.HashMap">
+		update SURVEY_ANSWER_V set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+		and FK_USER = #FK_USER# 
+	</update>
+	<!-- 2.删除SURVEY_ANSWER表中数据 -->
+	<update id="RemoveCollectTargetAnswer" parameterClass="java.util.HashMap">
+		update SURVEY_ANSWER set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+		and FK_USER = #FK_USER# 
+		and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID#
+	</update>
+	<!-- 3.删除SURVEY_SYNTH表中数据 -->
+	<update id="RemoveCollectTargetSynth" parameterClass="java.util.HashMap">
+		update SURVEY_SYNTH set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_ANSWER_ID = (
+					select SURVEY_ANSWER_ID from SURVEY_ANSWER 
+					where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+					and FK_USER = #FK_USER# 
+					and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID#)
+	</update>
+	
+	<!-- 删除评比对象 -->
+	<!-- 1.删除SURVEY_ANSWER_V表中数据 -->
+	<update id="RemoveSurveyTarget" parameterClass="java.util.HashMap">
+		update SURVEY_SUBJECTTEACHER set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+		and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID# 
+	</update>
+	<!-- 2.删除SURVEY_ANSWER表中数据 -->
+	<update id="RemoveSurveyTargetAnswer" parameterClass="java.util.HashMap">
+		update SURVEY_ANSWER set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+		and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID#
+	</update>
+	<!-- 3.删除SURVEY_SYNTH表中数据 -->
+	<update id="RemoveSurveyTargetSynth" parameterClass="java.util.HashMap">
+		update SURVEY_SYNTH set
+			STATE = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		where SURVEY_ANSWER_ID in (
+					select SURVEY_ANSWER_ID from SURVEY_ANSWER 
+					where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+					and SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID#)
+	</update>
+	
+	<!-- 角色 -->
+	<select id="findRoleList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			ROLE_PK,
+			ROLE_CODE,
+			ROLE_NAME,
+			ROLE_COMMENT，
+			ROLE_TYPE,
+			ROLE_STATUS,
+       		FK_UNIT,
+       		FK_APP
+		FROM 
+			SC_SYS_ROLE
+		WHERE ROLE_STATUS = 0 AND ROLE_TYPE = 2
+		<isNotEmpty  prepend="OR" property="ISTEACHER">
+			ROLE_PK = '7199ed1161cb4eb4ad2897b45bbddd7c'
+		</isNotEmpty>
+	</select>
+     
+	 <!-- 查看答案列表 -->
+	 <select id="findAnswerList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+     	SELECT 
+			SURVEY_ANSWER_ID,
+			SURVEY_QUEST_ID,
+			(select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) QUESTIONNAIRE_NAME,
+			FK_USER,
+			nvl((select USER_SN from SC_USER where USER_PK = FK_USER),FK_USER) USER_SN,
+			ANSWER_TIME,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			SURVEY_SUBJECTTEACHER_ID,
+			(select TEACHER_XM from SC_USER_TEACHER where TEACHER_PK = (
+				 select FK_TEACHER from SURVEY_SUBJECTTEACHER SS
+				 where SS.SURVEY_SUBJECTTEACHER_ID = SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID 
+				 and SS.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)) TEACHER_NAME
+        FROM SURVEY_ANSWER
+        WHERE STATE = 0
+        <isNotEmpty prepend="AND" property="USER_SN">
+			nvl((select USER_SN from SC_USER where USER_PK = FK_USER),FK_USER) LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+        ORDER BY CREATE_TIME DESC
+   	</select>
+   	
+    <select id="findAnswerListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+    	SELECT COUNT(*)
+        FROM SURVEY_ANSWER
+        WHERE STATE = 0
+        <isNotEmpty prepend="AND" property="USER_SN">
+			(select USER_SN from SC_USER where USER_PK = FK_USER) LIKE '%'||#USER_SN#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+    </select>
+    
+    <!-- 查看答案 -->
+    <select id="findAnswerByUserId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT 
+    		SURVEY_ANSWER_ID,
+			SURVEY_QUEST_ID,
+			FK_USER,
+			ANSWER_TIME,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			SURVEY_SUBJECTTEACHER_ID
+		FROM SURVEY_ANSWER
+		WHERE FK_USER = #FK_USER# 
+		AND SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		AND STATE = 0
+    </select>
+
+	<!-- 查看选项及答案 --> 
+    <select id="findOptionAndValueListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">   
+		SELECT 
+	         SURVEY_CONTENT.SURVEY_CONTENT_ID,
+	         SURVEY_CONTENT_CHOOSE,
+	         SURVEY_CONTENT.SURVEY_TITLE_ID,
+	         SURVEY_QUEST_ORDER,
+	         SURVEY_CONTENT_VALUE,
+	         SURVEY_CONTENT_IMG,
+	         IMAGE_WIDTH,
+			 IMAGE_HEIGHT,
+	         (select SURVEY_VALUE from SURVEY_SYNTH 
+	         		where SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+	         		and SURVEY_MATRIX_ID is null 
+	         		and  SURVEY_ANSWER_ID = (select  SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and  SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID# and FK_USER = #userInfo.GUID#)) VALS,
+	         (select NVL2(SURVEY_SYNTH_ID,'true','false') from SURVEY_SYNTH 
+	         		where SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID
+	         		and SURVEY_MATRIX_ID is null 
+	         		and SURVEY_ANSWER_ID = (select  SURVEY_ANSWER_ID from SURVEY_ANSWER where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and  SURVEY_SUBJECTTEACHER_ID = #SURVEY_SUBJECTTEACHER_ID# and FK_USER = #userInfo.GUID#)) IS_CHECKED
+     	FROM SURVEY_CONTENT
+     	WHERE SURVEY_CONTENT.SURVEY_TITLE_ID IN (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_TITLE.SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)   
+        ORDER BY SURVEY_QUEST_ORDER 
+     </select>
+     
+     <!-- 根据选项查看答案 -->
+     <select id="findSynthByOptionId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        SELECT 
+        	SURVEY_SYNTH_ID,
+			(select ANSWER_TIME from SURVEY_ANSWER where SURVEY_ANSWER.SURVEY_ANSWER_ID = SURVEY_SYNTH.SURVEY_ANSWER_ID) ANSWER_TIME,
+			SURVEY_QUEST_ID,
+			SURVEY_TITLE_ID,
+			STATE,
+			USER_PK,
+			(select USER_SN from SC_USER where SC_USER.USER_PK = SURVEY_SYNTH.USER_PK) USER_NAME,
+			SURVEY_VALUE,
+			SURVEY_CONTENT_ID,
+			SURVEY_ANSWER_ID,
+			SURVEY_SYNTH_ORDER,
+			nvl((select (select TEACHER_XM from SC_USER_TEACHER  where TEACHER_PK = FK_TEACHER) 
+				from SURVEY_SUBJECTTEACHER 
+				where SURVEY_SUBJECTTEACHER_ID = (select SURVEY_SUBJECTTEACHER_ID from SURVEY_ANSWER where SURVEY_ANSWER.SURVEY_ANSWER_ID = SURVEY_SYNTH.SURVEY_ANSWER_ID)),'无') TEACHER_XM
+        FROM SURVEY_SYNTH
+        WHERE SURVEY_CONTENT_ID=#SURVEY_CONTENT_ID# and STATE = 0 and SURVEY_MATRIX_ID is null
+        ORDER BY SURVEY_SYNTH_TIME desc	
+     </select>
+     
+     <select id="findSynthByOptionIdSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         SELECT COUNT(*)
+         FROM SURVEY_SYNTH
+         WHERE SURVEY_CONTENT_ID=#SURVEY_CONTENT_ID# and STATE = 0 and SURVEY_MATRIX_ID is null
+     </select>
+    
+	 <!--  提交答案 -->
+     <insert id="AnswerInsert" parameterClass="java.util.HashMap">
+         INSERT INTO 
+         SURVEY_ANSWER
+         (	
+         	SURVEY_ANSWER_ID,
+         	SURVEY_QUEST_ID,
+         	FK_USER,
+         	ANSWER_TIME,
+         	CREATE_BY,
+         	CREATE_TIME,
+         	UPDATE_BY,
+         	UPDATE_TIME,
+         	STATE,
+         	SURVEY_SUBJECTTEACHER_ID
+         )
+         VALUES
+         (
+         	#UUID#,
+         	#SURVEY_QUEST_ID#,
+         	#FK_USER#,
+         	sysdate,
+         	#userInfo.GUID#,
+         	sysdate,
+         	#UPDATE_BY#,
+         	#UPDATE_TIME#,
+         	0,
+         	#SURVEY_SUBJECTTEACHER_ID#
+         )
+     </insert>
+    
+     <!--添加答案 -->
+     <insert id="SynthInsert" parameterClass="java.util.HashMap">
+        INSERT INTO
+        SURVEY_SYNTH
+        (
+          	SURVEY_SYNTH_ID,
+			SURVEY_SYNTH_TIME,
+			SURVEY_QUEST_ID,
+			SURVEY_TITLE_ID,
+			STATE,
+			USER_PK,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			SURVEY_VALUE,
+			SURVEY_CONTENT_ID,
+			SURVEY_ANSWER_ID,
+			SURVEY_SYNTH_ORDER,
+			SURVEY_MATRIX_ID
+        ) 
+        VALUES 
+        (
+	       	#UUID#,
+	       	sysdate,
+	       	#SURVEY_QUEST_ID#,
+	       	#SURVEY_TITLE_ID#,
+	       	0,
+	       	#FK_USER#,
+	       	#userInfo.GUID#,
+	       	sysdate,
+	       	#UPDATE_BY#,
+			#UPDATE_TIME#,
+			#SURVEY_VALUE#,
+	       	#SURVEY_CONTENT_ID#,
+	       	#SURVEY_ANSWER_ID#,
+	        #SURVEY_SYNTH_ORDER#,
+	        #SURVEY_MATRIX_ID#
+        )   
+    </insert>
+</sqlMap>

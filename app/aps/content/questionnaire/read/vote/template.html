@@ -1,0 +1,75 @@
+		<div class="container" style="padding-top:15px;padding-bottom:15px;width:100%;height:1000px;background-color: white;padding-left:100px">    	   
+
+		<div class="index_bj">   
+		   <div class="index_bj2"></div> 	   
+		   <div class="index_top">
+	           <h1 ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</h1>
+	           <div class="new_addtest">
+	           	   <span ng-if="questionnaire.ANONYMOUS == '0'">本次投票为:实名投票</span>
+				   <span ng-if="questionnaire.ANONYMOUS == '1'">本次投票为:匿名投票</span>
+	           	   <span>发布时间:{{questionnaire.SURVEY_QUEST_SDATE | date:'yyyy-MM-dd'}}</span>
+	           </div>    
+           </div>  
+	       <div class="list-group index_cen"  style="padding-left:15px;padding-right:15px;">
+	       	  <div style="padding:10px 20px 0px 20px;">
+	          	  <span ng-bind-html="questionnaire.SURVEY_QUEST_REMARK | trustHtml"></span>
+	          </div>
+	       	  <ul ng-repeat="title in titleList" ng-switch on="title.SURVEY_TYPE_ID" style="padding-top: 20px;list-style:none;">
+	   				<!-- 5.投票单选题 -->
+	   				<li class="row" ng-switch-when="5" ng-switch on="title.CHECKED" style="list-style:none;"> 	 
+	   			       <div class="index_cenkuai"><h1 ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></h1></div>
+	   			       <div style="padding-left:15px;" class="index_cenkuai">		  
+	                       <ul ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}" style="list-style:none;float:left;padding:20px {{paddingWidth}}px;">
+	                           <li style="list-style:none;">
+	                              <a ng-if="option.EXPAND_VIDEO_IMG != null" ng-click="videoDetails(option);">
+		                              <img style="width:174px;height:188px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.EXPAND_IMG}}">
+		                          </a>
+	                           </li> 
+	                           <li style="list-style:none;">
+	                           	   <h2><a ng-click="videoDetails(option);"> {{option.SURVEY_CONTENT_CHOOSE}}</a></h2>
+	                           </li>
+	                           <li style="list-style:none;">
+	                           	   <h3>{{option.UNIT_NAME}}</h3>
+	                           </li>
+	                           <li style="list-style:none;">
+	                           	   <h4>
+	                           	   	   <input type="radio" value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR"  />
+	                           	   	   [<span style="color:red;">0</span>]票
+	                           	   </h4>
+	                           </li>
+	                       </ul>
+                       </div>              
+	   				</li>
+	   				<!-- 6.投票多选题-->
+	   				<li class="row" ng-switch-when="6" ng-switch on="title.CHECKED" style="list-style:none;"> 
+	   			       <div class="index_cenkuai"><h1 ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></h1></div>	
+	   			       <!-- <span style="color:blue;font-weight: bold;">[请选择{{title.MINIMUN_VALUE}}-{{title.MAXIMUN_VALUE}}项]</span> -->		 		  
+                       <div style="padding-left:15px;" class="index_cenkuai">
+                       	  <ul ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}" style="float:left;padding:15px {{paddingWidth}}px;list-style:none;">
+	                           <li style="list-style:none;">
+	                              <a ng-if="option.EXPAND_VIDEO_IMG != null" ng-click="videoDetails(option);">
+		                              <img style="width:174px;height:188px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.EXPAND_IMG}}">
+		                          </a>
+	                           </li> 
+	                           <li style="list-style:none;">
+	                           	   <h2><a ng-click="videoDetails(option);"> {{option.SURVEY_CONTENT_CHOOSE}}</a></h2>
+	                           </li>
+	                           <li style="list-style:none;">
+	                           	   <h3>{{option.UNIT_NAME}}</h3>
+	                           </li>
+	                           <li style="list-style:none;">
+	                           	   <h4>
+	                           	   	   <input type="checkbox" value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR"  />
+	                           	   	   [<span style="color:red;">0</span>]票
+	                           	   </h4>
+	                           </li>
+	                       </ul>
+                       </div> 
+                	</li>
+   				</ul> 
+   				<div class="index_xibtncen">
+	   				<button class="index_xibtn" ng-click="submitAnswer()" type="button"  id="voteBtn" disabled > 我要投票</button>  
+	   			</div>	
+       		</div>
+		</div>
+		</div>

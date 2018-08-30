@@ -1,0 +1,10 @@
+{
+    "name": "app_questionnaire_target_student",
+    "viewUrl": "aps/content/questionnaire/target/student/template.html",
+    "controllerUrl": "aps/content/questionnaire/target/student/controller.js",
+    "config": 
+    {
+    	"findQnListByUserPkURL": "json/Open_queryForList_findQnListByUserPk.json",
+    	"findQnListByClassPkURL": "json/Open_queryForList_findQnListByClassPk.json"
+    }
+}

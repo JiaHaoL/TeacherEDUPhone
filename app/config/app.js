@@ -44,6 +44,26 @@
                templateUrl: 'html/tktz.html',
                controller: 'MainController'
              })
+             .when('/collect/:qn',{
+   	   			templateUrl: 'html/collect.html',
+                controller: 'MainController'
+   	   	 	 })
+   	   	 	 .when('/voteResult/:pk', {
+            	templateUrl:'html/voteResult.html',
+            	controller:'MainController'
+            })
+            .when('/voteChoice/:pk', {
+            	templateUrl:'html/voteChoice.html',
+            	controller:'MainController'
+            })
+            .when('/evaluate/:qn', {
+               templateUrl: 'html/evaluate.html',
+               controller: 'MainController'
+             })
+             .when('/see/:qn',{
+	   			templateUrl: 'html/see.html',
+                controller: 'MainController'
+   	   	 	 })
            .otherwise({
                redirectTo: '/'
            });

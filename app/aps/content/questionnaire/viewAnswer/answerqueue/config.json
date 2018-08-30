@@ -1,0 +1,10 @@
+{
+    "name": "app_content_answerqueue",
+    "viewUrl": "aps/content/questionnaire/viewAnswer/answerqueue/template.html",
+    "controllerUrl": "aps/content/questionnaire/viewAnswer/answerqueue/controller.js",
+    "config": 
+    {
+          "findAnswerListURL":"json/Open_queryForList_findAnswerList.json",
+          "deleteAnswer":"json/Title_deleteAnswer_data.json" 
+    }
+}        

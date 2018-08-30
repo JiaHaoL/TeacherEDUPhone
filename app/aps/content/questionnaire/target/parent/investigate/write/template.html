@@ -1,0 +1,248 @@
+<style type="text/css">
+  .vacancy {
+     border-left: 0;
+     border-right: 0;
+     border-top: 0;
+     border-bottom: 1px solid #000000;
+     outline: medium;
+   }
+</style>
+
+<form class="form-horizontal form-horizontal-condensed">
+    <div class="container" style="margin-top:20px; width: 950px;">
+       	<table class="table table-hover" style="margin-top:20px; border-collapse:separate; border-spacing:10px;">
+	       <thead>
+	    	   <tr style="text-align:center;">
+		           <td style="font-size: 20px; color: blue;" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}
+		              <span style="float:right;color: blue; font-size: 16px;">评测人:{{form.TEACHER_NAME}}</span>   
+		           </td>
+	           </tr>
+	           <tr>
+		          <td><span style="float:left;" ng-bind-html="questionnaire.SURVEY_QUEST_REMARK | trustHtml"></span></td>   
+               </tr>
+	       </thead>
+	       <tbody ng-switch on = "page.current_num">
+		  	  <tr ng-switch-when = "0"  align="center">
+				<td colspan="100" class="NoSelectHistory">查询无纪录</td>
+			  </tr>
+	       	  <tr ng-repeat="title in titleList" ng-switch on="title.SURVEY_TYPE_ID">
+	       	    	<!--1，  单选题 -->
+	   				<td ng-switch-when="1" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[单选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[单选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                          <td>
+	                               &nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp;<input type="radio" value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}
+	                          </td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                              </td> 
+	                       </tr>  
+	                  </table>                
+	   				</td>	
+	   				<!-- 2.多选题 -->  
+	   				<td ng-switch-when="2" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[多选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[多选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>  			  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp; 
+	                           	  <input type="checkbox"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}
+<!-- 	                           	  <input type="hidden" value="{{option.SURVEY_CONTENT_CHOOSE}}" name="{{title.SURVEY_TITLE_ID}}"> -->
+	                           </td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                               </td> 
+	                       </tr>  
+	                   </table>                
+	   				</td>	
+	   				<!--3，  填空题 -->
+	   			    <td ng-switch-when="3" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[填空题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[填空题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 			   	  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>
+	                              <input type="hidden"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR">
+	                           </td>
+	                       </tr>  
+	                  </table>                
+	   				</td>
+	   				<!--,4 判断题 -->
+	   				<td ng-switch-when="4" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[判断题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[判断题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>	  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp; 
+	                          	  <input type="radio"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}</td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                              </td> 
+	                       </tr>  
+	                  </table>                
+	   				</td>
+	   				<!-- 5 投票单选题 -->
+	   				<td ng-switch-when="5" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[投票单选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[投票单选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>		  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp; 
+	                           	  <input type="radio"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}</td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                              </td> 
+	                       </tr>  
+	                  </table>                
+	   				</td>
+	   				<!-- 6 投票多选题-->
+	   				<td ng-switch-when="6" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[投票多选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[投票多选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	
+	   			       <span style="float:right;color:blue;font-weight: bold;">[请选择{{title.MINIMUN_VALUE}}-{{title.MAXIMUN_VALUE}}项]</span> 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>			  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp; 
+	                           	  <input type="checkbox"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}</td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                              </td> 
+	                       </tr>  
+	                   </table>                
+	   				</td>
+	   				<!-- 7 评分单选题-->
+	   				<td ng-switch-when="7" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[评分单选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[评分单选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>				  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp; 
+	                           	  <input type="radio"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}
+	                              <span style="color: orange; margin-left:  15px;">(分值：{{option.SURVEY_CONTENT_VALUE}})</span>
+	                           </td>
+	                           <td>
+	                              <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                          </span>
+                              </td> 
+	                       </tr>  
+	                  </table>                
+	   				</td>
+	   				<!-- 8 评分多选题-->
+	   				<td ng-switch-when="8" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[评分多选题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[评分多选题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>			  
+	   				   <table>
+	                       <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+	                           <td>&nbsp;&nbsp; &nbsp;&nbsp;{{$index+1}}&nbsp;
+	                           	   <input type="checkbox"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR" ng-checked="{{option.IS_CHECKED}}"> {{option.SURVEY_CONTENT_CHOOSE}}
+	                               <span style="color: orange; margin-left:  15px;">(分值：{{option.SURVEY_CONTENT_VALUE}})</span>
+	                           </td>
+	                           <td>
+	                               <span ng-if="option.SURVEY_CONTENT_IMG!=null">
+		                              <img style="width: {{option.IMAGE_WIDTH}}px;height:{{option.IMAGE_HEIGHT}}px;" src="http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK={{option.SURVEY_CONTENT_IMG}}">
+		                           </span>
+                              </td> 
+	                       </tr>  
+	                  </table>                
+	   				</td>
+	   			    <!--9，  主观题 -->
+	   			    <td ng-switch-when="9" ng-switch on="title.CHECKED">
+	   				   <span style="float:left;color: red;" ng-switch-when="true">*[主观题]&nbsp;</span>
+	   			  	   <span style="float:left;color: red;" ng-switch-when="false">[主观题]&nbsp;</span>	
+	   			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	   			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>	   				   	  				   	  
+	   				   <table>
+	   				        <tr ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                        <td>
+		                         	<textarea class="form-control" wrap="soft" rows="4"  tabindex="1" name="{{title.SURVEY_TITLE_ID}}" ng-model="SURVEY_TITLE_ID"
+			                             style="width: 400px; height: 70px; overflow: auto; padding: 5px 0px 0px 5px; border: 1px solid rgb(204, 204, 204);" not-null="yes">
+			                        </textarea>
+			                        <input type="hidden"  value="{{option.SURVEY_CONTENT_ID}}" name="{{title.SURVEY_TITLE_ID}}VDR">
+		                         </td>
+		                     </tr>
+	                  </table>                
+	   				</td>
+	   				<!-- 10.矩阵单选题 -->
+	 			 	<td ng-switch-when="10"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[矩阵单选题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[矩阵单选题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	 				     <table  style="margin-left:20px;">
+	 				     	 <thead>
+								<tr>
+									<th style="padding-right:400px;"></th>
+									<th style="padding:10px;text-align:center;" ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}" >{{option.SURVEY_CONTENT_CHOOSE}}</th>
+								</tr>
+	 				     	 </thead>
+	 				     	 <tbody>
+			                     <tr ng-repeat="heading in headingList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         	<td>{{heading.LINE_HEADING}}</td>
+		                         	<td style="padding:10px;text-align:center;" ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         		<input type="radio" name="{{heading.SURVEY_MATRIX_ID}}"  class="{{title.SURVEY_TITLE_ID}}VDR" value="{{option.SURVEY_CONTENT_ID}},{{heading.SURVEY_MATRIX_ID}}"/>
+		                         	</td>
+		                     	 </tr>    
+		                    </tbody>
+	                    </table>                 
+	 			  	</td>
+	 			  	<!-- 11.矩阵多选题 -->
+	 			  	<td ng-switch-when="11"  ng-switch on="title.CHECKED">
+	 				     <span style="float:left;color: red;" ng-switch-when="true">*[矩阵多选题]&nbsp;</span>
+	   				     <span style="float:left;color: red;" ng-switch-when="false">[矩阵多选题]&nbsp;</span>	
+	   				     <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span> 
+	 				     <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span> 	  
+	 				     <table style="margin-left:20px;">
+	 				     	 <thead>
+								<tr>
+									<th style="padding-right:400px;"></th>
+									<th style="padding:10px;" ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">{{option.SURVEY_CONTENT_CHOOSE}}</th>
+								</tr>
+	 				     	 </thead>
+	 				     	 <tbody>
+			                     <tr ng-repeat="heading in headingList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         	<td>{{heading.LINE_HEADING}}</td>
+		                         	<td style="padding:10px;text-align:center;" ng-repeat="option in optionList | filter : {SURVEY_TITLE_ID:title.SURVEY_TITLE_ID}">
+		                         		<input type="checkbox" name="{{heading.SURVEY_MATRIX_ID}}" class="{{title.SURVEY_TITLE_ID}}VDR" value="{{option.SURVEY_CONTENT_ID}},{{heading.SURVEY_MATRIX_ID}}"/>
+		                         	</td>
+		                     	 </tr>
+		                    </tbody>
+	                    </table>                  
+	 			    </td>	
+   				</tr> 	
+       		</tbody>
+   		</table>
+   		<div align="center">
+   			<button ng-click="saveAnswer()" type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> 提交</button>  
+     		<button ng-click="goBack()" type="button" class="btn btn-info"><span class="glyphicon glyphicon-remove"></span> 取消</button>
+   		</div>
+</div>
+</form>

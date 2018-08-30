@@ -1,0 +1,13 @@
+{
+    "name": "app_parent_investigate_write",
+    "viewUrl": "aps/content/questionnaire/target/parent/investigate/write/template.html",
+    "controllerUrl": "aps/content/questionnaire/target/parent/investigate/write/controller.js",
+    "config": 
+    {
+          "findQuestionnaireByIdURL": "json/Open_queryForObject_findQuestionnaireById.json",
+          "findTitleListByIdURL":"json/Open_queryForList_findTitleListById.json",
+          "findOptionListByIdURL":"json/Open_queryForList_findOptionListById.json",
+          "findHeadingByQnIdURL" : "json/Open_queryForList_findHeadingByQnId.json",
+          "addURL":"json/Title_answerSubmit_data.json"          
+    }
+}

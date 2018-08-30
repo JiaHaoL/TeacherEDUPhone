@@ -22,6 +22,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 
+
+
 public class QRCode {
 	// 图片宽度的一半
 	private static final int IMAGE_WIDTH = 64;

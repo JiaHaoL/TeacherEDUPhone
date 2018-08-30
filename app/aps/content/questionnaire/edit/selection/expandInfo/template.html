@@ -1,0 +1,61 @@
+<!-- 扩展信息 -->
+<div style="padding:0px 50px;">
+	<form class="form-horizontal form-horizontal-condensed">
+		<table class="table">
+			<tr class="td_middle">
+				<td style="width: 20%;"><b>竞选项目:</b> {{SURVEY_TITLE_TXT}}</td>
+				<td colspan="2" style="width: 35%;">
+					<span style="padding-left:20px;"><b>参选人员姓名:</b>
+						<select class="form-control" ng-model="form.FK_SURVEY_CONTENT" ng-change="selectChange()"
+							ng-options="data.SURVEY_CONTENT_ID as data.SURVEY_CONTENT_CHOOSE for data in options">
+							<option value="">--请选择--</option>
+						</select>
+					</span>
+				</td>
+				<td style="width: 45%;">
+					<span style="padding-left:10px;"><b>所在学校:</b>
+						<select style="width: 200px;" class="form-control" ng-options="data.UNIT_PK as data.UNIT_NAME for data in units" 
+							ng-model="form.FK_UNIT">
+							<option value="">--请选择--</option>
+						</select>
+					</span>
+				</td>
+			</tr>
+			<tr class="td_middle">
+				<td><b>视频照片:</b></td>
+				<td>
+					<input type="file" name="upload1" id="upload1" /> 
+		   			<input type="hidden" id="#uploadIndex"/>
+				</td>
+				<td><span style="color:blue;" ng-if="form.EXPAND_VIDEO_IMG != null">{{form.VIDEO_IMG_FILE_NAME}}</span></td>
+				<td><span style="color:red;">[ 类型: *.jpg | *.png ]</span></td>
+			</tr>
+			<tr class="td_middle">
+				<td><b>参选视频:</b></td>
+				<td>
+					<input type="file" name="upload3" id="upload3" /> 
+		   			<input type="hidden" id="#uploadIndex"/>
+				</td>
+				<td><span style="color:blue;"  ng-if="form.EXPAND_VIDEO != null">{{form.VIDEO_FILE_NAME}}</span></td>
+				<td><span style="color:red;">[ 类型: *.mp4 ]</span></td>
+			</tr>
+			<tr class="td_middle">
+				<td><b>参选照片:</b></td>
+				<td>
+					<input type="file"  name="upload2" id="upload2" /> 
+		   			<input type="hidden" id="#uploadIndex"/>
+		   		</td>
+		   		<td><span style="color:blue;"  ng-if="form.EXPAND_IMG != null">{{form.IMG_FILE_NAME}}</span></td>
+		   		<td><span style="color:red;">[ 类型: *.jpg | *.png ]</span></td>
+			</tr>
+			<tr class="td_middle">
+				<td colspan="4"><b>参选简介:</b></td>
+			</tr>
+			<tr class="td_middle">
+				<td colspan="4">
+					<div id="titlename" name="titlename" type="text/plain" style="width:760px;height:112px;"></div>
+				</td>
+			</tr>
+		</table> 	   
+	</form>
+</div>

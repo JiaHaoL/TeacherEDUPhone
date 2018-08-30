@@ -1,0 +1,11 @@
+{
+    "name": "app_vote_videoDetails",
+    "viewUrl": "aps/content/questionnaire/vote/videoDetails/template.html",
+    "controllerUrl": "aps/content/questionnaire/vote/videoDetails/controller.js",
+    "config": 
+    {
+    	"previewURL":"http://rescenter.sjedu.cn/ResCenter/upload/Preview_previewForApp_data.json",
+    	"findExpandInfoByIdURL":"json/Open_queryForObject_findExpandInfoById.json",
+    	"getFileURL" : "http://rescenter.sjedu.cn/ResCenter/upload/Preview_getViewByFileLink_data.json?FILELINKPK="
+    }
+}

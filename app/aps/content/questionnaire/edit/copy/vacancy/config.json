@@ -1,0 +1,30 @@
+{
+    "name": "app_support_copy_vacancy",
+    "viewUrl": "aps/content/questionnaire/edit/copy/vacancy/template.html",
+    "controllerUrl": "aps/content/questionnaire/edit/copy/vacancy/controller.js",
+    "config": 
+    {
+            "findTitleByPkURL": "json/Open_queryForObject_findTitleByPk.json",
+            "addURL": "json/Question_saveQuestion_data.json",
+            "menu":{
+	            "buttons":[
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_copy_vacancy.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"app_support_copy_vacancy.save"
+		        	}
+				]
+			}
+	}
+}
+
+

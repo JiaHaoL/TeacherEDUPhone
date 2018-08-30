@@ -20,9 +20,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=11; IE=9; IE=8">
-<script type="text/javascript" src="http://hygl.pdedu.sh.cn/js/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://hygl.pdedu.sh.cn/CDN/js/jquery/1.11.3/jquery.min.js"></script>
 <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=042e114360bc65e3dabeb450bddab0f3"></script> 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
+
+<%
+	String msg = "";
+%>
+
 <script type="text/javascript">
  $(function(){
 	 
@@ -65,7 +70,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					   "Lng":data.position.lng,
 					   "Lat":data.position.lat},
 				 success:function(data){
-					 
+					var dataa = $.parseJSON( data ); 
+					 if(dataa.data == "0"){
+						$("#qrcode_result").html("签到失败！由于您所在位置与会议地点不一致或已拒绝授权地理位置，请等待组织教师确认!");
+					 }else{
+						 $("#qrcode_result").html("扫码签到成功，您已完成签到！");
+					 }
 				 }
 			 })
 		  }
@@ -73,6 +83,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  function onError (data) {
 		    // 定位出错
 		    alert("您已拒绝定位签到");
+		    $("#qrcode_result").html("签到失败！由于您所在位置与会议地点不一致或已拒绝授权地理位置，请等待组织教师确认!");
 		  }
 		})
  })
@@ -86,7 +97,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</div>
 	
 	<div style="margin-top: 50px;text-align: center;color: #fff;">
-		<h4>扫码签到成功，等待主讲教师确认签到</h4>
+		<h4 id="qrcode_result">扫码签到成功，等待组织教师确认签到</h4>
 	</div>
 	
 </body>

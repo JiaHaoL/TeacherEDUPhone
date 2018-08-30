@@ -1,0 +1,72 @@
+<form class="form-horizontal form-horizontal-condensed">
+	<div class="form-group">
+		<label class="col-sm-3 control-label">问卷名称:</label>
+		<div class="col-sm-8">
+			<label class="control-label" ng-model="form.SURVEY_QUEST_ID">{{questionnaire.SURVEY_QUEST_NAME}}</label>
+		</div>
+	</div>
+	<!-- <div class="form-group">
+		<label class="col-sm-3 control-label">用户类型:</label>
+		<div class="col-sm-8">
+			<select class="form-control has-feedback" not-null="yes" ng-model="form.USER_TYPE" ng-change="userTypeChange();">
+				<option value="">--请选择--</option>
+				<option value="1">教师</option>
+				<option value="2">学生</option>
+				<option value="3">家长</option>
+			</select>
+		</div>
+	</div> -->
+	<div class="form-group unit">
+		<label class="col-sm-3 control-label">单位名称:</label>
+		<div class="col-sm-8">
+  			<select class="form-control" ng-model="form.TEACHER_GZDWPK" 
+     			ng-options="dic.UNIT_PK as dic.UNIT_ABBREVIATION for dic in units">
+	  			<option value="">--请选择--</option>
+  			</select>
+ 	 	</div>
+	</div>
+	<div class="form-group school">
+		<label class="col-sm-3 control-label">学校名称:</label>
+		<div class="col-sm-8">
+  			<select class="form-control" ng-model="form.FK_UNIT" ng-change="getGrade();"
+     			ng-options="dic.UNIT_PK as dic.UNIT_ABBREVIATION for dic in units ">
+	  			<option value="">--请选择--</option>
+  			</select>
+ 	 	</div>
+	</div>
+	<div class="form-group grade">
+		<label class="col-sm-3 control-label">年级:</label>
+		<div class="col-sm-8">
+		  	<select class="form-control" ng-model="form.STUDENT_NJID"
+     			ng-options="grade.GRADE_PK as grade.GRADE_NAME for grade in gradeData "  ng-change="getClass();">
+	 		 	<option value="">--请选择--</option>
+  			</select>
+		</div>
+	</div>
+	<div class="form-group classes">
+		<label class="col-sm-3 control-label">班级:</label>
+		<div class="col-sm-8">
+		   	<select class="form-control" ng-model="form.STUDENT_BJID" 
+     			ng-options="class.CLASS_PK as class.CLASS_NAME for class in classList ">
+	  			<option value="">--请选择--</option>
+			</select>
+		</div>
+	</div>
+<!-- 	<div class="form-group state">
+		<label class="col-sm-3 control-label">状态:</label>
+		<div class="col-sm-8">
+			<select class="form-control" ng-model="form.STUDENT_STATE" 
+     			ng-options="dic.DICTIONARY_PK as dic.DICTIONARY_NAME for dic in teacherLbs">
+	 			<option value="">--全部--</option>
+  			</select>
+		</div>
+	</div> -->
+	<div class="form-group role">
+		<label class="col-sm-3 control-label">角色:</label>
+		<div class="col-sm-8" style="padding-top:7px">
+			<div ng-repeat="role in roles" style="float:left;">
+				<input type="checkbox" name="dataPk" style="margin-left:10px;" value="{{role.ROLE_PK}}" ng-model="checked"/> {{role.ROLE_NAME}}
+			</div>
+		</div>
+	</div>
+</form>

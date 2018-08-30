@@ -1,0 +1,41 @@
+
+<form class="form-horizontal form-horizontal-condensed">
+
+	  <table align="center" style="width: 830px;">
+	  	  <tbody>
+	    	  <tr ng-repeat="title in titleList">
+				   <td ng-switch on="title.CHECKED">
+				  	   <span style="float:left;color: blue;" ng-switch-when="true">*[主观题]&nbsp;</span>
+	 			 	   <span style="float:left;color: blue;" ng-switch-when="false">[主观题]&nbsp;</span>	
+	 			       <span style="float: left; font-weight: bold;">{{$index+1}}.&nbsp;</span>  	 
+	 			       <span ng-bind-html="title.SURVEY_TITLE_NAME | trustHtml"></span>			  
+					   <table class="table .table-striped">	  		
+	                    <tr style="background-color: buttonhighlight;font-weight: bold;">
+	                        <td>序号</td>
+	                        <!-- <td>答题用户</td> -->
+	                        <td>提交答卷时间</td>
+	                        <td>评比人</td>
+	                        <td>答案文本</td>
+	                        <!-- <td>查看答卷</td> -->  
+	                    </tr>     	
+	                    <tr ng-repeat="option in optionList">
+	                       <td>{{$index+1}}</td>
+	                       <!-- <td>{{option.USER_NAME}}</td> -->
+	                       <td>{{option.ANSWER_TIME | date:'yyyy-MM-dd'}}</td>
+	                       <td>{{option.TEACHER_XM}}</td>
+	                       <td style="width:50%;">{{option.SURVEY_VALUE}}</td>
+	                       <!-- <td><a  ng-click="value()">查看答卷</a></td> -->
+	                    </tr>
+	                </table>                
+					</td>					  				
+				</tr> 	
+   		  </tbody> 
+       	  <tfoot>
+		      	<tr>
+		      	   <td colspan="100">
+		      		 <div ng-include="'html/page.html'"></div>
+				   </td>
+		      	</tr>
+         </tfoot>
+	 </table>
+</form>

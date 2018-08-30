@@ -18,4 +18,7 @@
 		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-qrcode.xml"/>
 		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-teachEvaluate.xml"/>	
 		<sqlMap resource="ibatis/TeacherEDU/sql-TeacherEDU-sheet.xml"/>	
+		<sqlMap resource="ibatis/TeacherEDU/sql-questionnaire-content.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-questionnaire-values.xml"/>
+		<sqlMap resource="ibatis/TeacherEDU/sql-questionnaire-vote.xml"/>
 </sqlMapConfig>

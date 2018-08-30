@@ -1,0 +1,10 @@
+{
+    "name": "app_questionnaire_target_parent",
+    "viewUrl": "aps/content/questionnaire/target/parent/template.html",
+    "controllerUrl": "aps/content/questionnaire/target/parent/controller.js",
+    "config": 
+    {
+    	"findParQnListByUserPkURL": "json/Open_queryForList_findParQnListByUserPk.json",
+    	"findParQnListByClassPkURL": "json/Open_queryForList_findParQnListByClassPk.json"
+    }
+}

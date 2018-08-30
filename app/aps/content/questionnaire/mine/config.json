@@ -1,0 +1,10 @@
+{
+	"name" : "aps_content_questionnaire_mine",
+    "viewUrl": "aps/content/questionnaire/mine/template.html",
+    "controllerUrl": "aps/content/questionnaire/mine/controller.js",
+    "config": {
+    	"findURL" : "json/Question_findQuestionnaireList_data.json",
+    	"findEvaluateListByIdSizeURL" : "json/Open_queryForObject_findEvaluateListByIdSize.json",
+    	"findUserRoleCodeURL" : "json/Parent_findUserRoleCode_data.json"
+	}
+}

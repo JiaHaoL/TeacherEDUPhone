@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<!-- 查找教师评测问卷  学生-->
+	<select id="findQnListByClassPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		    SURVEY_SUBJECTTEACHER_ID,
+		    FK_TEACHER,
+		    (select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+		    SURVEY_QUEST_ID,
+		    (select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID and DELETE_FLAG = 0) QUESTIONNAIRE_NAME,
+		    CREATE_BY,
+		    CREATE_TIME,
+		    STATE,
+		    FK_CLASS,
+		    (select count(*) 
+		    	from SURVEY_ANSWER 
+		    	where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+		    	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+		    	and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_STATUS,
+		    (select ANSWER_TIME 
+		    	from SURVEY_ANSWER 
+		    	where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+		    	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+		    	and  SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_TIME
+      	FROM SURVEY_SUBJECTTEACHER SS
+      	WHERE FK_CLASS = (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = #FK_USER#)
+        and SURVEY_TYPE = '2'
+      	<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ANSWER_STATUS">
+			(select count(*) 
+				from SURVEY_ANSWER 
+				where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+				and SURVEY_ANSWER.FK_USER = #FK_USER#) = #ANSWER_STATUS#
+		</isNotEmpty>
+	</select>
+	
+	<select id="findQnListByClassPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+		    count(*)
+      	FROM SURVEY_SUBJECTTEACHER SS
+      	WHERE FK_CLASS = (select STUDENT_BJID from SC_USER_STUDENT where STUDENT_PK = #FK_USER#)
+      	AND SURVEY_TYPE = '2'
+      	<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ANSWER_STATUS">
+			(select count(*) 
+				from SURVEY_ANSWER 
+				where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+				and SURVEY_ANSWER.FK_USER = #FK_USER#) = #ANSWER_STATUS#
+		</isNotEmpty>
+	</select>
+
+	<!-- 查找普通问卷 -->
+	<select id="findQnListByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_ANSWER_V_ID,
+			SURVEY_QUEST_ID,
+			(select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID and DELETE_FLAG = 0) QUESTIONNAIRE_NAME,
+			FK_USER,
+			STATE,
+			(select count(*) 
+				from SURVEY_ANSWER 
+				where SURVEY_ANSWER.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = 'SUBJECTTEACHER4180A1127B7A681E0' 
+				and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_STATUS,
+		    (select ANSWER_TIME 
+		    	from SURVEY_ANSWER 
+		    	where SURVEY_ANSWER.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+		    	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = 'SUBJECTTEACHER4180A1127B7A681E0' 
+		    	and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_TIME
+		FROM SURVEY_ANSWER_V SAV
+		WHERE STATE = 0
+		 and SAV.SURVEY_TYPE = '2'
+		 and SAV.FK_USER = #FK_USER# 
+		 and  SURVEY_QUEST_ID not in (select SURVEY_QUEST_ID from SURVEY_SUBJECTTEACHER)
+		<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+	</select>
+	
+	<select id="findQnListByUserPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			count(*)		
+		FROM SURVEY_ANSWER_V SAV
+		WHERE STATE = 0
+		and SAV.SURVEY_TYPE = '2'
+		and SAV.FK_USER = #FK_USER#
+		and SURVEY_QUEST_ID not in (select SURVEY_QUEST_ID from SURVEY_SUBJECTTEACHER)
+		<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+	</select>
+
+	<!-- 查找教师评测问卷  家长 -->
+	<select id="findParQnListByClassPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		    SURVEY_SUBJECTTEACHER_ID,
+		    FK_TEACHER,
+		    (select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+		    SURVEY_QUEST_ID,
+		    (select SURVEY_QUEST_NAME
+		    	from SURVEY_QUEST 
+		    	where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+		    	and DELETE_FLAG = 0) QUESTIONNAIRE_NAME,
+		    CREATE_BY,
+		    CREATE_TIME,
+		    STATE,
+		    FK_CLASS,
+		    (select count(*) 
+		    	from SURVEY_ANSWER
+		        where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+		        and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+		        and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_STATUS,
+		    (select ANSWER_TIME
+		    	from SURVEY_ANSWER 
+		    	where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+		    	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+		    	and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_TIME
+      	FROM SURVEY_SUBJECTTEACHER SS
+      	WHERE FK_CLASS in (select STUDENT_BJID 
+      						from SC_USER_STUDENT 
+      						where STUDENT_PK in (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0))
+      	AND SURVEY_TYPE = '3'
+      	<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ANSWER_STATUS">
+			(select count(*)
+				 from SURVEY_ANSWER 
+				 where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				 and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+				 and SURVEY_ANSWER.FK_USER = #FK_USER#) = #ANSWER_STATUS#
+		</isNotEmpty>
+	</select>
+	
+	<select id="findParQnListByClassPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+		    count(*)
+      	FROM SURVEY_SUBJECTTEACHER SS
+      	WHERE FK_CLASS in (select STUDENT_BJID 
+      						from SC_USER_STUDENT 
+      						where STUDENT_PK in (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0))
+      	AND SURVEY_TYPE = '3'
+      	<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ANSWER_STATUS">
+			(select count(*) 
+				from SURVEY_ANSWER 
+				where SURVEY_ANSWER.SURVEY_QUEST_ID = SS.SURVEY_QUEST_ID 
+				and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SS.SURVEY_SUBJECTTEACHER_ID 
+				and SURVEY_ANSWER.FK_USER = (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0)) = #ANSWER_STATUS#
+		</isNotEmpty>
+	</select>
+
+	<!-- 查找普通问卷 -->
+	<select id="findParQnListByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_ANSWER_V_ID,
+			SURVEY_QUEST_ID,
+			(select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID and DELETE_FLAG = 0) QUESTIONNAIRE_NAME,
+			FK_USER,
+			STATE,
+			(select count(*) 
+				from SURVEY_ANSWER 
+				where SURVEY_ANSWER.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = 'SUBJECTTEACHER4180A1127B7A681E0' 
+				and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_STATUS,
+		    (select ANSWER_TIME 
+		    	from SURVEY_ANSWER 
+		    	where SURVEY_ANSWER.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+		    	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = 'SUBJECTTEACHER4180A1127B7A681E0' 
+		    	and SURVEY_ANSWER.FK_USER = #FK_USER#) ANSWER_TIME
+		FROM SURVEY_ANSWER_V SAV
+		WHERE STATE = 0
+		 and SAV.SURVEY_TYPE = '3'
+		 and SAV.FK_USER = #FK_USER# 
+		 and  SURVEY_QUEST_ID not in (select SURVEY_QUEST_ID from SURVEY_SUBJECTTEACHER)
+		<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+	</select>
+	
+	<select id="findParQnListByUserPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT 
+			count(*)		
+		FROM SURVEY_ANSWER_V SAV
+		WHERE STATE = 0
+		and SAV.SURVEY_TYPE = '3'
+		and SAV.FK_USER = #FK_USER#
+		and SURVEY_QUEST_ID not in (select SURVEY_QUEST_ID from SURVEY_SUBJECTTEACHER)
+		<isNotEmpty prepend="AND" property="QUESTIONNAIRE_NAME">
+			(select SURVEY_QUEST_NAME 
+				from SURVEY_QUEST 
+				where SURVEY_QUEST.SURVEY_QUEST_ID = SAV.SURVEY_QUEST_ID 
+				and DELETE_FLAG = 0) like '%'||#QUESTIONNAIRE_NAME#||'%'
+		</isNotEmpty>
+	</select>
+	
+	<!-- 根据班级pk查找任课老师 -->
+	<select id="findTeaListByClassPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+		  SURVEY_SUBJECTTEACHER_ID,
+		  FK_TEACHER,
+		  (select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+		  SURVEY_QUEST_ID,
+		  CREATE_BY,
+		  CREATE_TIME,
+		  UPDATE_BY,
+		  UPDATE_TIME,
+		  STATE,
+		  FK_CLASS,
+		  (select count(*) 
+		  	from SURVEY_ANSWER 
+		  	where FK_USER = #FK_USER# 
+		  	and SURVEY_ANSWER.SURVEY_SUBJECTTEACHER_ID = SURVEY_SUBJECTTEACHER.SURVEY_SUBJECTTEACHER_ID) NUM
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE STATE = 0
+		and FK_CLASS = (select STUDENT_BJID 
+							from SC_USER_STUDENT 
+							where STUDENT_PK = (select FK_STUDENT from SC_STUDENT_PARENT where FK_PARENT = #FK_USER# and STATUS = 0))
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_ID">
+			SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		</isNotEmpty>
+	</select>
+</sqlMap>

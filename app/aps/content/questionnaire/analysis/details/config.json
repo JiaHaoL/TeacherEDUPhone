@@ -1,0 +1,22 @@
+{
+    "name": "app_analysis_details",
+    "viewUrl": "aps/content/questionnaire/analysis/details/template.html",
+    "controllerUrl": "aps/content/questionnaire/analysis/details/controller.js",
+    "config": 
+    {
+        "findTitleByIdURL":"json/Open_queryForList_findTitleById.json",
+        "findSynthByOptionIdURL":"json/Open_queryForList_findSynthByOptionId.json",
+        "menu":{
+            "buttons":[
+	        	{
+	            	"buttonName":"关闭窗口",
+	            	"buttonStyle":"primary",
+	            	"buttonImg":"remove",
+	            	"buttonStatus":"0",
+	            	"buttonLink":"app_analysis_details.close"
+	        	}
+			]
+		}
+		
+    }
+}

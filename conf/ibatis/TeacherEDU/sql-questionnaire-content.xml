@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<select id="findRoleListByUserId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select
+  			UROLE_PK,
+ 			FK_USER,
+  			FK_ROLE,
+  			FK_UNIT
+		from SC_USER_ROLE
+		where FK_USER = #FK_USER#
+	</select>
+
+	<!--  评测人员列表 -->
+	<select id="findEvaluateListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			SURVEY_SUBJECTTEACHER_ID,
+			FK_TEACHER,
+			(select USER_SN from SC_USER where USER_PK = FK_TEACHER) TEACHER_NAME,
+			SURVEY_QUEST_ID,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			STATE,
+			FK_CLASS,
+			(select (select GRADE_NAME from SC_GRADE where GRADE_PK=FK_GRADE)||nvl2(CLASS_BH,'('||CLASS_BH||')班','未分班') from SC_CLASS where CLASS_PK=FK_CLASS) CLASS_NAME,
+			(select UNIT_NAME 
+				from SC_UNIT
+				where UNIT_PK  = (select FK_UNIT from SC_USER where USER_PK = FK_TEACHER)) SCHOOL_NAME,
+			SURVEY_TYPE
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0
+	</select>
+	
+	<select id="findEvaluateListByIdSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM SURVEY_SUBJECTTEACHER
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and STATE = 0
+	</select>
+	
+	<!-- 用户问卷列表 -->
+	<select id="findQsListByUserPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			distinct
+			SURVEY_ANSWER_V_ID,
+			SURVEY_QUEST_ID,
+			(select SURVEY_QUEST_NAME from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) SURVEY_QUEST_NAME,
+			(select SURVEY_QUEST_STATE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) SURVEY_QUEST_STATE,
+			(select SURVEY_QUEST_SDATE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) START_DATE,
+			(select SURVEY_QUEST_EDATE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) END_DATE,
+			(select USER_SN from SC_USER where USER_PK = (select CREATE_BY from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID)) USER_SN,
+			(select SURVEY_QUEST_TYPE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) SURVEY_QUEST_TYPE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			FK_USER,
+			STATE,
+			SURVEY_TYPE,
+			TEACHER_FLAG,
+			WRITE_NUMBER
+		FROM SURVEY_ANSWER_V V
+		WHERE STATE = 0
+		AND FK_USER = #FK_USER#
+		AND (select SURVEY_QUEST_STATE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) != 0
+		<isNotEmpty prepend="AND" property="WRITE_NUMBER">
+			<isEqual property="WRITE_NUMBER" compareValue="0">
+				WRITE_NUMBER = #WRITE_NUMBER#
+			</isEqual>
+			<isNotEqual property="WRITE_NUMBER" compareValue="0">
+				WRITE_NUMBER > '0'
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_SC_COURSE">
+			FK_COURSE = #FK_SC_COURSE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			FK_COURSE = #FK_COURSE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				CREATE_BY = #userInfo.GUID#
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- 用户问卷数量 -->
+	<select id="findQsListByUserPkSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM SURVEY_ANSWER_V V
+		WHERE STATE = 0
+		AND FK_USER = #FK_USER#
+		AND (select SURVEY_QUEST_STATE from SURVEY_QUEST where SURVEY_QUEST.SURVEY_QUEST_ID = V.SURVEY_QUEST_ID) != 0
+		<isNotEmpty prepend="AND" property="WRITE_NUMBER">
+			<isEqual property="WRITE_NUMBER" compareValue="0">
+				WRITE_NUMBER = #WRITE_NUMBER#
+			</isEqual>
+			<isNotEqual property="WRITE_NUMBER" compareValue="0">
+				WRITE_NUMBER > '0'
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="FK_SC_COURSE">
+			FK_COURSE = #FK_SC_COURSE#
+		</isNotEmpty>
+	</select>
+	
+	<!-- *********************** 问卷复制 *********************** -->
+	<!-- 查询题目ID和题目类型 -->
+	<select id="findTitleAndTypeByQnId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_TITLE_ID,
+			SURVEY_TYPE_ID
+		FROM  SURVEY_TITLE
+		where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+		order by SURVEY_TITLE_ORDER 
+	</select>
+	
+	<!-- 复制问卷 -->
+	<insert id="QuestionnaireCopy" parameterClass="java.util.HashMap">
+		INSERT INTO 
+			SURVEY_QUEST
+			(
+				SURVEY_QUEST_ID,
+				SURVEY_QUEST_NAME,
+				SURVEY_QUEST_STATE,
+				SURVEY_QUEST_SDATE,
+				SURVEY_QUEST_EDATE,
+				SURVEY_QUEST_CODE,
+				CREATE_BY,
+				CREATE_TIME,
+				USER_PK,
+				DELETE_FLAG,
+				SURVEY_QUEST_REMARK,
+				SURVEY_REMARK_TEXT,
+			 	WRITE_TAG
+			)
+			VALUES
+			(
+				#UUID#,
+				#SURVEY_QUEST_NAME#,
+				0,
+				#SURVEY_QUEST_SDATE#,
+				#SURVEY_QUEST_EDATE#,
+				#SURVEY_QUEST_CODE#,
+				#userInfo.GUID#,
+				sysdate,
+				#USER_PK#,
+				0,
+				#SURVEY_QUEST_REMARK#,
+				#SURVEY_REMARK_TEXT#,
+				0
+			)
+	</insert>
+	
+	<!-- 复制题目 -->
+	<insert id="TitleCopy" parameterClass="java.util.HashMap">
+		INSERT INTO SURVEY_TITLE
+		(
+			SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TITLE_QUE,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_HINT,
+			SURVEY_TITLE_REL,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_TIME,
+			UPDATE_BY,
+			SURVEY_QUEST_ID,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,
+			FK_USER,
+			SERIES,
+			DELETE_FLAG,
+			IDS
+		)
+		select 
+			sys_guid(),
+			SURVEY_TITLE_NAME,
+			SURVEY_TITLE_QUE,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_HINT,
+			SURVEY_TITLE_REL,
+			#userInfo.GUID#,
+			sysdate,
+			null,
+			null,
+			#NEW_QUEST_ID#,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,
+			FK_USER,
+			SERIES,
+			DELETE_FLAG,
+			IDS
+		from SURVEY_TITLE
+		where SURVEY_QUEST_ID = #OLD_QUEST_ID#
+	</insert>
+	
+	<!-- 复制行标题 -->
+	<insert id="MatrixHeadingCopy" parameterClass="java.util.HashMap">
+		INSERT INTO SURVEY_MATRIX
+		(
+			SURVEY_MATRIX_ID,
+			LINE_HEADING,
+			SURVEY_TITLE_ID,
+			STATE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			LINE_HEADING_ORDER
+		)
+		select
+			sys_guid(),
+			LINE_HEADING,
+			#NEW_TITLE_ID#,
+			STATE,
+			#userInfo.GUID#,
+			sysdate,
+			null,
+			null,
+			LINE_HEADING_ORDER
+		from SURVEY_MATRIX
+		where SURVEY_TITLE_ID = #OLD_TITLE_ID#
+		and STATE = 0
+	</insert>
+	
+	<!-- 复制选项 -->
+	<insert id="OptionCopy" parameterClass="java.util.HashMap">
+		INSERT INTO SURVEY_CONTENT
+		(
+			SURVEY_CONTENT_ID,
+			SURVEY_CONTENT_CHOOSE,
+			SURVEY_CONTENT_IMG,
+			SURVEY_CONTENT_MENU,
+			SURVEY_CONTENT_FILL,
+			SURVEY_CONTENT_DEF,
+			SURVEY_QUEST_MIN,
+			SURVEY_QUEST_MAX,
+			SURVEY_QUEST_ORDER,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			DELETE_FLAG,
+			IMAGE_WIDTH,
+			IMAGE_HEIGHT,
+			SURVEY_TITLE_ID,
+			SURVEY_CONTENT_VALUE
+		)
+		select
+			sys_guid(),
+			SURVEY_CONTENT_CHOOSE,
+			SURVEY_CONTENT_IMG,
+			SURVEY_CONTENT_MENU,
+			SURVEY_CONTENT_FILL,
+			SURVEY_CONTENT_DEF,
+			SURVEY_QUEST_MIN,
+			SURVEY_QUEST_MAX,
+			SURVEY_QUEST_ORDER,
+			#userInfo.GUID#,
+			sysdate,
+			null,
+			null,
+			DELETE_FLAG,
+			IMAGE_WIDTH,
+			IMAGE_HEIGHT,
+			#NEW_TITLE_ID#,
+			SURVEY_CONTENT_VALUE
+		from SURVEY_CONTENT
+		where SURVEY_TITLE_ID = #OLD_TITLE_ID#
+		and DELETE_FLAG = 0
+	</insert>
+	
+	<!-- *********************** 矩阵题CRUD *********************** -->
+	<!-- 根据问卷id查询题目行标题 -->
+	<select id="findHeadingByQnId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_MATRIX_ID,
+			LINE_HEADING,
+			SURVEY_TITLE_ID,
+			STATE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			LINE_HEADING_ORDER
+		FROM SURVEY_MATRIX
+		WHERE SURVEY_TITLE_ID in (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) 
+		and STATE = 0
+		order by LINE_HEADING_ORDER
+	</select>
+	
+	<!-- 查询题目行标题 -->
+	<select id="findHeadingByTitleId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_MATRIX_ID,
+			LINE_HEADING,
+			SURVEY_TITLE_ID,
+			STATE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			LINE_HEADING_ORDER
+		FROM SURVEY_MATRIX
+		WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID# and STATE = 0
+		order by LINE_HEADING_ORDER
+	</select>
+	
+	<!-- 行标题修改 -->
+	<update id="MatrixHeadingUpdate" parameterClass="java.util.HashMap">
+		UPDATE SURVEY_MATRIX SET
+			LINE_HEADING = #LINE_HEADING#,
+			UPDATE_BY = #userInfo.GUID#,
+			UPDATE_TIME = sysdate,
+			LINE_HEADING_ORDER = #LINE_HEADING_ORDER#
+		WHERE SURVEY_MATRIX_ID = #SURVEY_MATRIX_ID#
+	</update>
+
+ 	<!-- 根据pk删除行标题 -->
+	<update id="MatrixHeadingDelete" parameterClass="java.util.HashMap">
+		UPDATE SURVEY_MATRIX SET
+			UPDATE_BY = #userInfo.GUID#,
+			UPDATE_TIME = sysdate,
+			STATE = 1
+		WHERE SURVEY_MATRIX_ID = #SURVEY_MATRIX_ID#
+	</update>
+	
+	<!-- 行标题插入 -->
+	<insert id="MatrixHeadingInsert" parameterClass="java.util.HashMap">
+		INSERT INTO SURVEY_MATRIX
+		(
+			SURVEY_MATRIX_ID,
+			LINE_HEADING,
+			SURVEY_TITLE_ID,
+			STATE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			LINE_HEADING_ORDER
+		)
+		VALUES
+		(
+			#UUID#,
+			#LINE_HEADING#,
+			#SURVEY_TITLE_ID#,
+			0,
+			#userInfo.GUID#,
+			sysdate,
+			#UPDATE_BY#,
+			#UPDATE_TIME#,
+			#LINE_HEADING_ORDER#
+		)
+	</insert>
+	
+    <!-- *********************** 题目CRUD *********************** -->
+	<!-- 1.题目查询  2.答题人数 3.默认选中 -->
+	<select id="findTitleListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+      		SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_QUE CHECKED, 
+			SURVEY_TITLE_HINT,
+			SURVEY_TITLE_REL,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			FK_USER,
+			SERIES,
+			DELETE_FLAG,
+			SURVEY_QUEST_ID,
+			IDS,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE
+      		<!-- (select COUNT(distinct SURVEY_ANSWER_ID) 
+          		from SURVEY_SYNTH 
+          		where STATE = 0 
+          		group by SURVEY_TITLE_ID
+          		having SURVEY_TITLE.SURVEY_TITLE_ID=SURVEY_SYNTH.SURVEY_TITLE_ID) NUM -->
+      	FROM SURVEY_TITLE
+      	WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+     	order by to_number(SURVEY_TITLE_ORDER)
+     	<isNotEmpty prepend="AND" property="FK_UNIT">
+     		(select FK_UNIT from SC_USER from USER_PK = 
+     			(select CREATE_BY from SURVEY_QUEST where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)) = #FK_UNIT#
+     	</isNotEmpty>
+    </select>
+    
+	<select id="findTitleListByIdSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+          SELECT 
+          		COUNT(*)
+	      FROM SURVEY_TITLE
+	      WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+    </select>
+    
+    <select id="findAnswerNumsById" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+    	select COUNT(distinct SURVEY_ANSWER_ID) 
+        from SURVEY_SYNTH 
+        where STATE = 0
+        and SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+        and SURVEY_QUEST_ID = #SURVEY_QUEST_ID# 
+    </select>
+    
+    <!-- 当前题目查询 -->
+    <select id="findCurrentTitleListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_TITLE_NAME,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_REL
+      	FROM SURVEY_TITLE
+      	WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+    </select>
+    
+    <!-- 关联题目查询 -->
+    <select id="findRelTitleListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+      		SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TYPE_ID,
+			(select SURVEY_TYPE_TYPE from SURVEY_TYPE where SURVEY_TYPE.SURVEY_TYPE_ID = SURVEY_TITLE.SURVEY_TYPE_ID) SURVEY_TYPE_NAME,
+			SURVEY_TITLE_ORDER,
+			SURVEY_TITLE_REL,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,
+			SURVEY_TITLE_TXT
+      	FROM SURVEY_TITLE
+      	WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+      	AND SURVEY_TYPE_ID not in ('3','9','10','11')
+      	AND <![CDATA[to_number(SURVEY_TITLE_ORDER) < to_number(#SURVEY_TITLE_ORDER#)]]>
+     	order by to_number(SURVEY_TITLE_ORDER)
+    </select>
+    
+    <!-- 修改题目  查询题目   默认选中查询-->
+    <select id="findTitleByPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+         	SURVEY_TITLE_ID,
+         	SURVEY_TITLE_NAME,
+         	SURVEY_TITLE_ID,
+         	SURVEY_TYPE_ID,
+         	SURVEY_QUEST_ID,
+         	SURVEY_TITLE_QUE,
+         	SURVEY_TITLE_ORDER,
+         	SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE,	
+     	    NVL2((select SURVEY_TITLE_ID 
+     	    		from SURVEY_TITLE sun 
+     	    		where SURVEY_TITLE_QUE='true'
+          			and sun.SURVEY_TITLE_ID = sut.SURVEY_TITLE_ID
+      				),'true','false') IS_CHECKED
+         FROM SURVEY_TITLE sut
+         WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#    
+         ORDER BY SURVEY_TITLE_ORDER
+    </select>
+    
+    <insert id="TitleInsert" parameterClass="java.util.HashMap">
+		INSERT
+		INTO SURVEY_TITLE
+		(
+			SURVEY_TITLE_ID,
+			SURVEY_TITLE_NAME,
+			SURVEY_TITLE_QUE,
+			SURVEY_TITLE_ORDER,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_TIME,
+			UPDATE_BY,
+			SURVEY_QUEST_ID,
+			SURVEY_TYPE_ID,
+			SURVEY_TITLE_TXT,
+			MAXIMUN_VALUE,
+			MINIMUN_VALUE
+		)
+		VALUES
+		(
+			#UUID#,
+			#SURVEY_TITLE_NAME#,
+			#SURVEY_TITLE_QUE#,
+			(select count(SURVEY_TITLE_ID)+1 from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID# and DELETE_FLAG = 0),
+			#userInfo.GUID#,
+			sysdate,
+			#UPDATE_TIME#,
+			#UPDATE_BY#,
+			#SURVEY_QUEST_ID#,
+			#SURVEY_TYPE_ID#,
+			#SURVEY_TITLE_TXT#,
+			#MAXIMUN_VALUE#,
+			#MINIMUN_VALUE#
+		)
+	</insert>
+	
+	<!-- 题目关联选项 -->
+    <update id="TitleRelUpdate" parameterClass="java.util.HashMap">
+         UPDATE SURVEY_TITLE SET
+         	SURVEY_TITLE_REL = #SURVEY_TITLE_REL#              
+         WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+    </update>
+    
+    <!-- 修改题目 -->
+    <update id="TitleUpdate" parameterClass="java.util.HashMap">
+         UPDATE SURVEY_TITLE SET
+         	SURVEY_TITLE_NAME = #SURVEY_TITLE_NAME#,
+         	SURVEY_TITLE_QUE = #SURVEY_TITLE_QUE#,
+         	SURVEY_TITLE_TXT = #SURVEY_TITLE_TXT#,
+         	MAXIMUN_VALUE = #MAXIMUN_VALUE#,
+			MINIMUN_VALUE = #MINIMUN_VALUE#               
+         WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+    </update>
+    
+    <!-- 修改题目编号 -->
+    <update id="updateTitleOrderById" parameterClass="java.util.HashMap">
+         UPDATE SURVEY_TITLE SET
+         SURVEY_TITLE_ORDER = #SURVEY_TITLE_ORDER#           
+         WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#   
+     	<isNotEmpty prepend="AND" property="SURVEY_TITLE_ID">
+   			SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+		</isNotEmpty>
+    </update>   
+       
+    <!-- *********************** 选项CRUD *********************** -->
+	<!-- 1.选项查询  2.默认选中-->
+	<select id="findOptionListById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+         SELECT 
+         	SURVEY_CONTENT_ID,
+			SURVEY_CONTENT_CHOOSE,
+			SURVEY_CONTENT_IMG,
+			SURVEY_CONTENT_MENU,
+			SURVEY_CONTENT_FILL,
+			SURVEY_CONTENT_DEF IS_CHECKED,
+			SURVEY_QUEST_MIN,
+			SURVEY_QUEST_MAX,
+			SURVEY_QUEST_ORDER,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			DELETE_FLAG,
+			IMAGE_WIDTH,
+			IMAGE_HEIGHT,
+			SURVEY_TITLE_ID,
+			SURVEY_CONTENT_VALUE,
+			(select count(*) from SURVEY_SYNTH where SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID) GAIN_VOTE
+			<!-- (select COUNT(*) 
+				from SURVEY_SYNTH
+				where STATE = 0 
+				group by SURVEY_CONTENT_ID,SURVEY_QUEST_ID 
+				having SURVEY_QUEST_ID=#SURVEY_QUEST_ID#  
+				and SURVEY_SYNTH.SURVEY_CONTENT_ID = SURVEY_CONTENT.SURVEY_CONTENT_ID) NUMS -->
+         FROM SURVEY_CONTENT
+         WHERE SURVEY_TITLE_ID in (select SURVEY_TITLE_ID from SURVEY_TITLE where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#)
+         ORDER BY SURVEY_QUEST_ORDER
+	</select>
+	
+	<select id="findSynthNumsById" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+    	select COUNT(*) 
+		from SURVEY_SYNTH
+		where STATE = 0 
+		and SURVEY_QUEST_ID=#SURVEY_QUEST_ID#  
+		and SURVEY_SYNTH.SURVEY_CONTENT_ID = #SURVEY_CONTENT_ID#
+    </select>
+	
+	<insert id="OptionInsert" parameterClass="java.util.HashMap">
+		INSERT
+		INTO SURVEY_CONTENT
+		(
+			SURVEY_CONTENT_ID,
+			SURVEY_CONTENT_CHOOSE,
+			SURVEY_CONTENT_DEF,
+			SURVEY_TITLE_ID,
+			SURVEY_QUEST_ORDER,
+			SURVEY_CONTENT_VALUE,
+			SURVEY_CONTENT_IMG,
+			IMAGE_WIDTH,
+			IMAGE_HEIGHT
+		)
+		VALUES
+		(
+			#UUID#,
+			#SURVEY_CONTENT_CHOOSE#,
+			#SURVEY_CONTENT_DEF#,
+			#SURVEY_TITLE_ID#,
+			#SURVEY_QUEST_ORDER#,
+			#SURVEY_CONTENT_VALUE#,
+			#SURVEY_CONTENT_IMG#,
+			#IMAGE_WIDTH#,
+			#IMAGE_HEIGHT#
+		)
+	</insert>
+	
+    <!-- 修改选项 -->
+    <update id="OptionUpdate" parameterClass="java.util.HashMap">
+         UPDATE SURVEY_CONTENT SET
+	         SURVEY_CONTENT_CHOOSE=#SURVEY_CONTENT_CHOOSE# ,
+	         SURVEY_QUEST_ORDER=#SURVEY_QUEST_ORDER#,
+	         SURVEY_CONTENT_DEF=#SURVEY_CONTENT_DEF#,
+	         SURVEY_CONTENT_VALUE=#SURVEY_CONTENT_VALUE#,
+	         SURVEY_CONTENT_IMG=#SURVEY_CONTENT_IMG#,
+	         IMAGE_WIDTH = #IMAGE_WIDTH#,    
+	         IMAGE_HEIGHT = #IMAGE_HEIGHT#
+         WHERE SURVEY_CONTENT_ID=#SURVEY_CONTENT_ID#
+    </update>
+    
+    <!-- 修改时 查询选项 -->
+    <select id="findOptionListByPk" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">     
+        SELECT 
+        	SURVEY_CONTENT_ID,
+        	SURVEY_CONTENT_CHOOSE,
+        	SURVEY_CONTENT_VALUE,
+        	SURVEY_TITLE_ID,
+        	SURVEY_QUEST_ORDER,
+        	SURVEY_CONTENT_IMG,
+        	NVL2((select survey_content_ID  
+        			 from SURVEY_CONTENT SUT 
+       				 where SURVEY_CONTENT_DEF='1'
+       				 and SUT.SURVEY_CONTENT_ID = SUN.SURVEY_CONTENT_ID
+       				 ),'true','false') IS_CHECKED,
+       		IMAGE_WIDTH,
+       		IMAGE_HEIGHT
+        FROM SURVEY_CONTENT SUN
+        WHERE SURVEY_TITLE_ID=#SURVEY_TITLE_ID#
+        ORDER BY SURVEY_QUEST_ORDER
+    </select>
+    
+    <!-- 根据选项id查询选项信息 -->
+    <select id="findOptionsByTitleId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT 
+    		SURVEY_CONTENT_ID,
+        	SURVEY_CONTENT_CHOOSE,
+        	SURVEY_CONTENT_VALUE,
+        	SURVEY_QUEST_ORDER,
+        	SURVEY_TITLE_ID
+        FROM SURVEY_CONTENT
+        WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+    </select>
+    
+    <!-- ********************** 问卷CRUD *********************** -->
+	<!-- 查询问卷 -->	
+	<select id="findQuestionnaireList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_QUEST_ID,
+			SURVEY_QUEST_NAME,
+			SURVEY_QUEST_STATE,
+			SURVEY_QUEST_SDATE,
+			SURVEY_QUEST_EDATE,
+			SURVEY_QUEST_CODE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			USER_PK,
+			SURVEY_QUEST_TYPE,
+			ANONYMOUS,
+			WRITE_TAG,
+			DELETE_FLAG,
+			SURVEY_QUEST_REMARK,
+			SURVEY_REMARK_TEXT,
+			(select COUNT(*) from SURVEY_ANSWER where STATE = 0 and SURVEY_ANSWER.SURVEY_QUEST_ID = SURVEY_QUEST.SURVEY_QUEST_ID) NUM,
+			(select count(*) from SURVEY_TITLE where DELETE_FLAG = 0 and SURVEY_TITLE.SURVEY_QUEST_ID = SURVEY_QUEST.SURVEY_QUEST_ID) TITLE_NUMS,
+			(select count(*) from SURVEY_ANSWER_V  where STATE = 0 and SURVEY_ANSWER_V.SURVEY_QUEST_ID = SURVEY_QUEST.SURVEY_QUEST_ID) USER_NUMS
+		FROM SURVEY_QUEST
+		WHERE DELETE_FLAG = 0
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			FK_COURSE = #FK_COURSE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_NAME">
+			SURVEY_QUEST_NAME LIKE '%'||#SURVEY_QUEST_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				CREATE_BY = #userInfo.GUID#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="UNIT_PK">
+			CREATE_BY in (select USER_PK from SC_USER where FK_UNIT = #UNIT_PK#)
+		</isNotEmpty>
+		ORDER BY CREATE_TIME desc
+	</select>
+	
+	<select id="findQuestionnaireListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM SURVEY_QUEST
+		WHERE DELETE_FLAG = 0
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			FK_COURSE = #FK_COURSE#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_NAME">
+			SURVEY_QUEST_NAME LIKE '%'||#SURVEY_QUEST_NAME#||'%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				CREATE_BY = #userInfo.GUID#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="UNIT_PK">
+			CREATE_BY in (select USER_PK from SC_USER where FK_UNIT = #UNIT_PK#)
+		</isNotEmpty>
+		ORDER BY CREATE_TIME desc
+	</select>
+	
+ 	<!-- 根据id查询问卷 -->	
+	<select id="findQuestionnaireById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			SURVEY_QUEST_ID,
+			SURVEY_QUEST_NAME,
+			SURVEY_QUEST_STATE,
+			SURVEY_QUEST_SDATE,
+			SURVEY_QUEST_EDATE,
+			SURVEY_QUEST_CODE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			USER_PK,
+			SURVEY_QUEST_TYPE,
+			ANONYMOUS,
+			WRITE_TAG,
+			DELETE_FLAG,
+			SURVEY_QUEST_REMARK,
+			SURVEY_REMARK_TEXT,
+			(select UNIT_NAME from SC_UNIT where UNIT_PK = (select FK_UNIT from SC_USER where USER_PK = SURVEY_QUEST.CREATE_BY)) CREATE_SCHOOL,
+			(select USER_SN from SC_USER where USER_PK = SURVEY_QUEST.CREATE_BY) USER_SN,
+			(select count(1) from SURVEY_ANSWER_V where SURVEY_QUEST_ID = #SURVEY_QUEST_ID#) ANSWER_USER_NUM
+		FROM SURVEY_QUEST
+		WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+	</select>
+	
+	<!-- 查询已删除问卷 -->
+	<select id="findRemovedQuestionnaireList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			SURVEY_QUEST_ID,
+			SURVEY_QUEST_NAME,
+			SURVEY_QUEST_STATE,
+			SURVEY_QUEST_SDATE,
+			SURVEY_QUEST_EDATE,
+			SURVEY_QUEST_CODE,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			USER_PK,
+			SURVEY_QUEST_TYPE,
+			ANONYMOUS,
+			WRITE_TAG,
+			DELETE_FLAG,
+			SURVEY_QUEST_REMARK,
+			SURVEY_REMARK_TEXT,
+			(SELECT COUNT(*) FROM SURVEY_ANSWER WHERE STATE = 0
+				GROUP BY SURVEY_QUEST_ID
+			 	HAVING SURVEY_ANSWER.SURVEY_QUEST_ID=SURVEY_QUEST.SURVEY_QUEST_ID) NUM
+		FROM SURVEY_QUEST
+		WHERE DELETE_FLAG = 1
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				CREATE_BY = #userInfo.GUID#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_NAME">
+			SURVEY_QUEST_NAME LIKE '%'||#SURVEY_QUEST_NAME#||'%'
+		</isNotEmpty>
+		ORDER BY CREATE_TIME desc
+	</select>
+	
+	<select id="findRemovedQuestionnaireListSize" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM SURVEY_QUEST
+		WHERE DELETE_FLAG = 1
+		<isNotEmpty prepend="AND" property="ROLE_CODE">
+			<isEqual property="ROLE_CODE" compareValue="0">
+				1 = 1
+			</isEqual>
+			<isEqual property="ROLE_CODE" compareValue="1">
+				CREATE_BY = #userInfo.GUID#
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SURVEY_QUEST_NAME">
+			SURVEY_QUEST_NAME LIKE '%'||#SURVEY_QUEST_NAME#||'%'
+		</isNotEmpty>
+		ORDER BY CREATE_TIME desc
+	</select>
+    
+    <!-- 问卷修改 -->
+    <update id="QuestionnaireUpdate" parameterClass="java.util.HashMap">
+           UPDATE SURVEY_QUEST SET 
+           		SURVEY_QUEST_NAME = #SURVEY_QUEST_NAME#,
+           		UPDATE_BY = #userInfo.GUID#,
+				UPDATE_TIME = sysdate,	
+           		SURVEY_QUEST_REMARK = #SURVEY_QUEST_REMARK#,
+           		SURVEY_REMARK_TEXT = #SURVEY_REMARK_TEXT#,
+           		SURVEY_QUEST_TYPE = #SURVEY_QUEST_TYPE# ,
+				ANONYMOUS = #ANONYMOUS#,
+				WRITE_TAG = #WRITE_TAG#
+           WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+    </update>
+    
+    <!-- 发布问卷－状态修改 -->
+    <update id="QuestionnaireStatusUpdate" parameterClass="java.util.HashMap">
+           UPDATE SURVEY_QUEST SET 
+           		SURVEY_QUEST_STATE ＝ 1,
+           		USER_PK = #userInfo.GUID#,
+				SURVEY_QUEST_SDATE = sysdate
+           WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+    </update>
+    
+    <!-- 结束发布问卷 -->
+    <update id="updateQuestionnaireStateIsEnd" parameterClass="java.util.HashMap">
+           UPDATE SURVEY_QUEST SET 
+         		SURVEY_QUEST_STATE ＝ 2,
+         		USER_PK = #userInfo.GUID#,
+				SURVEY_QUEST_EDATE = sysdate
+           WHERE SURVEY_QUEST_ID = #SURVEY_QUEST_ID#
+    </update>
+	
+	<!-- 问卷删除 -->
+	<update id="QuestionnaireDelete" parameterClass="java.util.HashMap">
+		UPDATE SURVEY_QUEST SET
+			DELETE_FLAG = 1,
+			UPDATE_TIME = sysdate,
+			UPDATE_BY = #userInfo.GUID#
+		WHERE SURVEY_QUEST_ID =#SURVEY_QUEST_ID#
+	</update>
+
+	<!-- 问卷新增 -->
+	<insert id="QuestionnaireInsert" parameterClass="java.util.HashMap">
+		INSERT INTO 
+			SURVEY_QUEST
+			(
+				SURVEY_QUEST_ID,
+				SURVEY_QUEST_NAME,
+				SURVEY_QUEST_STATE,
+				SURVEY_QUEST_SDATE,
+				SURVEY_QUEST_EDATE,
+				SURVEY_QUEST_CODE,
+				CREATE_BY,
+				CREATE_TIME,
+				UPDATE_BY,
+				UPDATE_TIME,
+				USER_PK,
+				SURVEY_QUEST_TYPE,
+				ANONYMOUS,
+				DELETE_FLAG,
+				SURVEY_QUEST_REMARK,
+				SURVEY_REMARK_TEXT,
+				WRITE_TAG,
+				FK_COURSE
+			)
+			VALUES
+			(
+				#UUID#,
+				#SURVEY_QUEST_NAME#,
+				0,
+				#SURVEY_QUEST_SDATE#,
+				#SURVEY_QUEST_EDATE#,
+				#SURVEY_QUEST_CODE#,
+				#userInfo.GUID#,
+				sysdate,
+				#UPDATE_BY#,
+				#UPDATE_TIME#,
+				#USER_PK#,
+				#SURVEY_QUEST_TYPE#,
+				#ANONYMOUS#,
+				0,
+				#SURVEY_QUEST_REMARK#,
+				#SURVEY_REMARK_TEXT#,
+				0,
+				#FK_COURSE#
+			)
+	</insert>
+	
+	<!-- 删除操作 -->
+    <!--  修改时删除题目 -->
+    <delete id="deleteTitle" parameterClass="java.util.HashMap">
+        DELETE FROM SURVEY_TITLE
+        WHERE SURVEY_TITLE_ID=#SURVEY_TITLE_ID#
+    </delete>
+    
+    <!-- 删除题目时一起删除行标题 -->
+	<delete id="deleteMatrixHeading" parameterClass="java.util.HashMap">
+		DELETE FROM SURVEY_MATRIX
+		WHERE SURVEY_TITLE_ID = #SURVEY_TITLE_ID#
+	</delete>
+	
+    <!--  删除题目时一起删除选项 -->
+    <delete id="deleteTitleChoose" parameterClass="java.util.HashMap">
+         DELETE FROM  SURVEY_CONTENT
+         WHERE SURVEY_TITLE_ID=#SURVEY_TITLE_ID#        
+    </delete>
+
+    <!-- 修改时删除选项 -->
+    <delete id="deleteChoose" parameterClass="java.util.HashMap">
+         DELETE FROM  SURVEY_CONTENT
+         WHERE SURVEY_CONTENT_ID=#SURVEY_CONTENT_ID#        
+    </delete>
+
+     <!-- 删除答案列表 -->
+     <delete id="deleteAnswer" parameterClass="java.util.HashMap">
+        DELETE FROM SURVEY_ANSWER
+        WHERE SURVEY_ANSWER_ID=#SURVEY_ANSWER_ID#
+     </delete>
+     
+     <!--删除答案 -->
+     <delete id="deleteSynth" parameterClass="java.util.HashMap">
+        DELETE FROM SURVEY_SYNTH
+        WHERE SURVEY_ANSWER_ID=#SURVEY_ANSWER_ID#
+     </delete> 
+	
+ 	<!-- *********************** 题型CRUD *********************** -->
+    <!--题型查询 -->
+    <select id="findTypeList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT 
+		    SURVEY_TYPE_ID,
+			SURVEY_TYPE_CODE,
+			SURVEY_TYPE_TYPE,
+			STATE,
+			ZD1,
+			ZD2,
+			ZD3
+        FROM SURVEY_TYPE 
+        WHERE 1=1
+        ORDER BY SURVEY_TYPE_ID
+	</select>
+</sqlMap>
